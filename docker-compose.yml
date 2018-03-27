@@ -31,6 +31,10 @@ services:
       context: .
       dockerfile: Dockerfile.client
     image: metacoma/silvercomplete-client:latest
+    environment:
+      - DISPLAY
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
 
 networks:
   silvercomplete:
