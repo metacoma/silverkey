@@ -79,7 +79,7 @@ user@localhost $ xhost +local:docker
 Add example key
 
 ```
-user@localhost $ curl -XPUT -s localhost:2379/v2/keys/myphone -d value=873084503445
+user@localhost $ curl -XPUT -s localhost:2379/v2/keys/i/myphone -d value=873084503445
 {"action":"set","node":{"key":"/myphone ","value":"873084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
@@ -118,7 +118,7 @@ user@localhost $ xhost +local:docker
 
 Add example key:
 ```
-user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/myphone -d value=873084503445
+user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/i/myphone -d value=873084503445
 {"action":"set","node":{"key":"/myphoneм-d","value":"873084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
