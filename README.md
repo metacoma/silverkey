@@ -10,7 +10,7 @@
 
 #[Precheks](#Precheks)
 
-### What's is it?
+### (#What's is it?)
 
   Check the video, worth a thousand words.
 
@@ -23,7 +23,7 @@
   Tested only on Ubuntu 16.04, but it should work on any other linux, see requirements section
 
 
-#### WARNING:
+### (#WARNING)
 
   IT'S INSECURE. Use at your own risk
 
@@ -69,8 +69,8 @@ ETCD api v2 available on http://localhost:2379
 
 Add example key
 ```
-user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+73084503445
-{"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
+user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/myphone -d value=+73084503445
+{"action":"set","node":{"key":"/myphone ","value":"+73084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
 Also you can manage through key/value through web interface
@@ -109,8 +109,8 @@ user@localhost $ docker-compose run --name silvercomplete_gui_1 -d -e SILVERCOMP
 
 Add example key:
 ```
-user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+73084503445
-{"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
+user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/myphone -d value=+73084503445
+{"action":"set","node":{"key":"/myphoneм-d","value":"+73084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
 Also you can manage your key/value through web interface
