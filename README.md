@@ -4,7 +4,7 @@
 
 #[Current state](#Current state)
 
-#[WARNING](#WARNING)
+#[Warning](#warning)
 
 #[Requirements](#Requirements)
 
@@ -23,7 +23,7 @@
   Tested only on Ubuntu 16.04, but it should work on any other linux, see requirements section
 
 
-### (#WARNING)
+#WARNING
 
   IT'S INSECURE. Use at your own risk
 
