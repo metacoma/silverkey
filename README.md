@@ -73,9 +73,6 @@ user@localhost $ docker-compose up -d
 user@localhost $ xhost +local:docker
 ```
 
-WEB ui for etcd available on http://localhost:2888
-
-ETCD api v2 available on http://localhost:2379
 
 
 Add example key
@@ -84,6 +81,8 @@ Add example key
 user@localhost $ curl -XPUT -s localhost:2379/v2/keys/myphone -d value=873084503445
 {"action":"set","node":{"key":"/myphone ","value":"873084503445","modifiedIndex":31,"createdIndex":31}}
 ```
+
+ETCD api v2 available on http://localhost:2379/v2/keys
 
 Also you can manage key/value through web interface http://localhost:2888
 
