@@ -10,7 +10,7 @@ Table of contents
 * [Warning](#warning)
 * [Requirements](#requirements)
 * [Precheks](#precheks)
-* [Install in single-user mode](#install-in-single-user mode)
+* [Install in single-user mode](#install-in-single-user-mode)
 * [Install in multi-user mode](#install-in-multi-user-mode)
 * [How to use it](#how-to-use-it)
 
