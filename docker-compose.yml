@@ -19,7 +19,7 @@ services:
     ports:
       - 0.0.0.0:2379:2379
 
-  etcd-ui:
+  ui:
     image: buddho/etcd-browser
     environment:
       ETCD_HOST: etcd
@@ -27,7 +27,7 @@ services:
     ports:
       - 0.0.0.0:2888:8000
 
-  silvercomplete-client:
+  gui:
     build:
       context: .
       dockerfile: Dockerfile.client
