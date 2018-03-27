@@ -1,19 +1,19 @@
 # Silver complete
 
-What's is it?
+### What's is it?
 
   Check out the video, worth a thousand words.
 
   [![IMAGE ALT TEXT](http://img.youtube.com/vi/ca7T0bXptU8/0.jpg)](http://www.youtube.com/watch?v=ca7T0bXptU8 "Silvercomplete demo")
 
-State:
+### Current state
 
   Proof of Concept
 
   Tested only on Ubuntu 16.04, but it should work on any other linux, see requirements section
 
 
-WARNING:
+#### WARNING:
 
   IT'S INSECURE
 
@@ -62,6 +62,7 @@ user@172.16.172.4 $ cd silvercomplete
 user@172.16.172.4 $ docker-compose pull
 user@172.16.172.4 $ docker-compose up -d web etcd
 ```
+
 Install on the clients
 ```
 user@localhost $ git clone https://github.com/metacoma/silvercomplete
@@ -72,4 +73,3 @@ user@localhost $ docker-compose run --name silvercomplete_gui_1 -d -e SILVERCOMP
 
 bind hotkey (for example F2) to run next command
 ```docker exec -ti silvercomplete_gui_1 silvercomplete.sh```
-
