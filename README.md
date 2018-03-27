@@ -66,10 +66,11 @@ Install in single-user mode
 ===========================
 
 ```
-git clone https://github.com/metacoma/silverkey
-cd silverkey
-docker-compose pull
-docker-compose up -d
+user@localhost $ git clone https://github.com/metacoma/silverkey
+user@localhost $ cd silverkey
+user@localhost $ docker-compose pull
+user@localhost $ docker-compose up -d
+user@localhost $ xhost +local:docker
 ```
 
 WEB ui for etcd available on http://localhost:2888
@@ -112,6 +113,7 @@ user@localhost $ git clone https://github.com/metacoma/silverkey
 user@localhost $ cd silverkey
 user@localhost $ docker-compose pull
 user@localhost $ docker-compose run --name silverkey_gui_1 -d -e SILVERCOMPLETE_HOST=172.16.172.4 gui
+user@localhost $ xhost +local:docker
 ```
 
 Add example key:
