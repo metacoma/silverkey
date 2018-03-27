@@ -1,8 +1,14 @@
 # Silver complete
 
+#[What it is?](#What is it)
+#[Current state](#Current state)
+#[WARNING](#WARNING)
+#[Requirements](#Requirements)
+#[Rrecheks](#Precheks)
+
 ### What's is it?
 
-  Check out the video, worth a thousand words.
+  Check the video, worth a thousand words.
 
   [![IMAGE ALT TEXT](http://img.youtube.com/vi/ca7T0bXptU8/0.jpg)](http://www.youtube.com/watch?v=ca7T0bXptU8 "Silvercomplete demo")
 
@@ -21,7 +27,7 @@
 
   Web ui and etcd api installed without any authentication
 
-### Prerequisites
+### Requirements
   docker (version >= 1.13.0)
     How to install https://docs.docker.com/install/
   docker-compose (version >= 1.11.2)
@@ -34,23 +40,40 @@ user $ docker ps | head -1
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 ```
 If you see error like
-```Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.35/containers/json: dial unix /var/run/docker.sock: connect: permission denied
 ```
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.35/containers/json: dial unix /var/run/docker.sock: connect: permission denied
+```
+
 please follow the instructions https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user
 
 
-### Installing in single-node
+### Install in single-user mode
+
 ```
 git clone https://github.com/metacoma/silvercomplete
 cd silvercomplete
 docker-compose pull
 docker-compose up -d
 ```
-Wait for all docker images was pulled and builded
 
-open browser: http://localhost:2888 - add some key
+WEB ui for etcd available on http://localhost:2888
+
+ETCD api v2 available on http://localhost:2379
+
+
+Add example key
+```
+user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+73084503445
+{"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
+```
+
+Also you can manage the key through web interface
+
+Open in browser http://localhost:2888
+
 
 bind hotkey (for example F2) to run next command
+
 ```docker exec silvercomplete_gui_1 silvercomplete.sh```
 
 ### Installing in multi-user mode
@@ -63,13 +86,31 @@ user@172.16.172.4 $ docker-compose pull
 user@172.16.172.4 $ docker-compose up -d web etcd
 ```
 
+WEB ui for etcd available on http://172.16.172.4:2888
+
+ETCD api v2 available on http://172.16.172.4:2379
+
+open in browser: http://172.16.172.4:2888 and add some key
+
 Install on the clients
+
 ```
 user@localhost $ git clone https://github.com/metacoma/silvercomplete
 user@localhost $ cd silvercomplete
 user@localhost $ docker-compose pull
-user@localhost $ docker-compose run --name silvercomplete_gui_1 -d -e SILVERCOMPLETE_HOST=172.16.172.1 gui
+user@localhost $ docker-compose run --name silvercomplete_gui_1 -d -e SILVERCOMPLETE_HOST=172.16.172.4 gui
 ```
 
+Add example key:
+```
+user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+73084503445
+{"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
+```
+
+Also you can manage the key/value through web interface
+
+Open in browser http://172.16.172.4:2888
+
 bind hotkey (for example F2) to run next command
+
 ```docker exec -ti silvercomplete_gui_1 silvercomplete.sh```
