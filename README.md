@@ -25,20 +25,18 @@
 
 #### WARNING:
 
-  IT'S INSECURE
+  IT'S INSECURE. Use at your own risk
 
   All data stored in plain text, connection between client<->server NOT encrypted
 
   Web ui and etcd api installed without any authentication
 
+
+
 ### Requirements
-  docker (version >= 1.13.0)
+  [docker](https://docs.docker.com/install/) (version >= 1.13.0)
 
-    How to install https://docs.docker.com/install/
-
-  docker-compose (version >= 1.11.2)
-
-    How to install: https://docs.docker.com/compose/install/#install-compose
+  [docker-compose](https://docs.docker.com/compose/install/#install-compose) (version >= 1.11.2)
 
   X11 compatibility server (like xorg, x11-server)
 
