@@ -1,10 +1,14 @@
 # Silver complete
 
 #[What it is?](#What is it)
+
 #[Current state](#Current state)
+
 #[WARNING](#WARNING)
+
 #[Requirements](#Requirements)
-#[Rrecheks](#Precheks)
+
+#[Precheks](#Precheks)
 
 ### What's is it?
 
@@ -29,9 +33,13 @@
 
 ### Requirements
   docker (version >= 1.13.0)
+
     How to install https://docs.docker.com/install/
+
   docker-compose (version >= 1.11.2)
+
     How to install: https://docs.docker.com/compose/install/#install-compose
+
   X11 compatibility server (like xorg, x11-server)
 
 ### Prechecks
@@ -67,7 +75,7 @@ user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+730845
 {"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
 ```
 
-Also you can manage the key through web interface
+Also you can manage through key/value through web interface
 
 Open in browser http://localhost:2888
 
@@ -107,7 +115,7 @@ user@localhost curl -XPUT -s 172.16.172.4:2379/v2/keys/myphoneм-d value=+730845
 {"action":"set","node":{"key":"/myphoneм-d","value":"","modifiedIndex":31,"createdIndex":31}}
 ```
 
-Also you can manage the key/value through web interface
+Also you can manage your key/value through web interface
 
 Open in browser http://172.16.172.4:2888
 
