@@ -10,6 +10,9 @@ Table of contents
 * [Warning](#warning)
 * [Requirements](#requirements)
 * [Precheks](#precheks)
+* [Install in single-user mode](#install-in-single-user mode)
+* [Install in multi-user mode](#install-in-multi-user-mode)
+* [How to use it](#how-to-use-it)
 
 What's is it?
 =============
@@ -63,8 +66,8 @@ Install in single-user mode
 ===========================
 
 ```
-git clone https://github.com/metacoma/silvercomplete
-cd silvercomplete
+git clone https://github.com/metacoma/silverkey
+cd silverkey
 docker-compose pull
 docker-compose up -d
 ```
@@ -85,15 +88,15 @@ Also you can manage key/value through web interface http://localhost:2888
 
 bind hotkey (for example F2) to run next command
 
-```docker exec silvercomplete_gui_1 silvercomplete.sh```
+```docker exec silverkey_gui_1 silvercomplete.sh```
 
-Installing in multi-user mode
+Install in multi-user mode
 =============================
 Run these commands on the server (in this example ip addr is 172.16.172.4)
 ```
 user@localhost $ ssh 172.16.172.4
-user@172.16.172.4 $ git clone https://github.com/metacoma/silvercomplete
-user@172.16.172.4 $ cd silvercomplete
+user@172.16.172.4 $ git clone https://github.com/metacoma/silverkey
+user@172.16.172.4 $ cd silverkey
 user@172.16.172.4 $ docker-compose pull
 user@172.16.172.4 $ docker-compose up -d web etcd
 ```
@@ -105,10 +108,10 @@ ETCD api v2 available on http://172.16.172.4:2379
 Install on the clients
 
 ```
-user@localhost $ git clone https://github.com/metacoma/silvercomplete
-user@localhost $ cd silvercomplete
+user@localhost $ git clone https://github.com/metacoma/silverkey
+user@localhost $ cd silverkey
 user@localhost $ docker-compose pull
-user@localhost $ docker-compose run --name silvercomplete_gui_1 -d -e SILVERCOMPLETE_HOST=172.16.172.4 gui
+user@localhost $ docker-compose run --name silverkey_gui_1 -d -e SILVERCOMPLETE_HOST=172.16.172.4 gui
 ```
 
 Add example key:
@@ -121,4 +124,10 @@ Also you can manage your key/value through web interface http://172.16.172.4:288
 
 bind hotkey (for example F2) to run next command
 
-```docker exec -ti silvercomplete_gui_1 silvercomplete.sh```
+```docker exec -ti silverkey_gui_1 silvercomplete.sh```
+
+How to use it
+=============
+
+It's very easy, just press your hotkey and type the keywords, the value is auto-inserted in your current text edit form,
+like termnial console, google drive documents, etc...
