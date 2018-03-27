@@ -33,6 +33,7 @@ services:
     image: metacoma/silvercomplete-client:latest
     environment:
       - DISPLAY
+      - SILVERCOMPLETE_HOST
     volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix"
 
