@@ -27,6 +27,9 @@ services:
       - 0.0.0.0:2888:8000
 
   silvercomplete-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
     image: metacoma/silvercomplete-client:latest
 
 networks:
