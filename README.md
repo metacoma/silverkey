@@ -81,8 +81,8 @@ ETCD api v2 available on http://localhost:2379
 Add example key
 
 ```
-user@localhost $ curl -XPUT -s localhost:2379/v2/keys/myphone -d value=+73084503445
-{"action":"set","node":{"key":"/myphone ","value":"+73084503445","modifiedIndex":31,"createdIndex":31}}
+user@localhost $ curl -XPUT -s localhost:2379/v2/keys/myphone -d value=873084503445
+{"action":"set","node":{"key":"/myphone ","value":"873084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
 Also you can manage key/value through web interface http://localhost:2888
@@ -99,7 +99,7 @@ user@localhost $ ssh 172.16.172.4
 user@172.16.172.4 $ git clone https://github.com/metacoma/silverkey
 user@172.16.172.4 $ cd silverkey
 user@172.16.172.4 $ docker-compose pull
-user@172.16.172.4 $ docker-compose up -d web etcd
+user@172.16.172.4 $ docker-compose up -d ui etcd
 ```
 
 WEB ui for etcd available on http://172.16.172.4:2888
@@ -118,8 +118,8 @@ user@localhost $ xhost +local:docker
 
 Add example key:
 ```
-user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/myphone -d value=+73084503445
-{"action":"set","node":{"key":"/myphoneм-d","value":"+73084503445","modifiedIndex":31,"createdIndex":31}}
+user@localhost $ curl -XPUT -s 172.16.172.4:2379/v2/keys/myphone -d value=873084503445
+{"action":"set","node":{"key":"/myphoneм-d","value":"873084503445","modifiedIndex":31,"createdIndex":31}}
 ```
 
 Also you can manage your key/value through web interface http://172.16.172.4:2888
