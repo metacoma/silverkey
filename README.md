@@ -1,15 +1,24 @@
 # Silver complete
 
 What's is it?
+
   Check out the video, worth a thousand words.
-  https://www.youtube.com/watch?v=ca7T0bXptU8
+
+  [![IMAGE ALT TEXT](http://img.youtube.com/vi/ca7T0bXptU8/0.jpg)](http://www.youtube.com/watch?v=ca7T0bXptU8 "Silvercomplete demo")
+
 State:
+
   Proof of Concept
+
   Tested only on Ubuntu 16.04, but it should work on any other linux, see requirements section
 
+
 WARNING:
+
   IT'S INSECURE
+
   All data stored in plain text, connection between client<->server NOT encrypted
+
   Web ui and etcd api installed without any authentication
 
 ### Prerequisites
