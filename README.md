@@ -5,11 +5,11 @@ Silver complete
 
 Table of contents
 =================
-* [Name](#Name)
-* [Current state](#Current state)
+* [Name](#name)
+* [Current state](#current-state)
 * [Warning](#warning)
-* [Requirements](#Requirements)
-* [Precheks](#Precheks)
+* [Requirements](#requirements)
+* [Precheks](#precheks)
 
 ### (#What's is it?)
 
