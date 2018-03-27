@@ -21,8 +21,9 @@ services:
 
   etcd-ui:
     image: buddho/etcd-browser
-    volumes:
-      - ./files/config.default.ini:/root/config.default.ini
+    environment:
+      ETCD_HOST: etcd
+      ETCD_PORT: 2379
     ports:
       - 0.0.0.0:2888:8000
 
@@ -35,7 +36,11 @@ services:
       - DISPLAY
       - SILVERCOMPLETE_HOST
     volumes:
-      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+      - "/etc/group:/etc/group:ro"
+      - "/etc/passwd:/etc/passwd:ro"
+      - "/etc/shadow:/etc/shadow:ro"
+      - "/etc/sudoers.d:/etc/sudoers.d:ro"
 
 networks:
   silvercomplete:
