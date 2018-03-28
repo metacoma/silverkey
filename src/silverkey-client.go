@@ -4,13 +4,16 @@ import (
 	"log"
 	"time"
 	"context"
+  "os"
 
 	"github.com/coreos/etcd/client"
 )
 
+var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+
 func main() {
 	cfg := client.Config{
-		Endpoints:               []string{"http://127.0.0.1:2379"},
+		Endpoints:               []string{ETCD_SERVER},
 		Transport:               client.DefaultTransport,
 		// set timeout per request to fail fast when the target endpoint is unavailable
 		HeaderTimeoutPerRequest: time.Second,
