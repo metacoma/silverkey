@@ -1,7 +1,7 @@
 Name
 ======
 
-Silver complete
+Silver key
 
 Table of contents
 =================
@@ -20,7 +20,7 @@ What's is it?
 
   Check the video, worth a thousand words.
 
-  [![IMAGE ALT TEXT](http://img.youtube.com/vi/ca7T0bXptU8/0.jpg)](http://www.youtube.com/watch?v=ca7T0bXptU8 "Silvercomplete demo")
+  [![IMAGE ALT TEXT](http://img.youtube.com/vi/ca7T0bXptU8/0.jpg)](http://www.youtube.com/watch?v=ca7T0bXptU8 "Silverkey demo")
 
 Current state
 =============
@@ -89,7 +89,7 @@ Also you can manage key/value through web interface http://localhost:2888
 
 bind hotkey (for example F2) to run next command
 
-```docker exec silverkey_gui_1 silvercomplete.sh```
+```docker exec silverkey_gui_1 silverkey.sh```
 
 Install in multi-user mode
 =============================
@@ -126,7 +126,7 @@ Also you can manage your key/value through web interface http://172.16.172.4:288
 
 bind hotkey (for example F2) to run next command
 
-```docker exec silverkey_gui_1 silvercomplete.sh```
+```docker exec silverkey_gui_1 silverkey.sh```
 
 How to use it
 =============

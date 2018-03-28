@@ -31,10 +31,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.client
-    image: metacoma/silvercomplete-client:latest
+    image: metacoma/silverkey-client:latest
     environment:
       - DISPLAY
-      - SILVERCOMPLETE_HOST
+      - SILVERKEY_HOST
     volumes:
       - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
       # required to run gui from non-root user inside a docker container
@@ -45,7 +45,7 @@ services:
       # - "/etc/sudoers.d:/etc/sudoers.d:ro"
 
 networks:
-  silvercomplete:
+  silverkey:
 
 volumes:
   etcd:

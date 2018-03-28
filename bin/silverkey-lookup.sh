@@ -2,7 +2,7 @@
 
 lookup_key() {
   # | jq -r '..|select(.key == "'"$1"'")?|.value' 2>/dev/null| grep -v null | head -n1
-  curl -sL http://$SILVERCOMPLETE_HOST/v2/keys$1 | jq -r '.node.value'
+  curl -sL http://$SILVERKEY_HOST/v2/keys$1 | jq -r '.node.value'
 
 }
 
