@@ -31,8 +31,8 @@ RUN make install
 
 ENV PATH /usr/local/bin/:$PATH
 
-ADD bin/silvercomplete.sh /usr/local/bin/silvercomplete.sh
-ADD bin/silvercomplete-lookup.sh /usr/local/bin/silvercomplete-lookup.sh
+ADD bin/silverkey.sh /usr/local/bin/silverkey.sh
+ADD bin/silverkey-lookup.sh /usr/local/bin/silverkey-lookup.sh
 ADD bin/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
