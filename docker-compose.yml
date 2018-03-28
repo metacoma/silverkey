@@ -30,7 +30,7 @@ services:
   gui:
     build:
       context: .
-      dockerfile: go-client.Dockerfile
+      dockerfile: Dockerfile
     image: metacoma/silverkey-golang-client:latest
     environment:
       - DISPLAY
