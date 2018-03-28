@@ -126,7 +126,7 @@ Also you can manage your key/value through web interface http://172.16.172.4:288
 
 bind hotkey (for example F2) to run next command
 
-```docker exec -ti silverkey_gui_1 silvercomplete.sh```
+```docker exec silverkey_gui_1 silvercomplete.sh```
 
 How to use it
 =============
