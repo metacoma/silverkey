@@ -30,8 +30,8 @@ services:
   gui:
     build:
       context: .
-      dockerfile: Dockerfile.client
-    image: metacoma/silverkey-client:latest
+      dockerfile: Dockerfile
+    image: metacoma/silverkey-golang-client:latest
     environment:
       - DISPLAY
       - SILVERKEY_HOST
