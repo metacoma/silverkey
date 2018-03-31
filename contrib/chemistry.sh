@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ETCD_HOST=http://etcd:2379
+ETCD_HOST=http://localhost:2379
 TEMP_FILE=/tmp/chemistry
 
 
@@ -18,11 +18,11 @@ for element in $elements; do
   melt=`show_chemistry | jq -r '.elements[]|select(.name == "'$element'").melt'`
   period=`show_chemistry | jq -r '.elements[]|select(.name == "'$element'").period'`
   number=`show_chemistry | jq -r '.elements[]|select(.name == "'$element'").number'`
-  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/масса -d value=$mass
-  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/кипение -d value=$boil
-  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/плавление -d value=$melt
-  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/период -d value=$period
-  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/номер -d value=$number
+  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/mass -d value=$mass
+  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/boil -d value=$boil
+  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/melt -d value=$melt
+  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/period -d value=$period
+  curl -XPUT -s ${ETCD_HOST}/v2/keys/chemistry/$element/number -d value=$number
 done
 
 
