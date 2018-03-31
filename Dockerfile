@@ -16,4 +16,4 @@ RUN go install -v ./...
 #RUN GOOS=darwin CGO_LDFLAGS_ALLOW="-mmacosx-version-min.*" CC=o64-clang CXX=o64-clang++ go build -o silverkey_darwin.app silverkey-client.go
 #CMD ["app"]
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/sh" ]
