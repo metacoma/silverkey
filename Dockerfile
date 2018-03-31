@@ -11,7 +11,6 @@ RUN go get github.com/octoblu/go-simple-etcd-client/etcdclient
 RUN go get github.com/wneo/jlfuzzy
 WORKDIR /go/src/silverkey-golang-client
 RUN go install -v ./...
-RUN go build
 RUN GOOS=linux CC=clang CXX=clang++ go build -o silverkey_linux silverkey-client.go
 RUN GOOS=windows CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ go build -o silverkey-client_windows.exe -ldflags "-H=windowsgui -extldflags=-s" silverkey-client.go
 RUN GOOS=darwin CGO_LDFLAGS_ALLOW="-mmacosx-version-min.*" CC=o64-clang CXX=o64-clang++ go build -o silverkey_darwin.app silverkey-client.go
