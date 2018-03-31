@@ -17,14 +17,24 @@ func main() {
 		input := ui.NewEntry()
 		button := ui.NewButton("Greet")
 		greeting := ui.NewLabel("")
+    combobox := ui.NewCombobox();
+
+    combobox.Append("/a/b/c")
+    combobox.Append("/hello/world")
+    combobox.Append("/foobar")
+    combobox.Append("/rostelecom/vm.addr")
+
 		box := ui.NewVerticalBox()
 		box.Append(ui.NewLabel("Enter your name:"), false)
 		box.Append(input, false)
 		box.Append(button, false)
 		box.Append(greeting, false)
-		window := ui.NewWindow("Hello", 200, 100, false)
+		window := ui.NewWindow("Hello", 400, 200, false)
 		window.SetMargined(true)
 		window.SetChild(box)
+    window.SetChild(combobox)
+
+
 		button.OnClicked(func(*ui.Button) {
 			greeting.SetText("Hello, " + input.Text() + "!")
 		})
