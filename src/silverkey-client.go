@@ -11,43 +11,10 @@ import (
 )
 
 var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+var MAX_RESULT = 10
 
 func main() {
-	err := ui.Main(func() {
-		input := ui.NewEntry()
-		button := ui.NewButton("Greet")
-		greeting := ui.NewLabel("")
-    combobox := ui.NewCombobox();
-
-    combobox.Append("/a/b/c")
-    combobox.Append("/hello/world")
-    combobox.Append("/foobar")
-    combobox.Append("/rostelecom/vm.addr")
-
-		box := ui.NewVerticalBox()
-		box.Append(ui.NewLabel("Enter your name:"), false)
-		box.Append(input, false)
-		box.Append(button, false)
-		box.Append(greeting, false)
-		window := ui.NewWindow("Hello", 400, 200, false)
-		window.SetMargined(true)
-		window.SetChild(box)
-    window.SetChild(combobox)
-
-
-		button.OnClicked(func(*ui.Button) {
-			greeting.SetText("Hello, " + input.Text() + "!")
-		})
-		window.OnClosing(func(*ui.Window) bool {
-			ui.Quit()
-			return true
-		})
-		window.Show()
-	})
-	if err != nil {
-		panic(err)
-	}
-
+  var i int;
   fuzzy := jlfuzzy.NewJLFuzzy()
 
   client, err := etcdclient.Dial(ETCD_SERVER)
@@ -57,16 +24,57 @@ func main() {
   }
 
   nodes, err := client.LsRecursive("/")
+
+	if err != nil {
+		panic(err)
+	}
+
   fuzzy.AddWords(nodes)
 
-  if err != nil {
-    log.Fatal(err)
-  }
+	err = ui.Main(func() {
+		input := ui.NewEntry()
+    combobox := ui.NewCombobox();
+
+
+		box := ui.NewVerticalBox()
+		box.Append(input, false)
+    box.Append(combobox, false)
+		window := ui.NewWindow("Hello", 400, 200, false)
+		window.SetMargined(true)
+		window.SetChild(box)
+
+		window.OnClosing(func(*ui.Window) bool {
+			ui.Quit()
+			return true
+		})
+
+    input.OnChanged(func(*ui.Entry) {
+      box.Delete(1)
+
+      combobox.Destroy()
+
+      combobox = ui.NewCombobox();
+      i = 1
+      for _, match := range fuzzy.SearchWord(input.Text(), 1, -1, 0, 10) {
+        combobox.Append(match)
+        i = i + 1
+        if (i == MAX_RESULT) {
+          break
+        }
+      }
+
+      combobox.SetSelected(0)
+
+      box.Append(combobox, false)
+
+
+    })
+		window.Show()
+	})
+
+
 
   /* UI part */
 
-  for _, match := range fuzzy.SearchWord(os.Args[1], 1, -1, 0, 10) {
-    log.Printf("Match %v\n", match)
-  }
 
 }
