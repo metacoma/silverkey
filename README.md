@@ -13,6 +13,7 @@ Table of contents
 * [Install in single-user mode](#install-in-single-user-mode)
 * [Install in multi-user mode](#install-in-multi-user-mode)
 * [How to use it](#how-to-use-it)
+* [How to contriube](#how-to-contribute)
 * [Uninstall](#uninstall)
 
 What's is it?
@@ -133,6 +134,11 @@ How to use it
 
 It's very easy, just press your hotkey and type the keywords, the value is auto-inserted in your current text edit form,
 like termnial console, google drive documents, etc...
+
+How to contribute
+=================
+
+Check out our [wiki](https://github.com/metacoma/silverkey/wiki)! 
 
 Uninstall
 =============
