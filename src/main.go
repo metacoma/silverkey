@@ -2,11 +2,13 @@ package main
 
 import (
 
-  "net/http"
-  "net"
+  _"net/http"
+  _"net"
   "os"
   "log"
   "fmt"
+  "net/url"
+	"time"
 
 
   "github.com/octoblu/go-simple-etcd-client/etcdclient"
@@ -16,14 +18,67 @@ import (
 
 )
 
-var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+type Nodes struct {
+	Value string `json:"value"`
+}
 
-func handler(w http.ResponseWriter, r *http.Request) {
-      fmt.Fprintf(w, "<html><body><input type=text name=key></input><br><select name=nodes><option value=foobar>foobar</option></select></body></html>")
+
+var fuzzy = jlfuzzy.NewJLFuzzy()
+var nodes []string
+var w webview.WebView
+
+func (nodes *Nodes) Search(searchkey string) {
+  nodes.Value = ""
+  for _, match := range fuzzy.SearchWord(searchkey, 1, -1, 0, 10) {
+    nodes.Value = nodes.Value + fmt.Sprintf("<option value=foobar>%s</option>", match)
+  }
+}
+
+func (nodes *Nodes) Found(nodeName string) {
+	w.Terminate();
+}
+
+var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+const myHTML = `<!doctype html>
+	<html>
+		<head>
+    	<script type="text/javascript">
+				function runScript(e) {
+    			if (e.keyCode == 13) {
+						external.invoke('close')
+						//nodes.found("hello");
+						//document.getElementById("test").innerHTML = e.keyCode;
+    			}
+				}
+        function onInputChange(input) {
+					nodes.search(input.value);
+					document.getElementById("nodes").innerHTML = nodes.data.value;
+        }
+				function onLoad() {
+					document.getElementById("test").innerHTML = "init";
+				}
+				window.onload = onLoad
+      </script>
+		</head>
+		<body>
+			<input type=text name=key oninput="onInputChange(this)" onkeypress="runScript(event)"></input>
+			<br>
+			<select id="nodes">
+			</select>
+			<div id=test></div>
+		</body>
+	</html>
+`
+
+
+
+
+func handleRPC(w webview.WebView, data string) {
+	log.Printf("RCP %s\n", data)
+	w.Terminate()
 }
 
 func main() {
-  fuzzy := jlfuzzy.NewJLFuzzy()
 
   client, err := etcdclient.Dial(ETCD_SERVER)
 
@@ -37,28 +92,15 @@ func main() {
   if err != nil {
     log.Fatal(err)
   }
-  robotgo.TypeString("Hello World")
 
-      ln, err := net.Listen("tcp", "127.0.0.1:0")
-        if err != nil {
-                log.Fatal(err)
-        }
-        defer ln.Close()
-        go func() {
-                http.HandleFunc("/", handler)
-                http.Serve(ln, nil)
-        }()
-
-        webview.Open("Silverkey", "http://"+ln.Addr().String()+"/", 400, 300, false)
-
-
-  /* UI part */
-
-  /*
-  for _, match := range fuzzy.SearchWord(os.Args[1], 1, -1, 0, 10) {
-    log.Printf("Match %v\n", match)
-  }
-  */
-
+	w = webview.New(webview.Settings{
+		URL: `data:text/html,` + url.PathEscape(myHTML),
+		Debug: true,
+		ExternalInvokeCallback: handleRPC,
+  })
+	w.Dispatch(func() {
+		w.Bind("nodes", &Nodes{})
+	})
+	w.Run()
 
 }
