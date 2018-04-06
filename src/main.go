@@ -4,7 +4,7 @@ import (
 
   _"net/http"
   _"net"
-  "os"
+  _"os"
   "log"
   "fmt"
   "net/url"
@@ -39,7 +39,7 @@ func (nodes *Nodes) Found(nodeName string) {
 }
 
 //var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
-var ETCD_SERVER = os.Getenv("http://nseha.linkpc.net:22379")
+var ETCD_SERVER = "http://nseha.linkpc.net:22379"
 const myHTML = `<!doctype html>
 	<html>
 		<head>
