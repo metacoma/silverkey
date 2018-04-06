@@ -29,7 +29,7 @@ type Nodes struct {
 func (nodes *Nodes) Search(searchkey string) {
   nodes.Value = ""
   for _, match := range fuzzy.SearchWord(searchkey, 1, -1, 0, 10) {
-    nodes.Value = nodes.Value + fmt.Sprintf("<option value=foobar>%s</option>", match)
+    nodes.Value = nodes.Value + fmt.Sprintf("<div class=divTableRow><div class=divTableCell>%s</div></div>", match)
   }
 }
 
