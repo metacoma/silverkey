@@ -87,6 +87,8 @@ func main() {
     url := startServer()
     w = webview.New(webview.Settings{
 		URL: url,
+		Width:  320,
+		Height: 200,
 		Debug: true,
 		ExternalInvokeCallback: handleRPC,
     })
