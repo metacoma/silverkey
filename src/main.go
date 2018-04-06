@@ -8,7 +8,7 @@ import (
   "log"
   "fmt"
   "net/url"
-	"time"
+	_"time"
 
 
   "github.com/octoblu/go-simple-etcd-client/etcdclient"
