@@ -103,4 +103,6 @@ func main() {
 	})
 	w.Run()
 
+  robotgo.TypeString("Hello World")
+
 }
