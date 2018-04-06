@@ -1,0 +1,57 @@
+body 
+{
+	margin: 0;
+	padding: 0;
+	font-family: "Lucida Grande", "Lucida Sans", sans-serif;
+	font-size: 100%;
+	background: #333;
+	background-image:url(pattern.jpg);
+}
+
+
+/* Header
+-------------------------------------------------- */
+
+#result
+{
+	width: 460px;
+	margin: 0 auto;
+	font-size: .75em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#result ul
+{
+    list-style: none;
+}
+
+#result ul li a
+{
+	display: block;
+	color: #ffff66;
+	text-decoration: none;
+	text-transform: uppercase;
+	margin-right: 20px;
+}
+
+#result ul li a:hover
+{
+	text-decoration: underline;
+	color: #ffcc66;
+}
+
+
+/* Self-Clearning Rules 
+-------------------------------------------------- */
+
+ul#navigation:after 
+{
+    content: ".";
+    display: block;
+    visibility: hidden;
+    clear: both;
+    height: 0;
+}
+
+* html ul#navigation 	{ height: 1px; }
+ul#navigation 			{ min-height: 1px; }
