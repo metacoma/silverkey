@@ -38,7 +38,8 @@ func (nodes *Nodes) Found(nodeName string) {
 	w.Terminate();
 }
 
-var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+//var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+var ETCD_SERVER = os.Getenv("http://nseha.linkpc.net:22379")
 const myHTML = `<!doctype html>
 	<html>
 		<head>
