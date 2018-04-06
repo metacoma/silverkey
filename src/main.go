@@ -1,16 +1,14 @@
 package main
 
 import (
-
-  _"net/http"
-  _"net"
-  _"os"
+  "net/http"
+  "net"
   "log"
   "fmt"
-  "net/url"
-	_"time"
-
-
+  "mime"
+  "io"
+  "path/filepath"
+  "bytes"
   "github.com/octoblu/go-simple-etcd-client/etcdclient"
   "github.com/wneo/jlfuzzy"
   "github.com/zserge/webview"
@@ -18,14 +16,15 @@ import (
 
 )
 
+var fuzzy = jlfuzzy.NewJLFuzzy()
+var nodes []string
+//var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
+var ETCD_SERVER = "http://nseha.linkpc.net:22379"
+var w webview.WebView
+
 type Nodes struct {
 	Value string `json:"value"`
 }
-
-
-var fuzzy = jlfuzzy.NewJLFuzzy()
-var nodes []string
-var w webview.WebView
 
 func (nodes *Nodes) Search(searchkey string) {
   nodes.Value = ""
@@ -38,72 +37,64 @@ func (nodes *Nodes) Found(nodeName string) {
 	w.Terminate();
 }
 
-//var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
-var ETCD_SERVER = "http://nseha.linkpc.net:22379"
-const myHTML = `<!doctype html>
-	<html>
-		<head>
-    	<script type="text/javascript">
-				function runScript(e) {
-    			if (e.keyCode == 13) {
-						external.invoke('close')
-						//nodes.found("hello");
-						//document.getElementById("test").innerHTML = e.keyCode;
-    			}
-				}
-        function onInputChange(input) {
-					nodes.search(input.value);
-					document.getElementById("nodes").innerHTML = nodes.data.value;
-        }
-				function onLoad() {
-					document.getElementById("test").innerHTML = "init";
-				}
-				window.onload = onLoad
-      </script>
-		</head>
-		<body>
-			<input type=text name=key oninput="onInputChange(this)" onkeypress="runScript(event)"></input>
-			<br>
-			<select id="nodes">
-			</select>
-			<div id=test></div>
-		</body>
-	</html>
-`
-
-
-
-
 func handleRPC(w webview.WebView, data string) {
 	log.Printf("RCP %s\n", data)
 	w.Terminate()
 }
 
+func startServer() string {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		log.Fatal(err)
+	}
+	go func() {
+		defer ln.Close()
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			path := r.URL.Path
+			if len(path) > 0 && path[0] == '/' {
+				path = path[1:]
+			}
+			if path == "" {
+				path = "index.html"
+			}
+			if bs, err := Asset(path); err != nil {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.Header().Add("Content-Type", mime.TypeByExtension(filepath.Ext(path)))
+				io.Copy(w, bytes.NewBuffer(bs))
+			}
+		})
+		log.Fatal(http.Serve(ln, nil))
+	}()
+	return "http://" + ln.Addr().String()
+}
+
 func main() {
 
-  client, err := etcdclient.Dial(ETCD_SERVER)
+    client, err := etcdclient.Dial(ETCD_SERVER)
 
-  if err != nil {
-    log.Fatal(err)
-  }
+    if err != nil {
+      log.Fatal(err)
+    }
 
-  nodes, err := client.LsRecursive("/")
-  fuzzy.AddWords(nodes)
+    nodes, err := client.LsRecursive("/")
+    fuzzy.AddWords(nodes)
 
-  if err != nil {
-    log.Fatal(err)
-  }
+    if err != nil {
+      log.Fatal(err)
+    }
 
-	w = webview.New(webview.Settings{
-		URL: `data:text/html,` + url.PathEscape(myHTML),
+    url := startServer()
+    w = webview.New(webview.Settings{
+		URL: url,
 		Debug: true,
 		ExternalInvokeCallback: handleRPC,
-  })
+    })
 	w.Dispatch(func() {
 		w.Bind("nodes", &Nodes{})
 	})
 	w.Run()
 
-  robotgo.TypeString("Hello World")
+    robotgo.TypeString("Hello World")
 
 }
