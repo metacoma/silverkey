@@ -1,7 +1,8 @@
 
 function runScript(e) {
     if (e.keyCode == 13) {
-		external.invoke('close')
+      answer.setValue(document.getElementById("keyInput").value)
+		  external.invoke('close')
     }
 }
 

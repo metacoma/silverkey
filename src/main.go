@@ -1,13 +1,16 @@
 package main
 
 import (
+	_"context"
   "net/http"
+  _"net/url"
   "net"
   "log"
   "fmt"
   "mime"
   "os"
   "syscall"
+  _"time"
   "io"
   "path/filepath"
   "bytes"
@@ -15,18 +18,24 @@ import (
   "github.com/wneo/jlfuzzy"
   "github.com/zserge/webview"
   "github.com/go-vgo/robotgo"
-  _"github.com/hidez8891/shm"
+  "github.com/hidez8891/shm"
+  _"github.com/coreos/etcd/client"
 
 )
 
 var fuzzy = jlfuzzy.NewJLFuzzy()
 var nodes []string
 //var ETCD_SERVER = os.Getenv("SILVERKEY_HOST")
-//var ETCD_SERVER = "http://nseha.linkpc.net:22379"
-var ETCD_SERVER = "http://hw2:2379"
+var ETCD_SERVER = "http://nseha.linkpc.net:22379"
+//var ETCD_SERVER = "http://hw2:2379"
 var w webview.WebView
+var answer_value = "404"
 
 type Nodes struct {
+	Value string `json:"value"`
+}
+
+type Answer struct {
 	Value string `json:"value"`
 }
 
@@ -37,12 +46,29 @@ func (nodes *Nodes) Search(searchkey string) {
   }
 }
 
+func (answer *Answer) SetValue(value string) {
+    answer_value = value
+}
+
 func (nodes *Nodes) Found(nodeName string) {
 	w.Terminate();
 }
 
 func handleRPC(w webview.WebView, data string) {
 	log.Printf("RCP %s\n", data)
+
+  m, _ := shm.Open(SHMEM_KEY, 256)
+
+  wbuf := make([]byte, 256)
+  for i := range wbuf {
+    wbuf[i] = 0
+  }
+
+  copy(wbuf[:], answer_value)
+  m.Write(wbuf)
+
+  m.Close()
+
 	w.Terminate()
 }
 
@@ -75,18 +101,21 @@ func startServer() string {
 
 const (
   CHILD_ARG = "child"
+  SHMEM_KEY = "silverkey"
 )
+
 
 func main() {
 
     if len(os.Args) >= 2 && os.Args[1] == CHILD_ARG {
+
 		  println("child RUN")
-      client, err := etcdclient.Dial(ETCD_SERVER)
+      client_etcd, err := etcdclient.Dial(ETCD_SERVER)
       if err != nil {
         log.Fatal(err)
       }
 
-      nodes, err := client.LsRecursive("/")
+      nodes, err := client_etcd.LsRecursive("/")
       fuzzy.AddWords(nodes)
 
       if err != nil {
@@ -103,10 +132,14 @@ func main() {
       })
 	    w.Dispatch(func() {
 		    w.Bind("nodes", &Nodes{})
+		    w.Bind("answer", &Answer{})
 	    })
 	    w.Run()
       return
     }
+
+    r, _ := shm.Create(SHMEM_KEY, 256)
+    defer r.Close()
 
 		println("parent RUN")
     pid, err := syscall.ForkExec(os.Args[0], []string{os.Args[0], CHILD_ARG}, &syscall.ProcAttr{Env: os.Environ(), Files: []uintptr{0, 1, 2}})
@@ -119,6 +152,8 @@ func main() {
 			panic(err.Error())
 		}
 
+
+
 		state, err := proc.Wait()
 
 		if err != nil {
@@ -128,6 +163,27 @@ func main() {
     println("pid:", state.Pid())
     println("Parent dies now.")
 
-    robotgo.TypeString("Hello World")
+
+    rbuf := make([]byte, 256)
+    _, err = r.Read(rbuf)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    client_etcd, err := etcdclient.Dial(ETCD_SERVER)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+		etcd_key := fmt.Sprintf("%s", string(bytes.TrimRight(rbuf, "\x00")))
+    log.Printf("Lookup key: %s (%d)\n", etcd_key, len(etcd_key))
+    value, err := client_etcd.Get(etcd_key)
+    if err != nil {
+      log.Fatal(err)
+    }
+    log.Printf("Lookup key: %s, value: %s\n", etcd_key, value)
+
+
+    robotgo.TypeString(value)
 
 }
