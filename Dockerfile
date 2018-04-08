@@ -26,7 +26,9 @@ RUN go get github.com/octoblu/go-simple-etcd-client/etcdclient
 RUN go get github.com/wneo/jlfuzzy
 RUN go get github.com/zserge/webview
 RUN go get github.com/go-vgo/robotgo
+RUN go get -u github.com/jteeuwen/go-bindata/...
+RUN go get github.com/hidez8891/shm
+
 
 CMD ["/bin/sh"]
-
 ENTRYPOINT [ "/bin/sh" ]
