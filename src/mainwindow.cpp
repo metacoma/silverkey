@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QStringList wordList;
 
-    //etcd::Client<example::RapidReply> etcd = new etcd::Client("localhost", 2379);
-    etcd::Client<example::RapidReply> etcd_client("localhost", 2379);
+    //etcd::Client<example::RapidReply> etcd = new etcd::Client("localhost", 2379); http://nseha.linkpc.net:22379
+    etcd::Client<example::RapidReply> etcd_client("nseha.linkpc.net", 22379);
     example::RapidReply reply = etcd_client.GetAll("/");
 
     //reply.KvPairs

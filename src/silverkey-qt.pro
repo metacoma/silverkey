@@ -35,3 +35,5 @@ FORMS += \
 
 LIBS += \
        -lcurl
+
+INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
