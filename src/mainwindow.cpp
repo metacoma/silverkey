@@ -14,7 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui(new Ui::MainWindow)
 {
-
+    setStyleSheet("background:transparent;");
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint);
     QStringList wordList;
 
     //etcd::Client<example::RapidReply> etcd = new etcd::Client("localhost", 2379); http://nseha.linkpc.net:22379
@@ -33,8 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
         wordList << QString::fromStdString(iter->first);
     }
 
-
     QLineEdit *lineEdit = new QLineEdit(this);
+    lineEdit->setGeometry(0, 0, 300, 30);
+    lineEdit->setStyleSheet("QLineEdit {background-color: white;}");
 
     QCompleter *completer = new QCompleter(wordList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
