@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //etcd::Client<example::RapidReply> etcd = new etcd::Client("localhost", 2379); http://nseha.linkpc.net:22379
     etcd::Client<example::RapidReply> etcd_client("nseha.linkpc.net", 22379);
+
     example::RapidReply reply = etcd_client.GetAll("/");
 
     //reply.KvPairs
@@ -46,7 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::hideEvent(QHideEvent *e) {
     qDebug() << "Hide";
-    this->~MainWindow();
+    this->close();
+    //this->~MainWindow();
 }
 
 
