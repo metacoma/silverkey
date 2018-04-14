@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -13,11 +14,14 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    static void EnterPressed();
+    void EnterPressed();
+    void EndOfWorkflow();
+    void hideEvent(QHideEvent *e);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
+
 
 };
 

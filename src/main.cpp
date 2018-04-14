@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+#include <iostream>
 #include <QApplication>
+
 
 
 int main(int argc, char *argv[])
@@ -10,5 +12,8 @@ int main(int argc, char *argv[])
 
     w.show();
 
-    return a.exec();
+    a.exec();
+
+    qDebug() << "end of application workflow";
+    return EXIT_SUCCESS;
 }

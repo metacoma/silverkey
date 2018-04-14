@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QCompleter>
 #include <QKeyEvent>
+#include <QDebug>
 
 
 
@@ -38,15 +39,21 @@ MainWindow::MainWindow(QWidget *parent) :
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     lineEdit->setCompleter(completer);
 
-    connect(lineEdit, &QLineEdit::returnPressed, this->EnterPressed);
-
+    connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
 
     ui->setupUi(this);
 }
 
-void MainWindow::EnterPressed() {
-    std::cout << "Enter pressed" << std::endl;
+void MainWindow::hideEvent(QHideEvent *e) {
+    qDebug() << "Hide";
+    this->~MainWindow();
+}
 
+
+void MainWindow::EnterPressed() {
+    //this->~MainWindow();
+    qDebug() << "EnterPressed";
+    this->hide();
 }
 
 MainWindow::~MainWindow()
