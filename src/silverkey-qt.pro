@@ -36,6 +36,6 @@ FORMS += \
 LIBS += \
        -lcurl
 
-Q_OS_OSX {
-  INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
+macx {
+    INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
 }
