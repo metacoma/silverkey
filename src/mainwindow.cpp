@@ -4,10 +4,13 @@
 #include "rapid_reply.hpp"
 #include <QLineEdit>
 #include <QCompleter>
+#include <QKeyEvent>
+
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+
     ui(new Ui::MainWindow)
 {
 
@@ -35,9 +38,15 @@ MainWindow::MainWindow(QWidget *parent) :
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     lineEdit->setCompleter(completer);
 
+    connect(lineEdit, &QLineEdit::returnPressed, this->EnterPressed);
 
 
     ui->setupUi(this);
+}
+
+void MainWindow::EnterPressed() {
+    std::cout << "Enter pressed" << std::endl;
+
 }
 
 MainWindow::~MainWindow()
