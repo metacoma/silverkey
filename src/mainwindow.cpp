@@ -56,8 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
-    QTimer::singleShot(0, lineEdit, SLOT(setFocus()));
-
 
     QPoint pos(lineEdit->width()-5, 5);
     QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
