@@ -36,6 +36,8 @@ FORMS += \
 LIBS += \
        -lcurl
 
+DEFINES += ROBOT_ARCH_64
+
 macx {
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
