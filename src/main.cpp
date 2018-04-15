@@ -2,6 +2,9 @@
 #include <iostream>
 #include <QApplication>
 
+#include <Robot.h>
+ROBOT_NS_USE_ALL;
+
 
 
 int main(int argc, char *argv[])
