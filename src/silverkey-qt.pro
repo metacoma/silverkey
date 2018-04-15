@@ -37,5 +37,15 @@ LIBS += \
        -lcurl
 
 macx {
+    DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
 }
+
+linux {
+    DEFINES += ROBOT_OS_LINUX
+}
+
+windows {
+    DEFINES += ROBOT_OS_WIN
+}
+
