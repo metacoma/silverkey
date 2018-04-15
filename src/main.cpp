@@ -6,7 +6,6 @@
 ROBOT_NS_USE_ALL;
 
 
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -18,5 +17,7 @@ int main(int argc, char *argv[])
     a.exec();
 
     qDebug() << "end of application workflow";
+    //Keyboard keyboard;
+    //keyboard.Click ("hello world sample");
     return EXIT_SUCCESS;
 }

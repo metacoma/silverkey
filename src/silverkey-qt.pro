@@ -46,6 +46,7 @@ macx {
 linux {
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
+    LIBS += -lRobot -lXtst -lX11
 }
 
 windows {
