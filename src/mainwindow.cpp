@@ -6,6 +6,8 @@
 #include <QCompleter>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QAbstractItemView>
+
 
 
 
@@ -42,8 +44,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QCompleter *completer = new QCompleter(wordList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     lineEdit->setCompleter(completer);
+    QAbstractItemView *abstractItemView = completer->popup();
+
 
     connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
+    connect(abstractItemView, &QAbstractItemView::clicked, this, &MainWindow::EnterPressed);
 
     ui->setupUi(this);
 }
