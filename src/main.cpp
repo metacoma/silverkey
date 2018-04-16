@@ -16,6 +16,10 @@ int main(int argc, char *argv[])
 
         w.show();
 
+
+        w.raise();  // for MacOS
+        w.activateWindow(); // for Windows
+      
         a.exec();
     } else {
         while (wait(&status) != pid)
