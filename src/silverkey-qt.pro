@@ -41,6 +41,8 @@ DEFINES += ROBOT_ARCH_64
 macx {
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
+    INCLUDEPATH += /usr/local/include/Robot/
+    LIBS += -L/usr/local/lib/robot -lRobot -framework ApplicationServices
 }
 
 linux {
