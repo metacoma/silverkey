@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLineEdit>
 #include <QDebug>
 
 namespace Ui {
@@ -21,6 +22,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLineEdit *lineEdit;
+    std::map<std::string, std::string> kvpairs;
 
 
 };
