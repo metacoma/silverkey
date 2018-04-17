@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QApplication>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <Robot.h>
 ROBOT_NS_USE_ALL;
 
