@@ -11,7 +11,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
 
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    lineEdit(new QLineEdit(this))
 {
     setStyleSheet("background:transparent;");
     setAttribute(Qt::WA_TranslucentBackground);
@@ -23,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     example::RapidReply reply = etcd_client.GetAll("/");
 
     //reply.KvPairs
-    std::map<std::string, std::string> kvpairs;
+
 
     //example::RapidReply::GetAll(kvpairs);
     reply.GetAll(kvpairs);
@@ -33,13 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
         wordList << QString::fromStdString(iter->first);
     }
 
-
-
-    QLineEdit *lineEdit = new QLineEdit(this);
     lineEdit->setFocusPolicy(Qt::StrongFocus);
     lineEdit->setFocus();
-
-
     lineEdit->setGeometry(0, 0, 300, 30);
     lineEdit->setStyleSheet("QLineEdit {background-color: white;}");
 
@@ -70,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::hideEvent(QHideEvent *e) {
     qDebug() << "Hide";
+    QCompleter *none;
+    lineEdit->setCompleter(none);
     this->close();
     //this->~MainWindow();
 }
@@ -83,5 +81,6 @@ void MainWindow::EnterPressed() {
 
 MainWindow::~MainWindow()
 {
+    delete lineEdit;
     delete ui;
 }
