@@ -18,12 +18,14 @@ public:
     void EnterPressed();
     void EndOfWorkflow();
     void hideEvent(QHideEvent *e);
+    void setWriteFd(int fd);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
     QLineEdit *lineEdit;
     std::map<std::string, std::string> kvpairs;
+    int wfd;
 
 
 };
