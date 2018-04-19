@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "etcd.hpp"
 #include "rapid_reply.hpp"
+
 #include <QLineEdit>
 #include <QCompleter>
 #include <QKeyEvent>
