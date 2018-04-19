@@ -5,8 +5,6 @@
 #include <QLineEdit>
 #include <QDebug>
 
-#define KEYBOARD_SPEED 20
-
 namespace Ui {
 class MainWindow;
 }

@@ -28,8 +28,6 @@ int main(int argc, char *argv[])
 
         qDebug() << "end of application workflow";
         Keyboard keyboard;
-        keyboard.AutoDelay.Min = std::max(KEYBOARD_SPEED - 5, 1);
-        keyboard.AutoDelay.Max = std::max(KEYBOARD_SPEED + 5, 1);
         keyboard.Click ("hello world sample");
     }
     return EXIT_SUCCESS;
