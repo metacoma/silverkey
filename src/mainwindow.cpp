@@ -65,8 +65,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 }
 
+void MainWindow::setWriteFd(int fd){
+    wfd = fd;
+}
+
 void MainWindow::hideEvent(QHideEvent *e) {
     qDebug() << "Hide";
+    QString val = lineEdit->text();
+    write(wfd, val.toLocal8Bit().constData(), val.length());
     QCompleter *none;
     lineEdit->setCompleter(none);
     this->close();
