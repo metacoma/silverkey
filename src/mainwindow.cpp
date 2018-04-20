@@ -71,8 +71,8 @@ void MainWindow::setWriteFd(int fd){
 
 void MainWindow::hideEvent(QHideEvent *e) {
     qDebug() << "Hide";
-    QString val = lineEdit->text();
-    write(wfd, val.toLocal8Bit().constData(), val.length());
+    std::string val = kvpairs[lineEdit->text().toUtf8().constData()];
+    write(wfd, val.c_str(), sizeof(val.c_str()));
     QCompleter *none;
     lineEdit->setCompleter(none);
     this->close();
