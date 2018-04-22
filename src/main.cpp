@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
             qDebug() << dbVal;
             Keyboard keyboard;
           
-            keyboard.AutoDelay.Min = std::max(KEYBOARD_SPEED - 5, 1);
-            keyboard.AutoDelay.Max = std::max(KEYBOARD_SPEED + 5, 1);
+            keyboard.AutoDelay.Min = 2;
+            keyboard.AutoDelay.Max = 3;
             keyboard.Click (dbVal);
         }
 
