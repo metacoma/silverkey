@@ -13,7 +13,6 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -21,9 +20,9 @@ public:
     void EndOfWorkflow();
     void hideEvent(QHideEvent *e);
     void setWriteFd(int fd);
-    ~MainWindow();
 
 private:
+    Q_OBJECT
     Ui::MainWindow *ui;
     QLineEdit *lineEdit;
     std::map<std::string, std::string> kvpairs;
