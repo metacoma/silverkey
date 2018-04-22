@@ -70,11 +70,15 @@ void MainWindow::setWriteFd(int fd){
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    qDebug() << "Hide";
+
     std::string val = kvpairs[lineEdit->text().toUtf8().constData()];
-    write(wfd, val.c_str(), sizeof(val.c_str()));
+    qDebug() << "Hide action, value is " << QString(val.c_str());
+
+    write(wfd, val.c_str(), std::strlen(val.c_str()));
     e->accept();
     qApp->closeAllWindows();
+
+
 }
 
 
