@@ -24,26 +24,18 @@ int main(int argc, char *argv[])
         QApplication a(argc, argv);
         MainWindow w;
         w.setWriteFd(fd[1]);
-        w.show();
+        w.setAttribute(Qt::WA_DeleteOnClose);
 
+        w.show();
 
         w.raise();  // for MacOS
         w.activateWindow(); // for Windows
       
-        a.exec();
+        qDebug() << a.exec();
         close(fd[1]);
     } else {
         close(fd[1]);
-        while (true) {
-
-            pid_t result = waitpid(pid, &status, WNOHANG);
-            if (result == -1) {
-                break;
-            } else if (result != 0) {
-                break;
-            }
-
-        }
+        wait(NULL);
         dbValLen = read(fd[0], &dbVal, sizeof(dbVal));
         close(fd[0]);
         qDebug() << "end of application workflow";

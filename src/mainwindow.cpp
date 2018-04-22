@@ -73,10 +73,8 @@ void MainWindow::hideEvent(QHideEvent *e) {
     qDebug() << "Hide";
     std::string val = kvpairs[lineEdit->text().toUtf8().constData()];
     write(wfd, val.c_str(), sizeof(val.c_str()));
-    QCompleter *none;
-    lineEdit->setCompleter(none);
-    this->close();
-    //this->~MainWindow();
+    e->accept();
+    qApp->closeAllWindows();
 }
 
 
@@ -86,8 +84,3 @@ void MainWindow::EnterPressed() {
     this->hide();
 }
 
-MainWindow::~MainWindow()
-{
-    delete lineEdit;
-    delete ui;
-}
