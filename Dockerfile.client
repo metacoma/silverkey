@@ -20,6 +20,7 @@ RUN apk add         \
   flex                      \
   xdotool                   \
   ttf-ubuntu-font-family    \
+  libxt-dev libxtst-dev libxinerama-dev \
   jq
 
 WORKDIR /tmp
