@@ -5,8 +5,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'lsb_release -a'
+                sh 'echo hello world'
             }
         }
     }
 }
+
