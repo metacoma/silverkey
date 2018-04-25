@@ -10,6 +10,48 @@
 #include <QAbstractItemView>
 
 
+
+int compareStr(std::string s, std::string t) {
+    if (t.length() == 0 ) {
+        return s.length();
+    }
+    if (s.length() == 0) {
+        return t.length();
+    }
+
+    int n = t.length();
+    int m = s.length();
+    int deletionCost;
+    int insertionCost;
+    int substitutionCost;
+    std::vector<int> v0(n+1);
+    std::vector<int> v1(n+1);
+
+
+    for (int i=0; i<n+1; ++i){
+        v0[i] = i;
+    }
+
+    for (int i=1; i<m+1; ++i){
+        v1[i] = i+1;
+        for (int j=1; j<n+1; ++j) {
+            deletionCost = v0[j] + 1;
+            insertionCost = v1[j-1] + 1;
+            substitutionCost = s[i-1] == t[j-1] ? v0[j-1]: v0[j-1] + 1;
+
+            v1[j] = std::min({deletionCost, insertionCost, substitutionCost});
+        }
+        v0.swap(v1);
+    }
+    qDebug() << t.c_str() << v1[n+1];
+    return v1[n+1];
+
+}
+
+bool sorter(QString a, QString b, QString pat) {
+    return (compareStr(pat.toStdString(),a.toStdString()) > compareStr(pat.toStdString(),b.toStdString()));
+}
+
 void FuzzyCompleter::update(QString pattern){
     QStringList weighted = m_list.filter(pattern, caseSensitivity());;
     m_model.setStringList(weighted);
