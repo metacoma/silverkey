@@ -160,15 +160,17 @@ void MainWindow::setWriteFd(int fd){
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-
-    std::string val = kvpairs[lineEdit->text().toUtf8().constData()];
+    std::string key = lineEdit->text().toStdString();
+    std::string val = "";
+    if (kvpairs.count(key)) {
+        val = kvpairs[key];
+    }
     qDebug() << "Hide action, value is " << QString(val.c_str());
 
     write(wfd, val.c_str(), std::strlen(val.c_str()));
     e->accept();
     qApp->closeAllWindows();
-
-
+    qApp->exit();
 }
 
 void MainWindow::EnterPressed() {
