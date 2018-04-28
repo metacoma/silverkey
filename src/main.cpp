@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <Robot.h>
-
+#include <QDebug>
 ROBOT_NS_USE_ALL;
 
 
