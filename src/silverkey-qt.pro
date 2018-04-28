@@ -56,5 +56,6 @@ linux {
 win32 {
     DEFINES += ROBOT_OS_WIN
     INCLUDEPATH += C:\src\curl-7.59.0\include
+    INCLUDEPATH += C:\src\rapidjson\include
 }
 
