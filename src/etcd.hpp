@@ -67,7 +67,11 @@
 #ifdef ETCD_SERVER
 #include <vector>
 #include <set>
+#ifndef WIN32 && ifndef WIN64
 #include <unistd.h>
+#else
+#include <io.h>
+#endif // ifndef WIN32 && ifnded WIN64
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
