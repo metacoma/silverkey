@@ -1,7 +1,10 @@
-#include "mainwindow.h"
-#include <iostream>
+#include "mainwindow.h" #include <iostream>
 #include <QApplication>
+#ifndef WIN32 && ifndef WIN64
 #include <unistd.h>
+#else
+#include <io.h>
+#endif // ifndef WIN32 && ifnded WIN64
 #include <sys/wait.h>
 #include <Robot.h>
 #include <QDebug>
