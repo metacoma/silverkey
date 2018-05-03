@@ -26,14 +26,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    fuzzycompleter.cpp
+    fuzzycompleter.cpp \
+    sksettings.cpp
 
 HEADERS += \
         mainwindow.h \
-    fuzzycompleter.h
+    fuzzycompleter.h \
+    sksettings.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    sksettings.ui
 
 LIBS += \
        -lcurl

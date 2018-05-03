@@ -3,6 +3,7 @@
 #include "etcd.hpp"
 #include "rapid_reply.hpp"
 #include "fuzzycompleter.h"
+#include "sksettings.h"
 
 #include <QKeyEvent>
 #include <QDebug>
@@ -98,3 +99,7 @@ void MainWindow::SearchEvent() {
     c->update(lineEdit->text());
 }
 
+void MainWindow::showSettings() {
+    SKSettings s;
+    s.exec();
+}
