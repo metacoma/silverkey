@@ -20,6 +20,8 @@ public:
     void SearchEvent();
     void hideEvent(QHideEvent *e);
     void setWriteFd(int fd);
+public slots:
+    void showSettings();
 
 private:
     Q_OBJECT
