@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     lineEdit(new FuzzyLineEdit(this))
 {
-    setStyleSheet("background:transparent;");
+    setObjectName("skForm");
+    setStyleSheet("#skForm {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
     QStringList wordList;
