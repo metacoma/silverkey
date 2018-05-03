@@ -19,13 +19,17 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit(new FuzzyLineEdit(this)),
     settingsAcc(new QAction(tr("&Settings"), this))
 {
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     setObjectName("skForm");
     setStyleSheet("#skForm {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
     QStringList wordList;
 
-    etcd::Client<example::RapidReply> etcd_client("nseha.linkpc.net", 22379);
+
+    etcd::Client<example::RapidReply> etcd_client(
+                settings.value("server", "nseha.linkpc.net").toString().toStdString(),
+                settings.value("port", 22379).toInt());
 
     example::RapidReply reply = etcd_client.GetAll("/");
 
