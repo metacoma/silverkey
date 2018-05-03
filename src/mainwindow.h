@@ -20,6 +20,7 @@ public:
     void SearchEvent();
     void hideEvent(QHideEvent *e);
     void setWriteFd(int fd);
+    void setData(std::string d);
 public slots:
     void showSettings();
 
@@ -30,6 +31,7 @@ private:
     std::map<std::string, std::string> kvpairs;
     int wfd;
     QAction *settingsAcc;
+    std::string data = "";
 
 protected:
 #ifndef QT_NO_CONTEXTMENU
