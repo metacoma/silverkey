@@ -29,6 +29,12 @@ private:
     FuzzyLineEdit *lineEdit;
     std::map<std::string, std::string> kvpairs;
     int wfd;
+    QAction *settingsAcc;
+
+protected:
+#ifndef QT_NO_CONTEXTMENU
+    void contextMenuEvent(QContextMenuEvent *event) override;
+#endif // QT_NO_CONTEXTMENU
 };
 
 #endif // MAINWINDOW_H

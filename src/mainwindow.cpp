@@ -8,14 +8,16 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QAbstractItemView>
-
+#include <QMenu>
+#include <QSettings>
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
 
     ui(new Ui::MainWindow),
-    lineEdit(new FuzzyLineEdit(this))
+    lineEdit(new FuzzyLineEdit(this)),
+    settingsAcc(new QAction(tr("&Settings"), this))
 {
     setObjectName("skForm");
     setStyleSheet("#skForm {background:transparent;}");
@@ -54,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(abstractItemView, &QAbstractItemView::clicked, this, &MainWindow::EnterPressed);
 
     connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
+
+    connect(settingsAcc, &QAction::triggered, this, &MainWindow::showSettings);
 
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
@@ -103,3 +107,11 @@ void MainWindow::showSettings() {
     SKSettings s;
     s.exec();
 }
+#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent(QContextMenuEvent *event) {
+    QMenu menu(this);
+    menu.addAction(settingsAcc);
+    menu.exec(event->globalPos());
+}
+#endif // QT_NO_CONTEXTMENU
+
