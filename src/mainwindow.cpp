@@ -82,15 +82,29 @@ void MainWindow::setWriteFd(int fd){
     wfd = fd;
 }
 
+void MainWindow::setData(std::string d) {
+    data = d;
+}
+
 void MainWindow::hideEvent(QHideEvent *e) {
     std::string key = lineEdit->text().toStdString();
-    std::string val = "";
-    if (kvpairs.count(key)) {
-        val = kvpairs[key];
-    }
-    qDebug() << "Hide action, value is " << QString(val.c_str());
+    if (data != "") {
+        qDebug() << "Data from CLI: " << data.c_str();
+        // TODO(dukov) Rework this to have only one connection to etcd
+        QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+        etcd::Client<example::RapidReply> etcd_client(
+                    settings.value("server", "nseha.linkpc.net").toString().toStdString(),
+                    settings.value("port", 22379).toInt());
+        example::RapidReply reply = etcd_client.Set(key, data);
+    } else {
+        std::string val = "";
+        if (kvpairs.count(key)) {
+            val = kvpairs[key];
+        }
+        qDebug() << "Hide action, value is " << QString(val.c_str());
 
-    write(wfd, val.c_str(), std::strlen(val.c_str()));
+        write(wfd, val.c_str(), std::strlen(val.c_str()));
+    }
     e->accept();
     qApp->closeAllWindows();
     qApp->exit();
