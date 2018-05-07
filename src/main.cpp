@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "robothelper.h"
 #include <iostream>
 #include <QApplication>
 #include <unistd.h>
@@ -40,18 +41,30 @@ int main(int argc, char *argv[])
     } else {
         close(fd[1]);
         wait(NULL);
+
         if (argc == 1) {
             dbValLen = read(fd[0], &dbVal, sizeof(dbVal));
             qDebug() << "end of application workflow";
 
             if (dbValLen) {
                 qDebug() << dbVal;
+
+                std::string value(dbVal);
+
+                RobotHelper helper;
+                auto converted = helper.convert(value);
+                const char* c_converted = converted.c_str();
+
                 Keyboard keyboard;
 
                 keyboard.AutoDelay.Min = 2;
                 keyboard.AutoDelay.Max = 3;
-                keyboard.Click (dbVal);
+
+                keyboard.Click (c_converted);
+                //This one easily misses some key presses. Need to get rid of it asap.
+                //Does not support multiline properly eather.
             }
+
         }
         close(fd[0]);
 

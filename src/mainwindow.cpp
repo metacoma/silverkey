@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowFlags(Qt::FramelessWindowHint);
     QStringList wordList;
 
-
     etcd::Client<example::RapidReply> etcd_client(
                 settings.value("server", "nseha.linkpc.net").toString().toStdString(),
                 settings.value("port", 22379).toInt());

@@ -26,13 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    fuzzycompleter.cpp \
-    sksettings.cpp
+        fuzzycompleter.cpp \
+        sksettings.cpp \
+        robothelper.cpp
 
 HEADERS += \
         mainwindow.h \
-    fuzzycompleter.h \
-    sksettings.h
+        fuzzycompleter.h \
+        sksettings.h \
+        robothelper.h
 
 FORMS += \
         mainwindow.ui \
