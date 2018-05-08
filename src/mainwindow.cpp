@@ -45,12 +45,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lineEdit->setFocusPolicy(Qt::StrongFocus);
     lineEdit->setFocus();
-    lineEdit->setGeometry(0, 0, 300, 30);
-    lineEdit->setStyleSheet("QLineEdit {background-color: white;}");
+    lineEdit->setGeometry(0, 0, 500, 50);
+    lineEdit->setStyleSheet("background-color: #f6f6f6;"
+                            "border-radius: 10px;"
+                            "font: 30pt Courier");
 
 
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->popup()->setStyleSheet("background-color: #f6f6f6;"
+                                      "font: 20pt Courier");
     lineEdit->setCompleter(completer);
     QAbstractItemView *abstractItemView = completer->popup();
 
