@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
+    FuzzyPopup *popup = new FuzzyPopup();
+    completer->setPopup(popup);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->popup()->setStyleSheet("background-color: #f6f6f6;"
                                       "font: 20pt Courier");
@@ -62,6 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
     connect(abstractItemView, &QAbstractItemView::clicked, this, &MainWindow::EnterPressed);
+    connect(popup, &FuzzyPopup::popupShow, this, &MainWindow::setAngleCorners);
+    connect(popup, &FuzzyPopup::popupHide, this, &MainWindow::setRoundedCorners);
 
     connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
 
@@ -129,6 +133,23 @@ void MainWindow::showSettings() {
     SKSettings s;
     s.exec();
 }
+
+void MainWindow::setAngleCorners() {
+    // TODO(dukov) get rid of this in favor of dynamic styles
+    lineEdit->setStyleSheet("background-color: #f6f6f6;"
+                            "border-radius: 10px;"
+                            "border-bottom-right-radius: 0;"
+                            "border-bottom-left-radius: 0;"
+                            "font: 30pt Courier");
+}
+
+void MainWindow::setRoundedCorners() {
+    // TODO(dukov) get rid of this in favor of dynamic styles
+    lineEdit->setStyleSheet("background-color: #f6f6f6;"
+                            "border-radius: 10px;"
+                            "font: 30pt Courier");
+}
+
 #ifndef QT_NO_CONTEXTMENU
 void MainWindow::contextMenuEvent(QContextMenuEvent *event) {
     QMenu menu(this);

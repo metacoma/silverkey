@@ -7,6 +7,19 @@
 #include <QStringList>
 #include <QStringListModel>
 #include <QSortFilterProxyModel>
+#include <QListView>
+
+class FuzzyPopup : public QListView
+{
+    Q_OBJECT
+private:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+
+Q_SIGNALS:
+    void popupShow();
+    void popupHide();
+};
 
 class FuzzySortFilterProxyModel : public QSortFilterProxyModel
 {
