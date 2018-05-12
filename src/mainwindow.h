@@ -10,7 +10,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public FuzzyLineEdit
 {
 
 public:
@@ -28,8 +28,6 @@ public slots:
 
 private:
     Q_OBJECT
-    Ui::MainWindow *ui;
-    FuzzyLineEdit *lineEdit;
     std::map<std::string, std::string> kvpairs;
     int wfd;
     QAction *settingsAcc;

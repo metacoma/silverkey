@@ -10,19 +10,19 @@
 #include <QAbstractItemView>
 #include <QMenu>
 #include <QSettings>
+#include <QDesktopWidget>
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
+    FuzzyLineEdit(parent),
 
-    ui(new Ui::MainWindow),
-    lineEdit(new FuzzyLineEdit(this)),
     settingsAcc(new QAction(tr("&Settings"), this))
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    setObjectName("skForm");
-    setStyleSheet("#skForm {background:transparent;}");
+    setObjectName("skInput");
+    setStyleSheet("#skInput {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
+
     setWindowFlags(Qt::FramelessWindowHint);
     QStringList wordList;
 
@@ -43,31 +43,36 @@ MainWindow::MainWindow(QWidget *parent) :
         wordList << QString::fromStdString(iter->first);
     }
 
-    lineEdit->setFocusPolicy(Qt::StrongFocus);
-    lineEdit->setFocus();
-    lineEdit->setGeometry(0, 0, 500, 50);
-    lineEdit->setStyleSheet("background-color: #f6f6f6;"
-                            "border-radius: 10px;"
-                            "font: 30pt Courier");
-    lineEdit->setTextMargins(5, 0, 0, 0);
-    lineEdit->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
+    setGeometry(0, 0, 500, 50);
+    setStyleSheet("#skInput {"
+                    "background-color: #f6f6f6;"
+                    "border-radius: 10px;"
+                    "font: 30pt Courier"
+                  "}");
+    setTextMargins(5, 0, 0, 0);
+    setAttribute(Qt::WA_MacShowFocusRect, 0);
 
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
     FuzzyPopup *popup = new FuzzyPopup();
+    popup->setObjectName("skPopup");
     completer->setPopup(popup);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->popup()->setStyleSheet("background-color: #f6f6f6;"
-                                      "font: 20pt Courier");
-    lineEdit->setCompleter(completer);
+    completer->popup()->setStyleSheet("#skPopup {"
+                                        "background-color: #f6f6f6;"
+                                        "font: 20pt Courier"
+                                      "}");
+    setCompleter(completer);
     QAbstractItemView *abstractItemView = completer->popup();
 
 
-    connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
+    connect(this, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
     connect(abstractItemView, &QAbstractItemView::clicked, this, &MainWindow::EnterPressed);
     connect(popup, &FuzzyPopup::popupShow, this, &MainWindow::setAngleCorners);
     connect(popup, &FuzzyPopup::popupHide, this, &MainWindow::setRoundedCorners);
 
-    connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
+    connect(this, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
 
     connect(settingsAcc, &QAction::triggered, this, &MainWindow::showSettings);
 
@@ -75,15 +80,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
 
-    QPoint pos(lineEdit->width()-5, 5);
+    QPoint pos(width()-5, 5);
     QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
-    qApp->sendEvent(lineEdit, &e);
+    qApp->sendEvent(this, &e);
     QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, 0);
-    qApp->sendEvent(lineEdit, &f);
+    qApp->sendEvent(this, &f);
 
     QWidget::setFocusProxy(this);
-
-    ui->setupUi(this);
+    setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignHCenter,
+            size(),
+            qApp->desktop()->availableGeometry()
+        )
+    );
 }
 
 void MainWindow::setWriteFd(int fd){
@@ -95,7 +106,7 @@ void MainWindow::setData(std::string d) {
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    std::string key = lineEdit->text().toStdString();
+    std::string key = text().toStdString();
     if (data != "") {
         qDebug() << "Data from CLI: " << data.c_str();
         // TODO(dukov) Rework this to have only one connection to etcd
@@ -125,8 +136,8 @@ void MainWindow::EnterPressed() {
 }
 
 void MainWindow::SearchEvent() {
-    FuzzyCompleter *c = lineEdit->completer();
-    c->update(lineEdit->text());
+    FuzzyCompleter *c = completer();
+    c->update(text());
 }
 
 void MainWindow::showSettings() {
@@ -136,18 +147,22 @@ void MainWindow::showSettings() {
 
 void MainWindow::setAngleCorners() {
     // TODO(dukov) get rid of this in favor of dynamic styles
-    lineEdit->setStyleSheet("background-color: #f6f6f6;"
-                            "border-radius: 10px;"
-                            "border-bottom-right-radius: 0;"
-                            "border-bottom-left-radius: 0;"
-                            "font: 30pt Courier");
+    setStyleSheet("#skInput {"
+                    "background-color: #f6f6f6;"
+                    "border-radius: 10px;"
+                    "border-bottom-right-radius: 0;"
+                    "border-bottom-left-radius: 0;"
+                    "font: 30pt Courier"
+                  "}");
 }
 
 void MainWindow::setRoundedCorners() {
     // TODO(dukov) get rid of this in favor of dynamic styles
-    lineEdit->setStyleSheet("background-color: #f6f6f6;"
-                            "border-radius: 10px;"
-                            "font: 30pt Courier");
+    setStyleSheet("#skInput {"
+                    "background-color: #f6f6f6;"
+                    "border-radius: 10px;"
+                    "font: 30pt Courier"
+                  "}");
 }
 
 #ifndef QT_NO_CONTEXTMENU
