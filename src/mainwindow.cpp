@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
                             "border-radius: 10px;"
                             "font: 30pt Courier");
     lineEdit->setTextMargins(5, 0, 0, 0);
-
+    lineEdit->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
