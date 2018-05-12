@@ -47,6 +47,14 @@ bool sorter(QString a, QString b, QString pat) {
     return ( x > y );
 }
 
+void FuzzyPopup::showEvent(QShowEvent *event) {
+    emit popupShow();
+}
+
+void FuzzyPopup::hideEvent(QHideEvent *event) {
+    emit popupHide();
+}
+
 FuzzySortFilterProxyModel::FuzzySortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {

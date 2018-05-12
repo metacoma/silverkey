@@ -23,6 +23,8 @@ public:
     void setData(std::string d);
 public slots:
     void showSettings();
+    void setAngleCorners();
+    void setRoundedCorners();
 
 private:
     Q_OBJECT
