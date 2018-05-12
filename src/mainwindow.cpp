@@ -57,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
     FuzzyPopup *popup = new FuzzyPopup();
     popup->setObjectName("skPopup");
+    popup->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    popup->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    popup->setSelectionBehavior(QAbstractItemView::SelectRows);
+    popup->setSelectionMode(QAbstractItemView::SingleSelection);
     completer->setPopup(popup);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->popup()->setStyleSheet("#skPopup {"
