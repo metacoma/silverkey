@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit->setStyleSheet("background-color: #f6f6f6;"
                             "border-radius: 10px;"
                             "font: 30pt Courier");
+    lineEdit->setTextMargins(5, 0, 0, 0);
 
 
     FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
