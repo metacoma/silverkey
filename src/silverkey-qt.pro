@@ -42,6 +42,7 @@ FORMS += \
 
 LIBS += \
        -lcurl
+       -lQt5Concurrent
 
 DEFINES += ROBOT_ARCH_64
 
