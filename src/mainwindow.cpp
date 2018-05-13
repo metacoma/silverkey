@@ -11,37 +11,20 @@
 #include <QMenu>
 #include <QSettings>
 #include <QDesktopWidget>
-
+#include <QFuture>
+#include <QtConcurrent/QtConcurrentRun>
 
 MainWindow::MainWindow(QWidget *parent) :
     FuzzyLineEdit(parent),
 
     settingsAcc(new QAction(tr("&Settings"), this))
 {
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     setObjectName("skInput");
     setStyleSheet("#skInput {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
 
     setWindowFlags(Qt::FramelessWindowHint);
-    QStringList wordList;
 
-    etcd::Client<example::RapidReply> etcd_client(
-                settings.value("server", "nseha.linkpc.net").toString().toStdString(),
-                settings.value("port", 22379).toInt());
-
-    example::RapidReply reply = etcd_client.GetAll("/");
-
-    //reply.KvPairs
-
-
-    //example::RapidReply::GetAll(kvpairs);
-    reply.GetAll(kvpairs);
-
-    for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
-        //wordList << "hello";
-        wordList << QString::fromStdString(iter->first);
-    }
 
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
@@ -54,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setTextMargins(5, 0, 0, 0);
     setAttribute(Qt::WA_MacShowFocusRect, 0);
 
-    FuzzyCompleter *completer = new FuzzyCompleter(wordList, this);
+    FuzzyCompleter *completer = new FuzzyCompleter(this);
     FuzzyPopup *popup = new FuzzyPopup();
     popup->setObjectName("skPopup");
     popup->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -91,14 +74,43 @@ MainWindow::MainWindow(QWidget *parent) :
     qApp->sendEvent(this, &f);
 
     QWidget::setFocusProxy(this);
+    QRect ag = qApp->desktop()->availableGeometry();
+    ag.setHeight(ag.height()/2);
     setGeometry(
         QStyle::alignedRect(
             Qt::LeftToRight,
-            Qt::AlignHCenter,
+            Qt::AlignCenter,
             size(),
-            qApp->desktop()->availableGeometry()
+            ag
         )
     );
+}
+
+void MainWindow::showEvent(QShowEvent *event) {
+    //std::future<int> result( std::async([]() { qDebug() << "SHOW"; sleep(10); return 0;}));
+    //result.get();
+    QFuture<void> future = QtConcurrent::run(this, &MainWindow::getDbData);
+}
+
+void MainWindow::getDbData()
+{
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    QStringList wordList;
+
+    etcd::Client<example::RapidReply> etcd_client(
+                settings.value("server", "nseha.linkpc.net").toString().toStdString(),
+                settings.value("port", 22379).toInt());
+
+    example::RapidReply reply = etcd_client.GetAll("/");
+
+    reply.GetAll(kvpairs);
+
+    for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
+        //wordList << "hello";
+        wordList << QString::fromStdString(iter->first);
+    }
+    FuzzyCompleter *c = this->completer();
+    c->setUp(wordList);
 }
 
 void MainWindow::setWriteFd(int fd){

@@ -43,7 +43,9 @@ class FuzzyCompleter : public QCompleter
     Q_OBJECT
 
 public:
+    FuzzyCompleter(QObject * parent);
     FuzzyCompleter(const QStringList& words, QObject * parent);
+    void setUp(const QStringList &words);
     void update(QString pattern);
 
 private:

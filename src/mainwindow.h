@@ -27,6 +27,8 @@ public slots:
     void setRoundedCorners();
 
 private:
+    void showEvent(QShowEvent *event);
+    void getDbData();
     Q_OBJECT
     std::map<std::string, std::string> kvpairs;
     int wfd;
