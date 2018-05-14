@@ -77,21 +77,15 @@ void FuzzySortFilterProxyModel::setSortPattern(QString pat) {
 FuzzyCompleter::FuzzyCompleter(QObject *parent)
     : QCompleter(parent)
 {
-}
-
-FuzzyCompleter::FuzzyCompleter(const QStringList &words, QObject *parent)
-    : QCompleter(parent)
-{
-    setUp(words);
+    m_model = new QStringListModel();
+    p_model = new FuzzySortFilterProxyModel(this);
+    p_model->setSourceModel(m_model);
+    setModel(p_model);
 }
 
 void FuzzyCompleter::setUp(const QStringList &words)
 {
-    m_model = new QStringListModel(words);
-    p_model = new FuzzySortFilterProxyModel(this);
-    p_model->setSourceModel(m_model);
-    setModel(p_model);
-
+    m_model->setStringList(words);
 }
 
 void FuzzyCompleter::update(QString pattern){

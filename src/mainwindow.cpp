@@ -87,6 +87,8 @@ MainWindow::MainWindow(QWidget *parent) :
             ag
         )
     );
+
+    lockInput();
 }
 
 void MainWindow::showEvent(QShowEvent *event) {
@@ -114,6 +116,22 @@ void MainWindow::getDbData()
     }
     FuzzyCompleter *c = this->completer();
     c->setUp(wordList);
+    this->unlockInput();
+}
+
+void MainWindow::lockInput()
+{
+    // TODO (dukov) Use gray style here
+    setReadOnly(true);
+    setText("Loading data...");
+}
+
+void MainWindow::unlockInput()
+{
+    // TODO (dukov) Restore default style
+    this->setText("");
+    this->setReadOnly(false);
+
 }
 
 void MainWindow::setWriteFd(int fd){
