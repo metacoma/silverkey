@@ -29,6 +29,8 @@ public slots:
 private:
     void showEvent(QShowEvent *event);
     void getDbData();
+    void lockInput();
+    void unlockInput();
     Q_OBJECT
     std::map<std::string, std::string> kvpairs;
     int wfd;
