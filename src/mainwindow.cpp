@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setStyleSheet("#skInput {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
 
-    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Popup);
 
 
     setFocusPolicy(Qt::StrongFocus);
