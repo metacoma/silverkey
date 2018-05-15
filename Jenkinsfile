@@ -2,8 +2,6 @@ pipeline {
   agent none
 
   environment {
-    JOB_GIT_URL = "https://github.com/metacoma/silverkey"
-    JOB_GIT_BRANCH = "cppqt"
     JOB_QT_APP = "silverkey-qt"
   }
 
@@ -24,10 +22,6 @@ pipeline {
             }
           }
           steps {
-            git (
-              url: "$JOB_GIT_URL",
-              branch: "$JOB_GIT_BRANCH"
-            )
             dir('src') {
               sh 'qmake'
               sh 'make -j4'
@@ -44,10 +38,6 @@ pipeline {
             label 'mac-slave'
           }
           steps {
-            checkout(
-              [$class: 'GitSCM',
-                branches: [[name: "*/${JOB_GIT_BRANCH}"]],
-                doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[url: "${JOB_GIT_URL}"]]])
             dir('src') {
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
@@ -60,14 +50,14 @@ pipeline {
       }
     }
   }
-	post {
-  	success {
-    	script {
-      	// CHANGE_ID is set only for pull requests, so it is safe to access the pullRequest global variable
-       	if (env.CHANGE_ID) {
-					pullRequest.addLabel('Build success')
-      	}
-    	}
- 		}
+  post {
+    success {
+      script {
+        // CHANGE_ID is set only for pull requests, so it is safe to access the pullRequest global variable
+        if (env.CHANGE_ID) {
+          pullRequest.addLabel('Build success')
+        }
+      }
+    }
   }
 }
