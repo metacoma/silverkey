@@ -22,6 +22,8 @@ pipeline {
             }
           }
           steps {
+            step([$class: 'WsCleanup'])
+            checkout scm
             dir('src') {
               sh 'qmake'
               sh 'make -j4'
@@ -38,6 +40,8 @@ pipeline {
             label 'mac-slave'
           }
           steps {
+            step([$class: 'WsCleanup'])
+            checkout scm
             dir('src') {
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
