@@ -1,10 +1,10 @@
 pipeline {
+
   agent none
 
   environment {
     JOB_QT_APP = "silverkey-qt"
   }
-
 
   stages {
     stage('Build') {
