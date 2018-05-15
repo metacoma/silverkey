@@ -5,7 +5,6 @@ pipeline {
     JOB_QT_APP = "silverkey-qt"
   }
 
-
   stages {
     stage('Build') {
       parallel {
