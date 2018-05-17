@@ -83,9 +83,16 @@ FuzzyCompleter::FuzzyCompleter(QObject *parent)
     setModel(p_model);
 }
 
+void FuzzyCompleter::cleanUp() {
+    QStringList np;
+    m_model->setStringList(np);
+    dataSet = false;
+}
+
 void FuzzyCompleter::setUp(const QStringList &words)
 {
     m_model->setStringList(words);
+    dataSet = true;
 }
 
 void FuzzyCompleter::update(QString pattern){
@@ -94,6 +101,11 @@ void FuzzyCompleter::update(QString pattern){
     p_model->sort(0);
     complete();
 
+}
+
+bool FuzzyCompleter::isDataSet()
+{
+    return dataSet;
 }
 
 FuzzyLineEdit::FuzzyLineEdit(QWidget *parent)
