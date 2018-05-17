@@ -45,9 +45,11 @@ class FuzzyCompleter : public QCompleter
 public:
     FuzzyCompleter(QObject * parent);
     void setUp(const QStringList &words);
+    void cleanUp();
     void update(QString pattern);
-
+    bool isDataSet();
 private:
+    bool dataSet = false;
     QStringListModel *m_model;
     FuzzySortFilterProxyModel *p_model;
 };
