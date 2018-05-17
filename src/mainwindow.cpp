@@ -12,7 +12,8 @@
 #include <QSettings>
 #include <QDesktopWidget>
 #include <QFuture>
-#include <QtConcurrent/QtConcurrentRun>
+#include <QFutureWatcher>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     FuzzyLineEdit(parent),
@@ -91,10 +92,22 @@ MainWindow::MainWindow(QWidget *parent) :
     lockInput();
 }
 
-void MainWindow::showEvent(QShowEvent *event) {
-    //std::future<int> result( std::async([]() { qDebug() << "SHOW"; sleep(10); return 0;}));
-    //result.get();
-    QFuture<void> future = QtConcurrent::run(this, &MainWindow::getDbData);
+void MainWindow::handleDataLoad() {
+    if (!this->completer()->isDataSet()) {
+        //QMessageBox::StandardButton reply;
+        int reply = QMessageBox::question(this,
+                                      "Error", "Failed to load data from database",
+                                      "Quit", "Open Settings");
+        qDebug() << "Reply: " << reply;
+        if (reply == 0) {
+            this->hide();
+        } else {
+            this->showSettings();
+        }
+    } else {
+        this->unlockInput();
+    }
+
 }
 
 void MainWindow::getDbData()
@@ -102,21 +115,20 @@ void MainWindow::getDbData()
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     QStringList wordList;
 
-    etcd::Client<example::RapidReply> etcd_client(
+    try {
+        etcd::Client<example::RapidReply> etcd_client(
                 settings.value("server", "nseha.linkpc.net").toString().toStdString(),
                 settings.value("port", 22379).toInt());
-
-    example::RapidReply reply = etcd_client.GetAll("/");
-
-    reply.GetAll(kvpairs);
-
-    for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
-        //wordList << "hello";
-        wordList << QString::fromStdString(iter->first);
+        example::RapidReply reply = etcd_client.GetAll("/");
+        reply.GetAll(kvpairs);
+        for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
+            wordList << QString::fromStdString(iter->first);
+        }
+        FuzzyCompleter *c = this->completer();
+        c->setUp(wordList);
+    } catch (etcd::ClientException e) {
+        qDebug() << "Exception";
     }
-    FuzzyCompleter *c = this->completer();
-    c->setUp(wordList);
-    this->unlockInput();
 }
 
 void MainWindow::lockInput()
@@ -179,7 +191,14 @@ void MainWindow::SearchEvent() {
 
 void MainWindow::showSettings() {
     SKSettings s;
-    s.exec();
+    int r = s.exec();
+    qDebug() << "Settings result: " << r;
+    if (r == QDialog::Accepted) {
+        this->lockInput();
+        this->completer()->cleanUp();
+        this->getDbData();
+        this->handleDataLoad();
+    }
 }
 
 void MainWindow::setAngleCorners() {
