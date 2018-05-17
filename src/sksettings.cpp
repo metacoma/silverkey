@@ -20,7 +20,7 @@ void SKSettings::accept() {
     settings.setValue("password", ui->skPassword->text());
     settings.setValue("server", ui->skServer->text());
     settings.setValue("port", ui->skServerPort->text().toInt());
-    this->close();
+    done(Accepted);
 }
 
 SKSettings::~SKSettings()
