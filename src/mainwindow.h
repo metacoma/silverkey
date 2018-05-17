@@ -21,14 +21,14 @@ public:
     void hideEvent(QHideEvent *e);
     void setWriteFd(int fd);
     void setData(std::string d);
+    void getDbData();
 public slots:
     void showSettings();
     void setAngleCorners();
     void setRoundedCorners();
+    void handleDataLoad();
 
 private:
-    void showEvent(QShowEvent *event);
-    void getDbData();
     void lockInput();
     void unlockInput();
     Q_OBJECT
