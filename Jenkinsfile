@@ -32,6 +32,29 @@ pipeline {
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
+        stage('linux-static') {
+          environment {
+            STAGE_ARCH = "x64_86"
+            STAGE_OS = "linux"
+            STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-static-${STAGE_ARCH}"
+          }
+          agent {
+            dockerfile {
+              reuseNode true
+              label 'master'
+            }
+          }
+          steps {
+            step([$class: 'WsCleanup'])
+            checkout scm
+            dir('src') {
+              sh 'qmake'
+              sh 'make -j4'
+              sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
+            }
+            archiveArtifacts "src/${STAGE_ARTIFACT}"
+          }
+        }
         stage('osx') {
           environment {
             STAGE_ARTIFACT = "${JOB_QT_APP}.app/**"
