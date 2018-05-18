@@ -19,15 +19,25 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /build
 RUN git clone git://code.qt.io/qt/qt5.git qt5
 WORKDIR /build/qt5
-RUN perl init-repository
+RUN perl init-repository                        \
+    --module-subset=all,-qt3d,-qtandroidextras,-qtcanvas3d,-qtdatavis3d,-qtdoc,-qtgamepad,-qtmultimedia,-qtserialport,-qtspeech,-qtvirtualkeyboard,-qtwebview,-qtwebglplugin,-qtwebengine,-qtwayland
+
 
 ENV PATH="/build/qt5/qtbase/bin:/build/qt5/qtrepotools/bin:$PATH"
 RUN ./configure                                 \
+  -release                                      \
+  -nomake tools                                 \
   -nomake examples                              \
   -nomake tests                                 \
+  -no-webkit                                    \
+  -no-qt3support                                \
+  -no-script                                    \
+  -no-scripttools                               \
+  -no-qt3d                                      \
   -prefix /qt5                                  \
   -confirm-license                              \
   -opensource                                   \
+  -feature-xml-schema                           \
   -static
 
 RUN ./build -j4
