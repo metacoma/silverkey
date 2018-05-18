@@ -32,5 +32,3 @@ RUN ./configure                                 \
 
 RUN ./build -j4
 RUN make -j4
-
-

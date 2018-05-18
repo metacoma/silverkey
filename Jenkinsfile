@@ -32,7 +32,7 @@ pipeline {
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
-        stage('linux-static') {
+        stage('qt-5.9-linux-static') {
           environment {
             STAGE_ARCH = "x64_86"
             STAGE_OS = "linux"
@@ -40,6 +40,7 @@ pipeline {
           }
           agent {
             dockerfile {
+              filename 'qt_5_9_linux_static.Dockerfile'
               reuseNode true
               label 'master'
             }
