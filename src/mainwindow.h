@@ -41,6 +41,7 @@ protected:
 #ifndef QT_NO_CONTEXTMENU
     void contextMenuEvent(QContextMenuEvent *event) override;
 #endif // QT_NO_CONTEXTMENU
+    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // MAINWINDOW_H

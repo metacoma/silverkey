@@ -184,6 +184,15 @@ void MainWindow::EnterPressed() {
     this->hide();
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Escape) {
+        setText("");
+        hide();
+    } else {
+        FuzzyLineEdit::keyPressEvent(e);
+    }
+}
+
 void MainWindow::SearchEvent() {
     FuzzyCompleter *c = completer();
     c->update(text());
