@@ -49,7 +49,7 @@ pipeline {
             step([$class: 'WsCleanup'])
             checkout scm
             dir('src') {
-              sh 'qmake'
+              sh 'qmake -profile release'
               sh 'make -j4'
               sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
             }
