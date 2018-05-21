@@ -79,7 +79,10 @@ MainWindow::MainWindow(QWidget *parent) :
     qApp->sendEvent(this, &f);
 
     QWidget::setFocusProxy(this);
-    QRect ag = qApp->desktop()->availableGeometry();
+
+    QPoint globalCursorPos = QCursor::pos();
+    int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
+    QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
     ag.setHeight(ag.height()/2);
     setGeometry(
         QStyle::alignedRect(
