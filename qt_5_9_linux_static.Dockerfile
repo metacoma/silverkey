@@ -29,16 +29,21 @@ RUN ./configure                                 \
   -nomake tools                                 \
   -nomake examples                              \
   -nomake tests                                 \
-  -no-webkit                                    \
-  -no-qt3support                                \
-  -no-script                                    \
-  -no-scripttools                               \
-  -no-qt3d                                      \
   -prefix /qt5                                  \
   -confirm-license                              \
   -opensource                                   \
   -feature-xml-schema                           \
   -static
 
-RUN ./build -j4
 RUN make -j4
+RUN make -j4 install
+# XXX move to upper section
+RUN apt-get update && apt install -y rapidjson-dev libx11-dev libxtst-dev libxinerama-dev libcurl4-nss-dev
+WORKDIR /tmp
+RUN git clone https://github.com/Robot/robot
+WORKDIR /tmp/robot
+RUN git checkout a19be1863405fa4dd5c970946d0f3f59d06b74f1
+RUN make -j4 build
+USER root
+RUN make install
+RUN jenkins
