@@ -121,6 +121,16 @@ FuzzyCompleter *FuzzyLineEdit::completer() const {
     return c;
 }
 
+QString FuzzyLineEdit::getSelectedItem() const
+{
+    return selectedItem;
+}
+
+void FuzzyLineEdit::setSelectedItem(const QString &value)
+{
+    selectedItem = value;
+}
+
 void FuzzyLineEdit::setCompleter(FuzzyCompleter *completer) {
     if (c) {
         disconnect(c, 0, this, 0);
@@ -140,8 +150,8 @@ void FuzzyLineEdit::setCompleter(FuzzyCompleter *completer) {
     }
 
     QObject::connect(this->completer(), SIGNAL(activated(QString)),
-                     this, SLOT(setText(QString)));
+                     this, SLOT(setSelectedItem(QString)));
     QObject::connect(this->completer(), SIGNAL(highlighted(QString)),
-                     this, SLOT(setText(QString)));
+                     this, SLOT(setSelectedItem(QString)));
 }
 
