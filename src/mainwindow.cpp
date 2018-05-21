@@ -4,6 +4,7 @@
 #include "rapid_reply.hpp"
 #include "fuzzycompleter.h"
 #include "sksettings.h"
+#include "hotkeys.h"
 
 #include <QKeyEvent>
 #include <QDebug>
@@ -90,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     lockInput();
+    registerService();
 }
 
 void MainWindow::handleDataLoad() {
