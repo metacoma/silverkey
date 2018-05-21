@@ -48,6 +48,7 @@ public:
     void cleanUp();
     void update(QString pattern);
     bool isDataSet();
+
 private:
     bool dataSet = false;
     QStringListModel *m_model;
@@ -64,10 +65,14 @@ public:
 
     void setCompleter(FuzzyCompleter *c);
     FuzzyCompleter *completer() const;
+    QString getSelectedItem() const;
 
+public Q_SLOTS:
+    void setSelectedItem(const QString &value);
 
 private:
     FuzzyCompleter *c;
+    QString selectedItem;
 };
 
 

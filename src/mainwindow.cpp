@@ -102,6 +102,7 @@ void MainWindow::handleDataLoad() {
                                       "Quit", "Open Settings");
         qDebug() << "Reply: " << reply;
         if (reply == 0) {
+            this->setSelectedItem("");
             this->hide();
         } else {
             this->showSettings();
@@ -157,7 +158,7 @@ void MainWindow::setData(std::string d) {
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    std::string key = text().toStdString();
+    std::string key = getSelectedItem().toStdString();
     if (data != "") {
         qDebug() << "Data from CLI: " << data.c_str();
         // TODO(dukov) Rework this to have only one connection to etcd
@@ -188,7 +189,7 @@ void MainWindow::EnterPressed() {
 
 void MainWindow::keyPressEvent(QKeyEvent *e) {
     if (e->key() == Qt::Key_Escape) {
-        setText("");
+        setSelectedItem("");
         hide();
     } else {
         FuzzyLineEdit::keyPressEvent(e);
@@ -198,6 +199,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e) {
 void MainWindow::SearchEvent() {
     FuzzyCompleter *c = completer();
     c->update(text());
+    c->popup()->setCurrentIndex(c->popup()->model()->index(0,0));
 }
 
 void MainWindow::showSettings() {
