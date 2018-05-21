@@ -34,7 +34,8 @@ HEADERS += \
         mainwindow.h \
         fuzzycompleter.h \
         sksettings.h \
-        robothelper.h
+        robothelper.h \
+        hotkeys.h
 
 FORMS += \
         mainwindow.ui \
@@ -47,13 +48,18 @@ LIBS += \
 DEFINES += ROBOT_ARCH_64
 
 macx {
+    HEADERS += mac_service.h
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
     INCLUDEPATH += /usr/local/include/Robot/
     LIBS += -L/usr/local/lib/robot -lRobot -framework ApplicationServices
+    QMAKE_INFO_PLIST = ../contrib/Info.plist
+    QMAKE_LFLAGS += -framework Cocoa
+    OBJECTIVE_SOURCES += mac_service.mm
 }
 
 linux {
+    SOURCES += hotkeys.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
     LIBS += -lRobot -lXtst -lX11
