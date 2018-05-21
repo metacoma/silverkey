@@ -32,6 +32,7 @@ pipeline {
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
+        /*
         stage('qt-5.9-linux-static') {
           environment {
             STAGE_ARCH = "x64_86"
@@ -56,6 +57,7 @@ pipeline {
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
+        */
         stage('osx') {
           environment {
             STAGE_ARTIFACT = "${JOB_QT_APP}.app/**"
