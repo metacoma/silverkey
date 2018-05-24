@@ -69,6 +69,7 @@ void type_text(int dbValLen, char dbVal[256]) {
     }
 }
 
+#ifdef SK_UI_FORK
 void main_with_fork(int argc, char *argv[]) {
     int fd[2];
     pipe(fd);
@@ -92,17 +93,18 @@ void main_with_fork(int argc, char *argv[]) {
         close(fd[0]);
     }
 }
+#endif // SK_UI_FORK
 
 
 
 int main(int argc, char *argv[])
 {
-#ifdef Q_OS_MACOS
+#ifdef SK_UI_FORK
     main_with_fork(argc, argv);
 #else
     QString res = "";
     show_window(argc, argv, &res);
-    type_text(res.length(), res.toUtf8().constData());
-#endif
+    type_text(res.length(), (char *)res.toUtf8().constData());
+#endif // SK_UI_FORK
     return EXIT_SUCCESS;
 }
