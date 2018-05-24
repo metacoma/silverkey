@@ -22,6 +22,7 @@ public:
     void setWriteFd(int fd);
     void setData(std::string d);
     void getDbData();
+    void setResultPtr(QString *ptr);
 public slots:
     void showSettings();
     void setAngleCorners();
@@ -36,6 +37,7 @@ private:
     int wfd;
     QAction *settingsAcc;
     std::string data = "";
+    QString *resultPtr;
 
 protected:
 #ifndef QT_NO_CONTEXTMENU

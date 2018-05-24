@@ -137,6 +137,11 @@ void MainWindow::getDbData()
     }
 }
 
+void MainWindow::setResultPtr(QString *ptr)
+{
+    resultPtr = ptr;
+}
+
 void MainWindow::lockInput()
 {
     // TODO (dukov) Use gray style here
@@ -176,8 +181,12 @@ void MainWindow::hideEvent(QHideEvent *e) {
             val = kvpairs[key];
         }
         qDebug() << "Hide action, value is " << QString(val.c_str());
-
+#ifdef Q_OS_MACOS
         write(wfd, val.c_str(), std::strlen(val.c_str()));
+#endif
+        if (resultPtr) {
+            *resultPtr = QString::fromStdString(val);
+        }
     }
     e->accept();
     qApp->closeAllWindows();
