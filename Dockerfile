@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libegl1-mesa                                        \
   libcpprest-dev                                      \
   libboost-all-dev                                    \
+  cmake                                               \
   rapidjson-dev
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev patchelf
