@@ -6,6 +6,11 @@
 
 #define KEYBOARD_SPEED 20
 
+#ifdef Q_OS_MACOS
+#define SK_UI_FORK
+#endif
+
+
 namespace Ui {
 class MainWindow;
 }
