@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libcurlpp-dev                                       \
   libcurl4-openssl-dev                                \
   libegl1-mesa                                        \
+  libcpprest-dev                                      \
   rapidjson-dev
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev patchelf
