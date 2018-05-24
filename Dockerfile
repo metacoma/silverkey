@@ -24,9 +24,9 @@ RUN make -j4 build
 USER root
 RUN make install
 WORKDIR /tmp
-RUN git clone https://github.com/nokia/etcd-cpp-api
+RUN git clone https://github.com/metacoma/etcd-cpp-api
 WORKDIR /tmp/etcd-cpp-api
-ADD https://github.com/catchorg/Catch2/releases/download/v2.2.2/catch.hpp /tmp/etcd/cpp-api/catch.hpp
+ADD https://github.com/catchorg/Catch2/releases/download/v2.2.2/catch.hpp /tmp/etcd-cpp-api/catch.hpp
 RUN cmake .
 RUN make
 WORKDIR /tmp
