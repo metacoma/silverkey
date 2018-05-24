@@ -33,6 +33,7 @@ RUN cmake .
 RUN make
 RUN make install
 WORKDIR /tmp
+ENV LD_LIBRARY_PATH=/opt/Qt/5.11.0/gcc_64/lib/
 RUN git clone https://github.com/probonopd/linuxdeployqt.git
 WORKDIR /tmp/linuxdeployqt
 RUN qmake
