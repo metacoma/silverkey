@@ -4,6 +4,7 @@ pipeline {
 
   environment {
     JOB_QT_APP = "silverkey-qt"
+    TMP_DIR = "/tmp/silverkey-build-artifacts"
   }
 
 
@@ -13,7 +14,6 @@ pipeline {
         stage('linux') {
           environment {
               APP_NAME="silverkey"
-              BUILD_DIR="/tmp"
           }
           agent {
             docker {
@@ -21,10 +21,12 @@ pipeline {
               label 'master'
             }
           }
+
           steps {
-            dir("${BUILD_DIR}") {
-                dir("${BUILD_DIR}/${APP_NAME}/DEBIAN") {
-                    writeFile file: 'control', text: '''
+
+            dir('/tmp') {
+                dir("${APP_NAME}") {
+                    writeFile file: 'DEBIAN', text: '''
 Package: silverkey
 Version: 0.0-1
 Section: base
@@ -36,15 +38,21 @@ Description: Silverkey app
  When you need some sunshine, just run this
  small program!
 '''
+                    }
                 }
-            }
-            dir("${BUILD_DIR}/${APP_NAME}/usr/local/bin") {
-              // TODO copy artifacts from build job
-            }
-            dir("${BUIL_DIR}") {
-              dpkg-deb --build ${APP_NAME}
-            }
-        }
-    }
 
+
+                script {
+                    step ([$class: 'CopyArtifact',
+                    projectName: 'silverkey-ui-crossplatform-build-pipeline',
+                    filter: "src/silverkey-qt-linux-x64_86",
+                    target: "/tmp/${APP_NAME}/usr/local/bin/"]);
+                }
+
+                sh "dpkg-deb --build ${APP_NAME} ."
+          }
+        }
+      }
+   }
+  }
 }
