@@ -23,7 +23,7 @@ pipeline {
           }
           steps {
             step([$class: 'WsCleanup'])
-            echo "---- PR build test 7777"
+            echo "---- PR build test 8888"
             checkout scm
             dir('src') {
               sh 'qmake'
@@ -68,7 +68,7 @@ pipeline {
           }
           steps {
             step([$class: 'WsCleanup'])
-            echo "---- PR build test 7777"
+            echo "---- PR build test 8888"
             checkout scm
             dir('src') {
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
