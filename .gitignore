@@ -70,7 +70,7 @@ moc_*.h
 qrc_*.cpp
 ui_*.h
 Makefile*
--*build-*
+build-silverkey*
 
 # QtCreator
 
