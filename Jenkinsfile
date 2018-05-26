@@ -69,6 +69,8 @@ pipeline {
             step([$class: 'WsCleanup'])
             checkout scm
             dir('src') {
+              sh 'brew install cpprestsdk'
+              sh 'brew install boost'
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
               sh '/usr/local/Cellar/qt/5.10.1/bin/macdeployqt ${JOB_QT_APP}.app'
