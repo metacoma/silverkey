@@ -43,6 +43,7 @@ RUN make -j4 -f Makefile
 RUN make install
 ADD https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 RUN chmod +x /usr/local/bin/appimagetool
-ADD http://res.freestockphotos.biz/pictures/16/16161-illustration-of-a-silver-key-pv.png /tmp/silverkey-icon.png
+ADD --chown=root:root http://res.freestockphotos.biz/pictures/16/16161-illustration-of-a-silver-key-pv.png /tmp/silverkey-icon.png
+RUN chmod a+rw /tmp/silverkey-icon.png
 WORKDIR /
 #USER jenkins
