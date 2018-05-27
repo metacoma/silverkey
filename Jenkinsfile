@@ -14,6 +14,7 @@ pipeline {
             STAGE_ARCH = "x64_86"
             STAGE_OS = "linux"
             STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-${STAGE_ARCH}"
+            LINUXDEPLOYMENTQT_BUILD_DIR = "/tmp/linuxdeploymentqt"
           }
           agent {
             dockerfile {
@@ -28,8 +29,10 @@ pipeline {
             dir('src') {
               sh 'qmake'
               sh 'make -j4'
+              sh "chmod +x ${JOB_QT_APP}"
               sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
             }
+
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
