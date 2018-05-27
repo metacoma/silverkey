@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libboost-all-dev                                    \
   wget                                                \
   cmake                                               \
+  libfuse2                                            \
   rapidjson-dev
 
 RUN apt-get install -y libcurl4-nss-dev
