@@ -14,7 +14,7 @@ pipeline {
             STAGE_ARCH = "x64_86"
             STAGE_OS = "linux"
             STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-${STAGE_ARCH}"
-            LINUXDEPLOYQT_BUILD_DIR = "/tmp/linuxdeployqt"
+            LINUXDEPLOYQT_BUILD_DIR = "/opt/linuxdeployqt"
             TMP_FILE = "/tmp/${JOB_QT_APP}"
             SK_ICON_PATH = "/tmp/silverkey-icon.png"
           }
@@ -29,6 +29,8 @@ pipeline {
             step([$class: 'WsCleanup'])
             echo "---- PR build test 8888"
             checkout scm
+
+            sh "sudo mkdir --mode=777 -p ${LINUXDEPLOYQT_BUILD_DIR}"
             dir('src') {
               sh 'qmake'
               sh 'make -j4'
@@ -36,8 +38,10 @@ pipeline {
               sh "cp -v ${JOB_QT_APP} ${TMP_FILE}"
               sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
             }
+            archiveArtifacts "src/${STAGE_ARTIFACT}"
 
-            sh "mkdir -p ${LINUXDEPLOYQT_BUILD_DIR}"
+
+
             sh "cd ${LINUXDEPLOYQT_BUILD_DIR}"
             //dir("${LINUXDEPLOYQT_BUILD_DIR}") {
               sh "mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps"
@@ -52,10 +56,11 @@ Icon=${JOB_QT_APP}
 Categories=Office;
 """
               sh "sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
+              sh "sudo chown -R user:user ${LINUXDEPLOYQT_BUILD_DIR} || :"
             //}
 
-            archiveArtifacts "${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage"
-            archiveArtifacts "src/${STAGE_ARTIFACT}"
+            archiveArtifacts "Silverkey-x86_64.AppImage"
+
           }
         }
         /*
@@ -118,3 +123,4 @@ Categories=Office;
     }
   }
 }
+
