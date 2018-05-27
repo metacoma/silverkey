@@ -17,26 +17,28 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
-    FuzzyLineEdit(parent),
-
-    settingsAcc(new QAction(tr("&Settings"), this))
+    QDialog(parent)
 {
-    setObjectName("skInput");
-    setStyleSheet("#skInput {background:transparent;}");
+    setObjectName("skDialog");
+
+    setStyleSheet("#skDialog {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
 
-
-    setFocusPolicy(Qt::StrongFocus);
-    setFocus();
-    setGeometry(0, 0, 500, 50);
-    setStyleSheet("#skInput {"
+    lineEdit = new FuzzyLineEdit(this);
+    lineEdit->setObjectName("skInput");
+    lineEdit->setFocusPolicy(Qt::StrongFocus);
+    lineEdit->setFocus();
+    lineEdit->setGeometry(0, 0, 500, 50);
+    lineEdit->setStyleSheet(
+                  "#skInput {"
                     "background-color: #f6f6f6;"
                     "border-radius: 10px;"
                     "font: 30pt Courier"
-                  "}");
-    setTextMargins(5, 0, 0, 0);
-    setAttribute(Qt::WA_MacShowFocusRect, 0);
+                  "}"
+                );
+    lineEdit->setTextMargins(5, 0, 0, 0);
+    lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
 
     FuzzyCompleter *completer = new FuzzyCompleter(this);
     FuzzyPopup *popup = new FuzzyPopup();
@@ -51,35 +53,34 @@ MainWindow::MainWindow(QWidget *parent) :
                                         "background-color: #f6f6f6;"
                                         "font: 20pt Courier"
                                       "}");
-    setCompleter(completer);
-    QAbstractItemView *abstractItemView = completer->popup();
+    lineEdit->setCompleter(completer);
+    QAbstractItemView *abstractItemView = lineEdit->completer()->popup();
 
 
-    connect(this, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
+    connect(lineEdit, &QLineEdit::returnPressed, this, &MainWindow::EnterPressed);
     connect(abstractItemView, &QAbstractItemView::clicked, this, &MainWindow::EnterPressed);
     connect(popup, &FuzzyPopup::popupShow, this, &MainWindow::setAngleCorners);
     connect(popup, &FuzzyPopup::popupHide, this, &MainWindow::setRoundedCorners);
 
-    connect(this, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
+    connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
+    connect(lineEdit, &FuzzyLineEdit::hideApp, this, &MainWindow::hide);
 
-    connect(settingsAcc, &QAction::triggered, this, &MainWindow::showSettings);
 
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
 
-    QPoint pos(width()-5, 5);
+    QPoint pos(lineEdit->width()-5, 5);
     QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
-    qApp->sendEvent(this, &e);
+    qApp->sendEvent(lineEdit, &e);
     QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, 0);
-    qApp->sendEvent(this, &f);
+    qApp->sendEvent(lineEdit, &f);
 
     QWidget::setFocusProxy(this);
 
     QPoint globalCursorPos = QCursor::pos();
     int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
     QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
-    ag.setHeight(ag.height()/2);
     setGeometry(
         QStyle::alignedRect(
             Qt::LeftToRight,
@@ -94,14 +95,14 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::handleDataLoad() {
-    if (!this->completer()->isDataSet()) {
+    if (!lineEdit->completer()->isDataSet()) {
         //QMessageBox::StandardButton reply;
         int reply = QMessageBox::question(this,
                                       "Error", "Failed to load data from database",
                                       "Quit", "Open Settings");
         qDebug() << "Reply: " << reply;
         if (reply == 0) {
-            this->setSelectedItem("");
+            lineEdit->setSelectedItem("");
             this->hide();
         } else {
             this->showSettings();
@@ -126,7 +127,7 @@ void MainWindow::getDbData()
         for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
             wordList << QString::fromStdString(iter->first);
         }
-        FuzzyCompleter *c = this->completer();
+        FuzzyCompleter *c = lineEdit->completer();
         c->setUp(wordList);
     } catch (etcd::ClientException e) {
         qDebug() << "Exception";
@@ -141,15 +142,15 @@ void MainWindow::setResultPtr(QString *ptr)
 void MainWindow::lockInput()
 {
     // TODO (dukov) Use gray style here
-    setReadOnly(true);
-    setText("Loading data...");
+    lineEdit->setReadOnly(true);
+    lineEdit->setText("Loading data...");
 }
 
 void MainWindow::unlockInput()
 {
     // TODO (dukov) Restore default style
-    this->setText("");
-    this->setReadOnly(false);
+    lineEdit->setText("");
+    lineEdit->setReadOnly(false);
 
 }
 
@@ -162,7 +163,7 @@ void MainWindow::setData(std::string d) {
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    std::string key = getSelectedItem().toStdString();
+    std::string key = lineEdit->getSelectedItem().toStdString();
     if (data != "") {
         qDebug() << "Data from CLI: " << data.c_str();
         // TODO(dukov) Rework this to have only one connection to etcd
@@ -195,18 +196,9 @@ void MainWindow::EnterPressed() {
     this->hide();
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *e) {
-    if (e->key() == Qt::Key_Escape) {
-        setSelectedItem("");
-        hide();
-    } else {
-        FuzzyLineEdit::keyPressEvent(e);
-    }
-}
-
 void MainWindow::SearchEvent() {
-    FuzzyCompleter *c = completer();
-    c->update(text());
+    FuzzyCompleter *c = lineEdit->completer();
+    c->update(lineEdit->text());
     c->popup()->setCurrentIndex(c->popup()->model()->index(0,0));
 }
 
@@ -216,7 +208,7 @@ void MainWindow::showSettings() {
     qDebug() << "Settings result: " << r;
     if (r == QDialog::Accepted) {
         this->lockInput();
-        this->completer()->cleanUp();
+        lineEdit->completer()->cleanUp();
         this->getDbData();
         this->handleDataLoad();
     }
@@ -241,12 +233,4 @@ void MainWindow::setRoundedCorners() {
                     "font: 30pt Courier"
                   "}");
 }
-
-#ifndef QT_NO_CONTEXTMENU
-void MainWindow::contextMenuEvent(QContextMenuEvent *event) {
-    QMenu menu(this);
-    menu.addAction(settingsAcc);
-    menu.exec(event->globalPos());
-}
-#endif // QT_NO_CONTEXTMENU
 
