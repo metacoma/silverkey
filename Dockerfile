@@ -13,17 +13,10 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libegl1-mesa                                        \
   libcpprest-dev                                      \
   libboost-all-dev                                    \
-  m4                                                  \
-  automake                                            \
-  autotools-dev                                       \
   wget                                                \
   cmake                                               \
-  lzma                                                \
-  lzma-dev                                            \
-  liblzma-dev                                         \
-  libfuse2                                            \
-  libfuse-dev                                         \
   rapidjson-dev
+
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev patchelf
 #USER jenkins
@@ -41,14 +34,13 @@ RUN cmake .
 RUN make
 RUN make install
 WORKDIR /tmp
-RUN git clone https://github.com/bignaux/appimagetool appimagetool
-WORKDIR /tmp/appimagetool
-RUN ./build.sh
-WORKDIR /tmp
 ENV LD_LIBRARY_PATH=/opt/Qt/5.11.0/gcc_64/lib/
 RUN git clone https://github.com/probonopd/linuxdeployqt.git
 WORKDIR /tmp/linuxdeployqt
 RUN qmake
 RUN make -j4 -f Makefile
 RUN make install
+ADD https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+RUN chmod +x /usr/local/bin/appimagetool
+WORKDIR /
 #USER jenkins
