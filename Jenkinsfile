@@ -52,6 +52,7 @@ Categories=Office;
               sh "linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
             }
 
+            archiveArtifacts "${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage"
             archiveArtifacts "src/${STAGE_ARTIFACT}"
           }
         }
