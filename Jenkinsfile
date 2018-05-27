@@ -22,7 +22,7 @@ pipeline {
             dockerfile {
               reuseNode true
               label 'master'
-              args '--privileged'
+              args '--privileged --cap-add SYS_PTRACE'
             }
           }
           steps {
