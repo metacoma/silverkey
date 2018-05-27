@@ -21,6 +21,7 @@ pipeline {
             dockerfile {
               reuseNode true
               label 'master'
+              args '--privileged'
             }
           }
           steps {
