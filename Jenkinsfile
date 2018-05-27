@@ -37,7 +37,9 @@ pipeline {
               sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
             }
 
-            dir("${LINUXDEPLOYQT_BUILD_DIR}") {
+            sh "mkdir -p ${LINUXDEPLOYQT_BUILD_DIR}"
+            sh "cd ${LINUXDEPLOYQT_BUILD_DIR}"
+            //dir("${LINUXDEPLOYQT_BUILD_DIR}") {
               sh "mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps"
               sh "cp -v ${TMP_FILE} usr/bin/${JOB_QT_APP}"
               sh "cp -v ${SK_ICON_PATH} usr/share/icons/hicolor/256x256/apps/silverkey-qt.png"
@@ -50,7 +52,7 @@ Icon=${JOB_QT_APP}
 Categories=Office;
 """
               sh "linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
-            }
+            //}
 
             archiveArtifacts "${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage"
             archiveArtifacts "src/${STAGE_ARTIFACT}"
