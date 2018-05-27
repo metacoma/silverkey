@@ -16,6 +16,7 @@ pipeline {
             STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-${STAGE_ARCH}"
             LINUXDEPLOYQT_BUILD_DIR = "/tmp/linuxdeployqt"
             TMP_FILE = "/tmp/${JOB_QT_APP}"
+            SK_ICON_PATH = "/tmp/silverkey-icon.png"
           }
           agent {
             dockerfile {
@@ -39,6 +40,7 @@ pipeline {
             dir(${LINUXDEPLOYQT_BUILD_DIR}) {
               sh "mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps"
               sh "cp -v ${TMP_FILE} usr/bin/${JOB_QT_APP}"
+              sh "cp -v ${SK_ICON_PATH} usr/share/icons/hicolor/256x256/apps/silverkey-qt.png"
               writeFile file: "usr/share/applications/${JOB_QT_APP}.desktop", """[Desktop Entry]
 Type=Application
 Name=Silverkey
