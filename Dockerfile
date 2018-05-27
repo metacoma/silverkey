@@ -13,8 +13,16 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libegl1-mesa                                        \
   libcpprest-dev                                      \
   libboost-all-dev                                    \
+  m4                                                  \
+  automake                                            \
+  autotools-dev                                       \
   wget                                                \
   cmake                                               \
+  lzma                                                \
+  lzma-dev                                            \
+  liblzma-dev                                         \
+  libfuse2                                            \
+  libfuse-dev                                         \
   rapidjson-dev
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev patchelf
@@ -32,6 +40,10 @@ ADD https://github.com/catchorg/Catch2/releases/download/v2.2.2/catch.hpp /tmp/e
 RUN cmake .
 RUN make
 RUN make install
+WORKDIR /tmp
+RUN git clone https://github.com/bignaux/appimagetool appimagetool
+WORKDIR /tmp/appimagetool
+RUN ./build.sh
 WORKDIR /tmp
 ENV LD_LIBRARY_PATH=/opt/Qt/5.11.0/gcc_64/lib/
 RUN git clone https://github.com/probonopd/linuxdeployqt.git
