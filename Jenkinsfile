@@ -51,7 +51,7 @@ Exec=${JOB_QT_APP}
 Icon=${JOB_QT_APP}
 Categories=Office;
 """
-              sh "linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
+              sh "sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
             //}
 
             archiveArtifacts "${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage"
