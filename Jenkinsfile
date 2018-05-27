@@ -14,7 +14,8 @@ pipeline {
             STAGE_ARCH = "x64_86"
             STAGE_OS = "linux"
             STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-${STAGE_ARCH}"
-            LINUXDEPLOYMENTQT_BUILD_DIR = "/tmp/linuxdeploymentqt"
+            LINUXDEPLOYQT_BUILD_DIR = "/tmp/linuxdeployqt"
+            TMP_FILE = "/tmp/${JOB_QT_APP}"
           }
           agent {
             dockerfile {
@@ -30,7 +31,22 @@ pipeline {
               sh 'qmake'
               sh 'make -j4'
               sh "chmod +x ${JOB_QT_APP}"
+              sh "cp -v ${JOB_QT_APP} ${TMP_FILE}"
               sh "mv -v ${JOB_QT_APP} ${STAGE_ARTIFACT}"
+            }
+
+            dir(${LINUXDEPLOYQT_BUILD_DIR}) {
+              sh "mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps"
+              sh "cp -v ${TMP_FILE} usr/bin/${JOB_QT_APP}"
+              writeFile file: "usr/share/applications/${JOB_QT_APP}.desktop", """[Desktop Entry]
+Type=Application
+Name=Silverkey
+Comment=The best Qt Application Ever
+Exec=${JOB_QT_APP}
+Icon=${JOB_QT_APP}
+Categories=Office;
+"""
+              sh "linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
             }
 
             archiveArtifacts "src/${STAGE_ARTIFACT}"
