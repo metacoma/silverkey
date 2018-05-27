@@ -36,7 +36,10 @@ public slots:
     void handleDataLoad();
 
 private:
+    const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
+    QPushButton *settingsButton;
+    QPushButton *addDataButton;
     void lockInput();
     void unlockInput();
     Q_OBJECT
