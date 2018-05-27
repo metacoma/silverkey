@@ -31,10 +31,7 @@ void show_window(int argc, char *argv[], QString *res, int fd = 0, bool child = 
     if (res) {
         w.setResultPtr(res);
     }
-    if (argc == 2) {
-        std::string d(argv[1]);
-        w.setData(d);
-    }
+
     w.setAttribute(Qt::WA_DeleteOnClose);
 
     w.show();
@@ -45,17 +42,15 @@ void show_window(int argc, char *argv[], QString *res, int fd = 0, bool child = 
     qDebug() << a.exec();
 }
 
-void type_text(int dbValLen, char dbVal[256]) {
+void type_text(std::string dbVal) {
 
     qDebug() << "end of application workflow";
 
-    if (dbValLen) {
-        qDebug() << dbVal;
-
-        std::string value(dbVal);
+    if (dbVal.length()) {
+        qDebug() << dbVal.c_str();
 
         RobotHelper helper;
-        auto converted = helper.convert(value);
+        auto converted = helper.convert(dbVal);
         const char* c_converted = converted.c_str();
 
         Keyboard keyboard;
@@ -83,13 +78,15 @@ void main_with_fork(int argc, char *argv[]) {
         close(fd[1]);
         wait(NULL);
 
-        if (argc == 1) {
-            char dbVal[256];
-            int dbValLen;
-            memset(&dbVal, 0, sizeof(dbVal));
-            dbValLen = read(fd[0], &dbVal, sizeof(dbVal));
-            type_text(dbValLen, dbVal);
+        std::string dbVal;
+        char ch;
+        while (read(fd[0], &ch, 1) > 0)
+        {
+            if (ch != 0)
+                dbVal.push_back(ch);
+
         }
+        type_text(dbVal);
         close(fd[0]);
     }
 }
@@ -104,7 +101,7 @@ int main(int argc, char *argv[])
 #else
     QString res = "";
     show_window(argc, argv, &res);
-    type_text(res.length(), (char *)res.toUtf8().constData());
+    type_text(res.toStdString());
 #endif // SK_UI_FORK
     return EXIT_SUCCESS;
 }
