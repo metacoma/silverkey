@@ -16,13 +16,15 @@
 #include <QFutureWatcher>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QClipboard>
+#include <QMimeData>
 
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
     setObjectName("skDialog");
 
-    setStyleSheet("#skDialog {background:transparent;}");
+    //setStyleSheet("#skDialog {background:transparent;}");
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
 
@@ -72,12 +74,23 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit->move(settingsButton->x() + settingsButton->width() + widgetPadding,
                    settingsButton->y());
 
-    int x = settingsButton->x() +
-            settingsButton->width() +
-            widgetPadding +
+    int x = lineEdit->x() +
             lineEdit->width() +
             widgetPadding;
     addDataButton->move(x, settingsButton->y());
+
+
+    clipboardData = new QTextEdit(this);
+    clipboardData->setObjectName("clipboardData");
+    clipboardData->setGeometry(x, settingsButton->y(), 500, 300);
+    clipboardData->setStyleSheet(
+                  "#clipboardData {"
+                    "background-color: #f6f6f6;"
+                    "border-radius: 10px;"
+                    "font: 20pt Courier"
+                  "}"
+                );
+    clipboardData->hide();
 
     FuzzyCompleter *completer = new FuzzyCompleter(this);
     FuzzyPopup *popup = new FuzzyPopup();
@@ -102,9 +115,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(popup, &FuzzyPopup::popupHide, this, &MainWindow::setRoundedCorners);
 
     connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
-    connect(lineEdit, &FuzzyLineEdit::hideApp, this, &MainWindow::hide);
+    connect(lineEdit, &FuzzyLineEdit::hideApp, this, &MainWindow::escapePressed);
 
     connect(settingsButton, &QPushButton::clicked, this, &MainWindow::showSettings);
+    connect(addDataButton, &QPushButton::clicked, this, &MainWindow::showTextEdit);
 
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
@@ -210,23 +224,24 @@ void MainWindow::setData(std::string d) {
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    std::string key = lineEdit->getSelectedItem().toStdString();
-    if (data != "") {
-        qDebug() << "Data from CLI: " << data.c_str();
+    if (clipboardData->toPlainText() != "") {
+        std::string key = lineEdit->text().toStdString();
+        qDebug() << "Data to DB: " << clipboardData->toPlainText();
         // TODO(dukov) Rework this to have only one connection to etcd
         QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
         etcd::Client<example::RapidReply> etcd_client(
                     settings.value("server", "nseha.linkpc.net").toString().toStdString(),
                     settings.value("port", 22379).toInt());
-        example::RapidReply reply = etcd_client.Set(key, data);
+        example::RapidReply reply = etcd_client.Set(key, clipboardData->toPlainText().toStdString());
     } else {
+        std::string key = lineEdit->getSelectedItem().toStdString();
         std::string val = "";
         if (kvpairs.count(key)) {
             val = kvpairs[key];
         }
         qDebug() << "Hide action, value is " << QString(val.c_str());
 #ifdef Q_OS_MACOS
-        write(wfd, val.c_str(), std::strlen(val.c_str()));
+        write(wfd, val.c_str(), val.length()+1);
 #endif
         if (resultPtr) {
             *resultPtr = QString::fromStdString(val);
@@ -235,6 +250,12 @@ void MainWindow::hideEvent(QHideEvent *e) {
     e->accept();
     qApp->closeAllWindows();
     qApp->exit();
+}
+
+void MainWindow::escapePressed() {
+    clipboardData->setText("");
+    lineEdit->setSelectedItem("");
+    this->hide();
 }
 
 void MainWindow::EnterPressed() {
@@ -261,9 +282,27 @@ void MainWindow::showSettings() {
     }
 }
 
+void MainWindow::showTextEdit() {
+    addDataButton->hide();
+    clipboardData->show();
+    int w = settingsButton->width() +
+            widgetPadding +
+            lineEdit->width() +
+            widgetPadding +
+            clipboardData->width();
+    resize(w,clipboardData->height());
+
+    const QClipboard *cb = QApplication::clipboard();
+    const QMimeData *md = cb->mimeData();
+    if (md->hasText()) {
+        clipboardData->setText(md->text());
+    }
+
+}
+
 void MainWindow::setAngleCorners() {
     // TODO(dukov) get rid of this in favor of dynamic styles
-    setStyleSheet("#skInput {"
+    lineEdit->setStyleSheet("#skInput {"
                     "background-color: #f6f6f6;"
                     "border-radius: 10px;"
                     "border-bottom-right-radius: 0;"
@@ -274,7 +313,7 @@ void MainWindow::setAngleCorners() {
 
 void MainWindow::setRoundedCorners() {
     // TODO(dukov) get rid of this in favor of dynamic styles
-    setStyleSheet("#skInput {"
+    lineEdit->setStyleSheet("#skInput {"
                     "background-color: #f6f6f6;"
                     "border-radius: 10px;"
                     "font: 30pt Courier"

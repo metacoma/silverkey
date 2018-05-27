@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDialog>
+#include <QTextEdit>
 #include "fuzzycompleter.h"
 
 #define KEYBOARD_SPEED 20
@@ -29,17 +30,22 @@ public:
     void setData(std::string d);
     void getDbData();
     void setResultPtr(QString *ptr);
+    void showTextEdit();
+
 public slots:
+    void escapePressed();
     void showSettings();
     void setAngleCorners();
     void setRoundedCorners();
     void handleDataLoad();
+
 
 private:
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
     QPushButton *addDataButton;
+    QTextEdit *clipboardData;
     void lockInput();
     void unlockInput();
     Q_OBJECT
