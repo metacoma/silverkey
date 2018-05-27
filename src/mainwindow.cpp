@@ -15,6 +15,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QMessageBox>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
@@ -39,6 +40,44 @@ MainWindow::MainWindow(QWidget *parent) :
                 );
     lineEdit->setTextMargins(5, 0, 0, 0);
     lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+
+    settingsButton = new QPushButton("",this);
+    settingsButton->setObjectName("settings");
+    settingsButton->setStyleSheet("#settings {"
+                                  "border-image:url(:/images/if_cog_35873.png);"
+                                  "}"
+                                  "#settings:pressed {"
+                                  "border-image:url(:/images/if_cog_35873_pressed.png);"
+                                  "}");
+    settingsButton->resize(QImage(":/images/if_cog_35873.png").size());
+    settingsButton->setGeometry(
+                QStyle::alignedRect(
+                    Qt::LeftToRight,
+                    Qt::AlignTop|Qt::AlignLeft,
+                    settingsButton->size(),
+                    this->geometry()
+                ));
+
+    addDataButton = new QPushButton("", this);
+    addDataButton->setObjectName("addData");
+    addDataButton->setStyleSheet("#addData {"
+                                 "border-image:url(:/images/if_edit_add_7710.png);"
+                                 "}"
+                                 "#addData:pressed {"
+                                 "border-image:url(:/images/if_edit_add_7710_pressed.png);"
+                                 "}");
+    addDataButton->resize(QImage(":/images/if_edit_add_7710.png").size());
+
+
+    lineEdit->move(settingsButton->x() + settingsButton->width() + widgetPadding,
+                   settingsButton->y());
+
+    int x = settingsButton->x() +
+            settingsButton->width() +
+            widgetPadding +
+            lineEdit->width() +
+            widgetPadding;
+    addDataButton->move(x, settingsButton->y());
 
     FuzzyCompleter *completer = new FuzzyCompleter(this);
     FuzzyPopup *popup = new FuzzyPopup();
@@ -65,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(lineEdit, &QLineEdit::textEdited, this, &MainWindow::SearchEvent);
     connect(lineEdit, &FuzzyLineEdit::hideApp, this, &MainWindow::hide);
 
+    connect(settingsButton, &QPushButton::clicked, this, &MainWindow::showSettings);
 
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
@@ -80,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QPoint globalCursorPos = QCursor::pos();
     int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
+    qDebug() << "Screen " << mouseScreen;
     QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
     setGeometry(
         QStyle::alignedRect(
@@ -91,6 +132,12 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     lockInput();
+    int w = settingsButton->width() +
+            widgetPadding +
+            lineEdit->width() +
+            widgetPadding +
+            addDataButton->width();
+    resize(w,lineEdit->height());
     registerService();
 }
 

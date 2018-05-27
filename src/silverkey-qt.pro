@@ -69,3 +69,6 @@ windows {
     DEFINES += ROBOT_OS_WIN
 }
 
+RESOURCES += \
+    skimages.qrc
+
