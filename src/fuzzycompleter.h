@@ -70,6 +70,12 @@ public:
 public Q_SLOTS:
     void setSelectedItem(const QString &value);
 
+Q_SIGNALS:
+    void hideApp();
+
+protected:
+    void keyPressEvent(QKeyEvent *e);
+
 private:
     FuzzyCompleter *c;
     QString selectedItem;

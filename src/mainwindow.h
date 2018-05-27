@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDialog>
 #include "fuzzycompleter.h"
 
 #define KEYBOARD_SPEED 20
@@ -15,7 +16,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public FuzzyLineEdit
+class MainWindow : public QDialog
 {
 
 public:
@@ -35,20 +36,15 @@ public slots:
     void handleDataLoad();
 
 private:
+    FuzzyLineEdit *lineEdit;
     void lockInput();
     void unlockInput();
     Q_OBJECT
     std::map<std::string, std::string> kvpairs;
     int wfd;
-    QAction *settingsAcc;
     std::string data = "";
     QString *resultPtr;
 
-protected:
-#ifndef QT_NO_CONTEXTMENU
-    void contextMenuEvent(QContextMenuEvent *event) override;
-#endif // QT_NO_CONTEXTMENU
-    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // MAINWINDOW_H

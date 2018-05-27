@@ -2,6 +2,7 @@
 #include <QLineEdit>
 #include <QCompleter>
 #include <QDebug>
+#include <QKeyEvent>
 
 
 int compareStr(const std::string& s, const std::string& t) {
@@ -153,5 +154,14 @@ void FuzzyLineEdit::setCompleter(FuzzyCompleter *completer) {
                      this, SLOT(setSelectedItem(QString)));
     QObject::connect(this->completer(), SIGNAL(highlighted(QString)),
                      this, SLOT(setSelectedItem(QString)));
+}
+
+void FuzzyLineEdit::keyPressEvent(QKeyEvent *e) {
+    if (e->key() == Qt::Key_Escape) {
+        setSelectedItem("");
+        emit hideApp();
+    } else {
+        QLineEdit::keyPressEvent(e);
+    }
 }
 
