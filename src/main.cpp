@@ -13,18 +13,16 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QClipboard>
 ROBOT_NS_USE_ALL;
 
 
-void show_window(int argc, char *argv[], QString *res, int fd = 0, bool child = false) {
+void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
     QApplication a(argc, argv);
     MainWindow w;
 
     if (child) {
         w.setWriteFd(fd);
-    }
-    if (res) {
-        w.setResultPtr(res);
     }
 
     w.setAttribute(Qt::WA_DeleteOnClose);
@@ -37,6 +35,7 @@ void show_window(int argc, char *argv[], QString *res, int fd = 0, bool child = 
     qDebug() << a.exec();
 }
 
+#ifdef SK_UI_FORK
 void type_text(std::string dbVal) {
 
     qDebug() << "end of application workflow";
@@ -44,20 +43,13 @@ void type_text(std::string dbVal) {
     if (dbVal.length()) {
         qDebug() << dbVal.c_str();
 
-        RobotHelper helper;
-        auto converted = helper.convert(dbVal);
-        const char* c_converted = converted.c_str();
-
         Keyboard keyboard;
 
-        keyboard.AutoDelay.Min = 2;
-        keyboard.AutoDelay.Max = 3;
-
-        keyboard.Click (c_converted);
-        //This one easily misses some key presses. Need to get rid of it asap.
-        //Does not support multiline properly eather.
+        sleep(1);
+        keyboard.Click("$(v)");
     }
 }
+#endif
 
 #ifdef SK_UI_FORK
 void main_with_fork(int argc, char *argv[]) {
@@ -67,7 +59,7 @@ void main_with_fork(int argc, char *argv[]) {
 
     if (pid == 0) {
         close(fd[0]);
-        show_window(argc, argv, NULL, fd[1], true);
+        show_window(argc, argv, fd[1], true);
         close(fd[1]);
     } else {
         close(fd[1]);
@@ -94,9 +86,7 @@ int main(int argc, char *argv[])
 #ifdef SK_UI_FORK
     main_with_fork(argc, argv);
 #else
-    QString res = "";
-    show_window(argc, argv, &res);
-    type_text(res.toStdString());
+    show_window(argc, argv);
 #endif // SK_UI_FORK
     return EXIT_SUCCESS;
 }
