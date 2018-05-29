@@ -119,6 +119,7 @@ EOF
             dir('src') {
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
+              sh "chmod +x ${JOB_QT_APP}"
               sh '/usr/local/Cellar/qt/5.10.1/bin/macdeployqt ${JOB_QT_APP}.app'
 
               archiveArtifacts "${STAGE_ARTIFACT}"
