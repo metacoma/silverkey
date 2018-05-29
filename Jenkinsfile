@@ -127,6 +127,28 @@ EOF
         }
       }
     }
+
+  }
+  stage('Publish latest artifacts') {
+    agent {
+      dockerfile {
+        reuseNode true
+        label 'master'
+        args "--privileged --cap-add SYS_PTRACE -v /opt/silverkey:/opt/silverkey"
+      }
+    }
+    steps {
+      sh '''
+        find /var/jenkins_home
+      '''
+      echo ${env.BUILD_NUMBER}
+      sh ""
+        find /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}
+      """
+      sh """
+        find /opt/silverkey
+      """
+    }
   }
   post {
     success {
