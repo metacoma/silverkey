@@ -30,7 +30,7 @@ pipeline {
             echo "---- PR build test 8888"
             checkout scm
 
-            sh "sudo mkdir --mode=777 -p ${LINUXDEPLOYQT_BUILD_DIR}"
+
             dir('src') {
               sh 'qmake'
               sh 'make -j4'
@@ -42,24 +42,36 @@ pipeline {
 
 
 
-            sh "cd ${LINUXDEPLOYQT_BUILD_DIR}"
+
+
             //dir("${LINUXDEPLOYQT_BUILD_DIR}") {
-              sh "mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps"
-              sh "cp -v ${TMP_FILE} usr/bin/${JOB_QT_APP}"
-              sh "cp -v ${SK_ICON_PATH} usr/share/icons/hicolor/256x256/apps/silverkey-qt.png"
-              writeFile file: "usr/share/applications/${JOB_QT_APP}.desktop", text: """[Desktop Entry]
+              sh """
+              sudo mkdir --mode=777 -p "${LINUXDEPLOYQT_BUILD_DIR}"
+              cd "${LINUXDEPLOYQT_BUILD_DIR}"
+              pwd
+              id
+              ls -ltr "${LINUXDEPLOYQT_BUILD_DIR}"
+              mkdir -p usr/bin usr/lib usr/share/applications usr/share/icons/hicolor/256x256/apps
+              cp -v "${TMP_FILE}" "usr/bin/${JOB_QT_APP}"
+              cp -v "${SK_ICON_PATH}" usr/share/icons/hicolor/256x256/apps/silverkey-qt.png
+              cat<<EOF > "usr/share/applications/${JOB_QT_APP}.desktop"
+[Desktop Entry]
 Type=Application
 Name=Silverkey
 Comment=The best Qt Application Ever
 Exec=${JOB_QT_APP}
 Icon=${JOB_QT_APP}
 Categories=Office;
-"""
-              sh "sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage"
-              sh "sudo chown -R user:user ${LINUXDEPLOYQT_BUILD_DIR} || :"
-            //}
+EOF
+              sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage
+              sudo chown user: ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage
+              ls -ltr ${env.WORKSPACE}/
+              cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${env.WORKSPACE}/
+             """
+
 
             archiveArtifacts "Silverkey-x86_64.AppImage"
+
 
           }
         }
@@ -123,4 +135,5 @@ Categories=Office;
     }
   }
 }
+
 
