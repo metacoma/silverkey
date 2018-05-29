@@ -132,6 +132,7 @@ EOF
   stage('Publish latest artifacts') {
     agent {
       dockerfile {
+        filename 'publish-artifacts.Dockerfile'
         reuseNode true
         label 'master'
         args "--privileged --cap-add SYS_PTRACE -v /opt/silverkey:/opt/silverkey"
@@ -142,7 +143,7 @@ EOF
         find /var/jenkins_home
       '''
       echo ${env.BUILD_NUMBER}
-      sh ""
+      sh """
         find /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}
       """
       sh """
