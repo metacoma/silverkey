@@ -16,13 +16,15 @@ pipeline {
             STAGE_ARTIFACT = "${JOB_QT_APP}-${STAGE_OS}-${STAGE_ARCH}"
             LINUXDEPLOYQT_BUILD_DIR = "/opt/linuxdeployqt"
             TMP_FILE = "/tmp/${JOB_QT_APP}"
+            ARTIFACT_SHARE_HOST_DIR = "/opt/silverkey"
+            ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
             SK_ICON_PATH = "/tmp/silverkey-icon.png"
           }
           agent {
             dockerfile {
               reuseNode true
               label 'master'
-              args '--privileged --cap-add SYS_PTRACE'
+              args "--privileged --cap-add SYS_PTRACE -v /opt/silverkey:/opt/silverkey"
             }
           }
           steps {
@@ -67,6 +69,8 @@ EOF
               sudo chown user: ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage
               ls -ltr ${env.WORKSPACE}/
               cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${env.WORKSPACE}/
+              sudo cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-linux.run
+
              """
 
 
@@ -135,5 +139,3 @@ EOF
     }
   }
 }
-
-
