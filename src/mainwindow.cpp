@@ -3,10 +3,13 @@
 #include "fuzzycompleter.h"
 #include "sksettings.h"
 #include "hotkeys.h"
-
+#include <Robot.h>
 #ifdef Q_OS_MACOS
 # include <unistd.h>
 # include <sys/wait.h>
+#endif
+#ifdef Q_OS_UNIX
+# include <unistd.h>
 #endif
 
 #include <QKeyEvent>
@@ -21,6 +24,8 @@
 #include <QPushButton>
 #include <QClipboard>
 #include <QMimeData>
+ROBOT_NS_USE_ALL;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
@@ -276,11 +281,6 @@ void MainWindow::getDbData()
 
 }
 
-void MainWindow::setResultPtr(QString *ptr)
-{
-    resultPtr = ptr;
-}
-
 void MainWindow::lockInput()
 {
     // TODO (dukov) Use gray style here
@@ -310,10 +310,27 @@ void MainWindow::hideEvent(QHideEvent *e) {
 #ifdef Q_OS_MACOS
         write(wfd, data.toStdString().c_str(), data.toStdString().length()+1);
 #endif
-        if (resultPtr) {
-            *resultPtr = data;
+        if (data != "") {
+
+            QClipboard *cb = QApplication::clipboard();
+            cb->setText(data);
+            if (cb->supportsSelection()) {
+                cb->setText(data, QClipboard::Selection);
+                qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
+            }
+
+#ifndef SK_UI_FORK
+            Keyboard keyboard;
+
+#ifdef Q_OS_UNIX
+            sleep(1);
+#endif
+            keyboard.Click("+{INSERT}");
+#endif
         }
     }
+
+
     e->accept();
     qApp->closeAllWindows();
     qApp->exit();
