@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,14 +28,16 @@ SOURCES += \
         mainwindow.cpp \
         fuzzycompleter.cpp \
         sksettings.cpp \
-        robothelper.cpp
+        robothelper.cpp \
+    requester.cpp
 
 HEADERS += \
         mainwindow.h \
         fuzzycompleter.h \
         sksettings.h \
         robothelper.h \
-        hotkeys.h
+        hotkeys.h \
+    requester.h
 
 FORMS += \
         mainwindow.ui \

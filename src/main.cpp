@@ -20,11 +20,6 @@ void show_window(int argc, char *argv[], QString *res, int fd = 0, bool child = 
     QApplication a(argc, argv);
     MainWindow w;
 
-    QFutureWatcher<void> watcher;
-    QObject::connect(&watcher, SIGNAL(finished()), &w, SLOT(handleDataLoad()));
-    QFuture<void> future = QtConcurrent::run(&w, &MainWindow::getDbData);
-    watcher.setFuture(future);
-
     if (child) {
         w.setWriteFd(fd);
     }

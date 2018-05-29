@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QTextEdit>
 #include "fuzzycompleter.h"
+#include "requester.h"
 
 #define KEYBOARD_SPEED 20
 
@@ -27,10 +28,18 @@ public:
     void SearchEvent();
     void hideEvent(QHideEvent *e);
     void setWriteFd(int fd);
-    void setData(std::string d);
+    void setData(QString d);
     void getDbData();
     void setResultPtr(QString *ptr);
     void showTextEdit();
+    static QStringList getKeys(const QJsonObject &o);
+    void getVal(QString key);
+    void setVal(QString key, QString val);
+
+
+Q_SIGNALS:
+    void dataLoaded();
+    void gotReplyFromDB();
 
 public slots:
     void escapePressed();
@@ -38,6 +47,7 @@ public slots:
     void setAngleCorners();
     void setRoundedCorners();
     void handleDataLoad();
+    void doHide();
 
 
 private:
@@ -46,12 +56,13 @@ private:
     QPushButton *settingsButton;
     QPushButton *addDataButton;
     QTextEdit *clipboardData;
+    Requester *httpClient;
     void lockInput();
     void unlockInput();
     Q_OBJECT
-    std::map<std::string, std::string> kvpairs;
+    QStringList wordlist;
     int wfd;
-    std::string data = "";
+    QString data = "";
     QString *resultPtr;
 
 };
