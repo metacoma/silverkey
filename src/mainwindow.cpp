@@ -240,6 +240,8 @@ void MainWindow::setVal(QString key, QString val) {
     } else {
         path = "v2/keys" + key;
     }
+
+    val.replace(QString(";"), QString("%3B"));
     httpClient->sendRequest(path,
                             getData,
                             errData,

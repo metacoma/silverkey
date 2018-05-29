@@ -56,7 +56,8 @@ void Requester::sendRequest(const QString &apiStr,
     } case Type::PUT: {
         QByteArray putDataByteArray;
         putDataByteArray.append(data);
-        reply = manager->put(request, putDataByteArray);
+        qDebug() << "PUT data" << putDataByteArray;
+        reply = manager->put(request, putDataByteArray + ";");
         break;
     } default:
         reply = nullptr;
