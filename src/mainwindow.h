@@ -30,7 +30,6 @@ public:
     void setWriteFd(int fd);
     void setData(QString d);
     void getDbData();
-    void setResultPtr(QString *ptr);
     void showTextEdit();
     static QStringList getKeys(const QJsonObject &o);
     void getVal(QString key);
@@ -64,8 +63,6 @@ private:
     QStringList wordlist;
     int wfd;
     QString data = "";
-    QString *resultPtr;
-
 };
 
 #endif // MAINWINDOW_H
