@@ -85,8 +85,8 @@ FuzzyCompleter::FuzzyCompleter(QObject *parent)
 }
 
 void FuzzyCompleter::cleanUp() {
-    QStringList np;
-    m_model->setStringList(np);
+    qDebug() << "Model cleanup executed";
+    m_model->setStringList(QStringList{});
     dataSet = false;
 }
 

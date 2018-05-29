@@ -25,11 +25,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     httpClient = new Requester(this);
-    httpClient->initRequester(settings.value("server", "nseha.linkpc.net").toString(),
-                              settings.value("port", 22379).toInt(),
-                              nullptr);
+    connectDB();
 
     setObjectName("skDialog");
 
@@ -249,6 +246,14 @@ void MainWindow::setVal(QString key, QString val) {
                             "value=" + val);
 }
 
+void MainWindow::connectDB()
+{
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    httpClient->initRequester(settings.value("server", "nseha.linkpc.net").toString(),
+                              settings.value("port", 22379).toInt(),
+                              nullptr);
+}
+
 
 void MainWindow::getDbData()
 {
@@ -348,6 +353,7 @@ void MainWindow::showSettings() {
     if (r == QDialog::Accepted) {
         this->lockInput();
         lineEdit->completer()->cleanUp();
+        this->connectDB();
         this->getDbData();
     }
 }
