@@ -69,7 +69,7 @@ EOF
               sudo chown user: ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage
               ls -ltr ${env.WORKSPACE}/
               cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${env.WORKSPACE}/
-              sudo cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-linux.run
+              sudo cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-linux.run
 
              """
 
