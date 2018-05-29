@@ -35,6 +35,7 @@ public:
     static QStringList getKeys(const QJsonObject &o);
     void getVal(QString key);
     void setVal(QString key, QString val);
+    void connectDB();
 
 
 Q_SIGNALS:
