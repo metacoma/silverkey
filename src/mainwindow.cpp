@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "etcd.hpp"
-#include "rapid_reply.hpp"
 #include "fuzzycompleter.h"
 #include "sksettings.h"
 #include "hotkeys.h"
+
+#ifdef Q_OS_MACOS
+# include <unistd.h>
+# include <sys/wait.h>
+#endif
 
 #include <QKeyEvent>
 #include <QDebug>
@@ -22,6 +25,12 @@
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    httpClient = new Requester(this);
+    httpClient->initRequester(settings.value("server", "nseha.linkpc.net").toString(),
+                              settings.value("port", 22379).toInt(),
+                              nullptr);
+
     setObjectName("skDialog");
 
     //setStyleSheet("#skDialog {background:transparent;}");
@@ -42,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent) :
                 );
     lineEdit->setTextMargins(5, 0, 0, 0);
     lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+
+    getDbData();
+    connect(this, &MainWindow::dataLoaded, this, &MainWindow::handleDataLoad);
+    connect(this, &MainWindow::gotReplyFromDB, this, &MainWindow::doHide);
 
     settingsButton = new QPushButton("",this);
     settingsButton->setObjectName("settings");
@@ -155,6 +168,19 @@ MainWindow::MainWindow(QWidget *parent) :
     registerService();
 }
 
+QStringList MainWindow::getKeys(const QJsonObject &o) {
+    QStringList res;
+    if (o.value("dir") == QJsonValue::Undefined) {
+        res.append(o.value("key").toString());
+    } else {
+        QJsonArray nodes = o.value("nodes").toArray();
+        foreach(const QJsonValue &n, nodes) {
+            res += getKeys(n.toObject());
+        }
+    }
+    return res;
+}
+
 void MainWindow::handleDataLoad() {
     if (!lineEdit->completer()->isDataSet()) {
         //QMessageBox::StandardButton reply;
@@ -174,25 +200,73 @@ void MainWindow::handleDataLoad() {
 
 }
 
+void MainWindow::doHide()
+{
+    qDebug() << "Hiding window";
+    this->hide();
+}
+
+void MainWindow::getVal(QString key) {
+    qDebug() << "Getting value from DB";
+    Requester::handleFunc getData = [this](const QJsonObject &o) {
+        this->data = o.value("node").toObject().value("value").toString();
+        qDebug() << "Got data " << this->data;
+        emit this->gotReplyFromDB();
+    };
+
+    Requester::handleFunc errData = [this](const QJsonObject &o) {
+        qDebug() << "Error retrieving key";
+        emit this->gotReplyFromDB();
+    };
+
+
+    httpClient->sendRequest("v2/keys" + key, getData, errData);
+}
+
+void MainWindow::setVal(QString key, QString val) {
+    qDebug() << "Setting value to DB" << val;
+    Requester::handleFunc getData = [this](const QJsonObject &o) {
+        QString resp = o.value("node").toObject().value("value").toString();
+        qDebug() << "Successfully written data"<< resp;
+        emit this->gotReplyFromDB();
+    };
+
+    Requester::handleFunc errData = [](const QJsonObject &o) {
+        qDebug() << "Error writing data";
+    };
+    QString path;
+    if (key[0] != '/') {
+        path = "v2/keys/" + key;
+    } else {
+        path = "v2/keys" + key;
+    }
+    httpClient->sendRequest(path,
+                            getData,
+                            errData,
+                            Requester::Type::PUT,
+                            "value=" + val);
+}
+
+
 void MainWindow::getDbData()
 {
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    QStringList wordList;
+    Requester::handleFunc getData = [this](const QJsonObject &o){
+        this->wordlist = MainWindow::getKeys(o.value("node").toObject());
+        qDebug() << "Got obj" << this->wordlist.join(" ");
+        FuzzyCompleter *c = this->lineEdit->completer();
+        c->setUp(this->wordlist);
+        emit this->dataLoaded();
+    };
+    Requester::handleFunc errData = [this](const QJsonObject &o){
+        qDebug() << "Got err obj";
+        emit this->dataLoaded();
+    };
 
-    try {
-        etcd::Client<example::RapidReply> etcd_client(
-                settings.value("server", "nseha.linkpc.net").toString().toStdString(),
-                settings.value("port", 22379).toInt());
-        example::RapidReply reply = etcd_client.GetAll("/");
-        reply.GetAll(kvpairs);
-        for (auto iter = kvpairs.begin(); iter != kvpairs.end(); ++iter) {
-            wordList << QString::fromStdString(iter->first);
-        }
-        FuzzyCompleter *c = lineEdit->completer();
-        c->setUp(wordList);
-    } catch (etcd::ClientException e) {
-        qDebug() << "Exception";
-    }
+    httpClient->sendRequest(
+                "v2/keys/?recursive=true&sorted=true",
+                getData,
+                errData);
+
 }
 
 void MainWindow::setResultPtr(QString *ptr)
@@ -219,32 +293,18 @@ void MainWindow::setWriteFd(int fd){
     wfd = fd;
 }
 
-void MainWindow::setData(std::string d) {
+void MainWindow::setData(QString d) {
     data = d;
 }
 
 void MainWindow::hideEvent(QHideEvent *e) {
-    if (clipboardData->toPlainText() != "") {
-        std::string key = lineEdit->text().toStdString();
-        qDebug() << "Data to DB: " << clipboardData->toPlainText();
-        // TODO(dukov) Rework this to have only one connection to etcd
-        QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-        etcd::Client<example::RapidReply> etcd_client(
-                    settings.value("server", "nseha.linkpc.net").toString().toStdString(),
-                    settings.value("port", 22379).toInt());
-        example::RapidReply reply = etcd_client.Set(key, clipboardData->toPlainText().toStdString());
-    } else {
-        std::string key = lineEdit->getSelectedItem().toStdString();
-        std::string val = "";
-        if (kvpairs.count(key)) {
-            val = kvpairs[key];
-        }
-        qDebug() << "Hide action, value is " << QString(val.c_str());
+    if (clipboardData->toPlainText() == "") {
+        qDebug() << "Hide action, value is " << data;
 #ifdef Q_OS_MACOS
-        write(wfd, val.c_str(), val.length()+1);
+        write(wfd, data.toStdString().c_str(), data.toStdString().length()+1);
 #endif
         if (resultPtr) {
-            *resultPtr = QString::fromStdString(val);
+            *resultPtr = data;
         }
     }
     e->accept();
@@ -261,7 +321,16 @@ void MainWindow::escapePressed() {
 void MainWindow::EnterPressed() {
     //this->~MainWindow();
     qDebug() << "EnterPressed";
-    this->hide();
+
+
+    if (clipboardData->toPlainText() != "") {
+        QString key = lineEdit->text();
+        setVal(key, clipboardData->toPlainText());
+    } else {
+        QString key = lineEdit->getSelectedItem();
+        getVal(key);
+    }
+
 }
 
 void MainWindow::SearchEvent() {
@@ -273,12 +342,11 @@ void MainWindow::SearchEvent() {
 void MainWindow::showSettings() {
     SKSettings s;
     int r = s.exec();
-    qDebug() << "Settings result: " << r;
+    qDebug() << "Settings result: " << r << QDialog::Accepted;
     if (r == QDialog::Accepted) {
         this->lockInput();
         lineEdit->completer()->cleanUp();
         this->getDbData();
-        this->handleDataLoad();
     }
 }
 
