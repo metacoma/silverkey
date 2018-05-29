@@ -127,28 +127,28 @@ EOF
         }
       }
     }
-
-  }
-  stage('Publish latest artifacts') {
-    agent {
-      dockerfile {
-        filename 'publish-artifacts.Dockerfile'
-        reuseNode true
-        label 'master'
-        args "--privileged --cap-add SYS_PTRACE -v /opt/silverkey:/opt/silverkey"
+    stage('Publish latest artifacts') {
+      environment {
+        ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
       }
-    }
-    steps {
-      sh '''
-        find /var/jenkins_home
-      '''
-      echo ${env.BUILD_NUMBER}
-      sh """
-        find /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}
-      """
-      sh """
-        find /opt/silverkey
-      """
+      agent {
+        dockerfile {
+          filename 'publish-artifacts.Dockerfile'
+          reuseNode true
+          label 'master'
+          args "--privileged --cap-add SYS_PTRACE -v /opt/silverkey:/opt/silverkey"
+        }
+      }
+      steps {
+        sh """
+          sudo cp /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-linux.run
+
+        """
+        sh """
+          cd /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/
+          sudo zip -r ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-osx.zip silverkey-qt.app
+        """
+      }
     }
   }
   post {
