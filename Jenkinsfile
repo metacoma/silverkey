@@ -69,8 +69,6 @@ EOF
               sudo chown user: ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage
               ls -ltr ${env.WORKSPACE}/
               cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${env.WORKSPACE}/
-              sudo cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-linux.run
-
              """
 
 
@@ -119,7 +117,6 @@ EOF
             dir('src') {
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
-              sh "chmod +x ${JOB_QT_APP}"
               sh '/usr/local/Cellar/qt/5.10.1/bin/macdeployqt ${JOB_QT_APP}.app'
 
               archiveArtifacts "${STAGE_ARTIFACT}"
