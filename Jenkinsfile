@@ -29,7 +29,6 @@ pipeline {
           }
           steps {
             step([$class: 'WsCleanup'])
-            echo "---- PR build test 8888"
             checkout scm
 
 
@@ -112,9 +111,10 @@ EOF
           }
           steps {
             step([$class: 'WsCleanup'])
-            echo "---- PR build test 8888"
             checkout scm
             dir('src') {
+              sh 'brew install cpprestsdk'
+              sh 'brew install boost'
               sh '/usr/local/Cellar/qt/5.10.1/bin/qmake'
               sh 'make -j4'
               sh '/usr/local/Cellar/qt/5.10.1/bin/macdeployqt ${JOB_QT_APP}.app'
