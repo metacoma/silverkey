@@ -314,10 +314,10 @@ void MainWindow::hideEvent(QHideEvent *e) {
 
             QClipboard *cb = QApplication::clipboard();
             cb->setText(data);
-            if (cb->supportsSelection()) {
+            //if (cb->supportsSelection()) {
                 cb->setText(data, QClipboard::Selection);
                 qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
-            }
+            //}
 
 #ifndef SK_UI_FORK
             Keyboard keyboard;
