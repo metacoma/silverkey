@@ -45,8 +45,12 @@ void type_text(std::string dbVal) {
 
         Keyboard keyboard;
 
-        sleep(1);
-        keyboard.Click("$(v)");
+        while (!keyboard.GetState(KeySystem)) {
+            keyboard.Press(KeySystem);
+            qDebug() << "Command key state " << keyboard.GetState(KeySystem);
+        }
+        keyboard.Click("v");
+        keyboard.Release(KeySystem);
     }
 }
 #endif

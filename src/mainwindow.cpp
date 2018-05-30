@@ -8,9 +8,6 @@
 # include <unistd.h>
 # include <sys/wait.h>
 #endif
-#ifdef Q_OS_UNIX
-# include <unistd.h>
-#endif
 
 #include <QKeyEvent>
 #include <QDebug>
@@ -314,18 +311,21 @@ void MainWindow::hideEvent(QHideEvent *e) {
 
             QClipboard *cb = QApplication::clipboard();
             cb->setText(data);
-            if (cb->supportsSelection()) {
-                cb->setText(data, QClipboard::Selection);
-                qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
-            }
+
+#ifdef Q_OS_LINUX
+            cb->setText(data, QClipboard::Selection);
+            qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
+#endif
 
 #ifndef SK_UI_FORK
             Keyboard keyboard;
 
-#ifdef Q_OS_UNIX
-            sleep(1);
-#endif
-            keyboard.Click("+{INSERT}");
+            while (!keyboard.GetState(KeyShift)) {
+                keyboard.Press(KeyShift);
+                qDebug() << "Command key state " << keyboard.GetState(KeyShift);
+            }
+            keyboard.Click("{INSERT}");
+            keyboard.Release(KeyShift);
 #endif
         }
     }
