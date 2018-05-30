@@ -240,12 +240,12 @@ void MainWindow::setVal(QString key, QString val) {
         path = "v2/keys" + key;
     }
 
-    val.replace(QString(";"), QString("%3B"));
+    QByteArray encodedVal = QUrl::toPercentEncoding(val);
     httpClient->sendRequest(path,
                             getData,
                             errData,
                             Requester::Type::PUT,
-                            "value=" + val);
+                            "value=" + encodedVal);
 }
 
 void MainWindow::connectDB()
