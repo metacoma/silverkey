@@ -1,8 +1,11 @@
 #!/bin/sh
 #set -ex
 TMP_FILE="/tmp/`date +%s`"
-KEY="foo"
-VALUE="bar"
+KEY="chemistry/gold/boil"
+VALUE="3243"
+
+SILVERKEY_BIN=/tmp/silverkey
+#SILVERKEY_BIN=~/bin/silverkey
 
 xdotool_wait() {
   #local MAX_RETRIES=60
@@ -26,10 +29,10 @@ xdotool_wait 10 ${term_filter}
 xdotool mousemove 250 200
 xdotool search ${term_filter} windowactivate
 xdotool search ${term_filter} windowactivate --sync %1 type 'export SILVERKEY_VALUE='
-~/bin/silverkey >/dev/null 2>&1 &
+${SILVERKEY_BIN} >/dev/null 2>&1 &
 silverkey_filter="--all --pid $! --class silverkey"
 xdotool_wait 20 ${silverkey_filter}
-xdotool search ${silverkey_filter} windowactivate --sync %1 type --delay 1000 "/${KEY}"
+xdotool search ${silverkey_filter} windowactivate --sync %1 type --delay 100 "/${KEY}"
 xdotool mousemove 250 200
 xdotool search ${term_filter} windowactivate
 xdotool search ${silverkey_filter} key KP_Enter
