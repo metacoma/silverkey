@@ -21,6 +21,7 @@ WINDOW_NAME="silverkey-xterm-test"
 xterm -xrm "xterm*allowTitleOps: false" -title "${WINDOW_NAME}" -n "${WINDOW_NAME}" &
 xterm_filter="--all --pid $! --name ${WINDOW_NAME}"
 xdotool_wait 10 ${xterm_filter}
+xdotool search ${xterm_filter} windowactivate
 xdotool search ${xterm_filter} windowactivate --sync %1 type 'export SILVERKEY_VALUE='
 ~/bin/silverkey >/dev/null 2>&1 &
 silverkey_filter="--all --pid $! --class silverkey"
