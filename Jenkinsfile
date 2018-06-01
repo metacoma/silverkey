@@ -143,7 +143,7 @@ EOF
         """
         checkout scm
         dir('.') {
-          sh './test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage'
+          sh "./test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
         }
       }
     }
