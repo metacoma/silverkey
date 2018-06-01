@@ -10,8 +10,8 @@ SKSettings::SKSettings(QWidget *parent) :
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     ui->skUser->setText(settings.value("user", "").toString());
     ui->skPassword->setText(settings.value("password", "").toString());
-    ui->skServer->setText(settings.value("server", "nseha.linkpc.net").toString());
-    ui->skServerPort->setText(settings.value("port",22379).toString());
+    ui->skServer->setText(settings.value("server", "hw2").toString());
+    ui->skServerPort->setText(settings.value("port",2379).toString());
 }
 
 void SKSettings::accept() {
