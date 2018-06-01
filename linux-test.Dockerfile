@@ -25,7 +25,7 @@ FROM debian:stretch
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get  update
-RUN apt-get install -y dbus-x11 procps psmisc xvfb xterm libfuse2 xdotool
+RUN apt-get install -y dbus-x11 procps psmisc xvfb xterm libfuse2 xdotool git
 
 # OpenGL / MESA
 RUN apt-get install -y mesa-utils mesa-utils-extra libxv1 kmod xz-utils
