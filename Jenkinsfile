@@ -142,7 +142,7 @@ EOF
           startlxde &
         """
         checkout scm
-        dir('src') {
+        dir('.') {
           sh './test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage'
         }
       }
