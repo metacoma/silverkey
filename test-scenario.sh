@@ -4,7 +4,7 @@ TMP_FILE="/tmp/`date +%s`"
 KEY="chemistry/gold/boil"
 VALUE="3243"
 
-SILVERKEY_BIN=/tmp/silverkey
+SILVERKEY_BIN=${1:-/tmp/silverkey}
 #SILVERKEY_BIN=~/bin/silverkey
 
 xdotool_wait() {

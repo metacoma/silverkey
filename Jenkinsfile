@@ -125,6 +125,28 @@ EOF
         }
       }
     }
+    stage('linux funcational test') {
+      environment {
+        ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
+      }
+      agent {
+        dockerfile {
+          filename 'linux-test.Dockerfile'
+          reuseNode true
+          label 'master'
+          args "--privileged -v /opt/silverkey:/opt/silverkey"
+        }
+      }
+      steps {
+        sh """
+          startlxde &
+        """
+        checkout scm
+        dir('src') {
+          sh './test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage'
+        }
+      }
+    }
     stage('Publish latest artifacts') {
       environment {
         ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
