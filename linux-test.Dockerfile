@@ -25,7 +25,7 @@ FROM debian:stretch
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get  update
-RUN apt-get install -y dbus-x11 procps psmisc xvfb xterm libfuse2 xdotool git
+RUN apt-get install -y dbus-x11 procps psmisc xvfb xterm libfuse2 xdotool git sudo fuse
 
 # OpenGL / MESA
 RUN apt-get install -y mesa-utils mesa-utils-extra libxv1 kmod xz-utils
@@ -82,6 +82,9 @@ exec $*\n\
 startlxde\n\
 ' > /usr/local/bin/start
 RUN chmod +x /usr/local/bin/start
+
+RUN useradd -ms /bin/bash -u 1000 user && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/default
 
 ENTRYPOINT ["/usr/local/bin/start"]
 CMD ["startlxde"]
