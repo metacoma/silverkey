@@ -8,7 +8,6 @@ SILVERKEY_BIN=/tmp/silverkey
 #SILVERKEY_BIN=~/bin/silverkey
 
 xdotool_wait() {
-  #local MAX_RETRIES=60
   local tries=$1
   shift
   local xdotool_filter="$*"
@@ -48,5 +47,3 @@ else
   echo "TEST FAIL"
   exit 1
 fi
-
-
