@@ -249,8 +249,8 @@ void MainWindow::setVal(QString key, QString val) {
 void MainWindow::connectDB()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    httpClient->initRequester(settings.value("server", "nseha.linkpc.net").toString(),
-                              settings.value("port", 22379).toInt(),
+    httpClient->initRequester(settings.value("server", "hw2").toString(),
+                              settings.value("port", 2379).toInt(),
                               nullptr);
 }
 

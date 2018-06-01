@@ -73,7 +73,7 @@
     <item row="2" column="1">
      <widget class="QLineEdit" name="skServer">
       <property name="text">
-       <string>nseha.linkpc.net</string>
+       <string>hw2</string>
       </property>
      </widget>
     </item>
@@ -87,7 +87,7 @@
     <item row="3" column="1">
      <widget class="QLineEdit" name="skServerPort">
       <property name="text">
-       <string>22379</string>
+       <string>2379</string>
       </property>
      </widget>
     </item>
