@@ -14,3 +14,8 @@ void FocusController::switchFocus()
 {
 
 }
+
+void FocusController::savePrevActive()
+{
+
+}

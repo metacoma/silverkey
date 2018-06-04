@@ -10,6 +10,7 @@ public:
     explicit FocusController(QObject *parent = nullptr);
     ~FocusController();
     void switchFocus();
+    void savePrevActive();
 
 private:
     void *controller;

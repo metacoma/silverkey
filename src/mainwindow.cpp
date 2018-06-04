@@ -4,6 +4,8 @@
 #include "sksettings.h"
 #include "hotkeys.h"
 #include <Robot.h>
+#include <chrono>
+#include <thread>
 #ifdef Q_OS_MACOS
 # include <unistd.h>
 # include <sys/wait.h>
@@ -27,6 +29,8 @@ ROBOT_NS_USE_ALL;
 MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
+    fc = new FocusController();
+
     httpClient = new Requester(this);
     connectDB();
 
@@ -312,21 +316,20 @@ void MainWindow::hideEvent(QHideEvent *e) {
             QClipboard *cb = QApplication::clipboard();
             cb->setText(data);
 
+            fc->switchFocus();
+
 #ifdef Q_OS_LINUX
             cb->setText(data, QClipboard::Selection);
             qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
 #endif
-
-#ifndef SK_UI_FORK
             Keyboard keyboard;
-
-            while (!keyboard.GetState(KeyShift)) {
-                keyboard.Press(KeyShift);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            while (!keyboard.GetState(SK_PASTE_MODIFIER)) {
+                keyboard.Press(SK_PASTE_MODIFIER);
                 qDebug() << "Command key state " << keyboard.GetState(KeyShift);
             }
-            keyboard.Click("{INSERT}");
-            keyboard.Release(KeyShift);
-#endif
+            keyboard.Click(SK_PASTE_KEY);
+            keyboard.Release(SK_PASTE_MODIFIER);
         }
     }
 
@@ -334,6 +337,12 @@ void MainWindow::hideEvent(QHideEvent *e) {
     e->accept();
     qApp->closeAllWindows();
     qApp->exit();
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    qDebug() << "Window show";
+    fc->savePrevActive();
 }
 
 void MainWindow::escapePressed() {
