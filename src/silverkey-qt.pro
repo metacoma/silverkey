@@ -37,7 +37,8 @@ HEADERS += \
         sksettings.h \
         robothelper.h \
         hotkeys.h \
-    requester.h
+    requester.h \
+    focuscontroller.h
 
 FORMS += \
         mainwindow.ui \
@@ -50,18 +51,24 @@ LIBS += \
 DEFINES += ROBOT_ARCH_64
 
 macx {
-    HEADERS += mac_service.h
+    HEADERS += \
+            mac_service.h \
+            focuscontroller_mac.h
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
     INCLUDEPATH += /usr/local/include/Robot/
     LIBS += -L/usr/local/lib/robot -lRobot -framework ApplicationServices
     QMAKE_INFO_PLIST = ../contrib/Info.plist
     QMAKE_LFLAGS += -framework Cocoa
-    OBJECTIVE_SOURCES += mac_service.mm
+    OBJECTIVE_SOURCES += \
+                        mac_service.mm \
+                        focuscontroller_mac.mm
 }
 
 linux {
-    SOURCES += hotkeys.cpp
+    SOURCES += \
+            hotkeys.cpp \
+            focuscontroller.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
     LIBS += -lRobot -lXtst -lX11
