@@ -6,11 +6,16 @@
 #include <QTextEdit>
 #include "fuzzycompleter.h"
 #include "requester.h"
+#include "focuscontroller.h"
 
 #define KEYBOARD_SPEED 20
 
 #ifdef Q_OS_MACOS
-#define SK_UI_FORK
+#define SK_PASTE_MODIFIER KeySystem
+#define SK_PASTE_KEY "v"
+#else
+#define SK_PASTE_MODIFIER KeyShift
+#define SK_PASTE_KEY "{INSERT}"
 #endif
 
 
@@ -27,6 +32,7 @@ public:
     void EndOfWorkflow();
     void SearchEvent();
     void hideEvent(QHideEvent *e);
+    void showEvent(QShowEvent *event);
     void setWriteFd(int fd);
     void setData(QString d);
     void getDbData();
@@ -63,6 +69,7 @@ private:
     QStringList wordlist;
     int wfd;
     QString data = "";
+    FocusController *fc;
 };
 
 #endif // MAINWINDOW_H

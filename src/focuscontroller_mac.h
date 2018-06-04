@@ -9,6 +9,7 @@ class FocusControllerMac
 public:
     FocusControllerMac();
     void switchFocusToOld();
+    void savePrevActive();
 private:
     NSRunningApplication *_oldApp;
 };
