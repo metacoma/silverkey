@@ -323,7 +323,9 @@ void MainWindow::hideEvent(QHideEvent *e) {
             qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
 #endif
             Keyboard keyboard;
+#ifdef Q_OS_OSX
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
+#endif
             while (!keyboard.GetState(SK_PASTE_MODIFIER)) {
                 keyboard.Press(SK_PASTE_MODIFIER);
                 qDebug() << "Command key state " << keyboard.GetState(KeyShift);
