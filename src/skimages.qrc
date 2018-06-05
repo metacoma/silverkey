@@ -4,5 +4,6 @@
         <file>images/if_cog_35873_pressed.png</file>
         <file>images/if_edit_add_7710.png</file>
         <file>images/if_edit_add_7710_pressed.png</file>
+        <file>images/if_tray_active.png</file>
     </qresource>
 </RCC>

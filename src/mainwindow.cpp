@@ -30,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
     fc = new FocusController();
+    createActions();
+    createTrayIcon();
+
 
     httpClient = new Requester(this);
     connectDB();
@@ -207,6 +210,32 @@ void MainWindow::doHide()
 {
     qDebug() << "Hiding window";
     this->hide();
+}
+
+void MainWindow::createTrayIcon()
+{
+    trayIconMenu = new QMenu(this);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setContextMenu(trayIconMenu);
+
+    QIcon icon = QIcon(":/images/if_tray_active.png");
+    trayIcon->setIcon(icon);
+    setWindowIcon(icon);
+    trayIcon->show();
+}
+
+void MainWindow::createActions()
+{
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, &QAction::triggered, this, &MainWindow::quitApp);
+}
+
+void MainWindow::quitApp()
+{
+    qApp->quit();
 }
 
 void MainWindow::getVal(QString key) {
