@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QDialog>
 #include <QTextEdit>
+#include <QAction>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #include "fuzzycompleter.h"
 #include "requester.h"
 #include "focuscontroller.h"
@@ -54,9 +57,11 @@ public slots:
     void setRoundedCorners();
     void handleDataLoad();
     void doHide();
-
+    void quitApp();
 
 private:
+    void createTrayIcon();
+    void createActions();
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
@@ -70,6 +75,9 @@ private:
     int wfd;
     QString data = "";
     FocusController *fc;
+    QAction *quitAction;
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
 };
 
 #endif // MAINWINDOW_H
