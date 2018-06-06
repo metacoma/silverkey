@@ -58,9 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit->setTextMargins(5, 0, 0, 0);
     lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
 
-    getDbData();
     connect(this, &MainWindow::dataLoaded, this, &MainWindow::handleDataLoad);
     connect(this, &MainWindow::gotReplyFromDB, this, &MainWindow::doHide);
+    connect(this, &MainWindow::gotDbUpdateEvent, this, &MainWindow::handleDbUpdate);
+    connect(this, &MainWindow::gotDbUpdateError, this, &MainWindow::handleDbUpdateError);
+    getDbData();
 
     settingsButton = new QPushButton("",this);
     settingsButton->setObjectName("settings");
@@ -202,6 +204,7 @@ void MainWindow::handleDataLoad() {
         }
     } else {
         this->unlockInput();
+        waitForDbUdates();
     }
 
 }
@@ -236,6 +239,40 @@ void MainWindow::createActions()
 void MainWindow::quitApp()
 {
     qApp->quit();
+}
+
+void MainWindow::updateDbIndex(int newIndex)
+{
+    dbIndex = newIndex;
+}
+
+void MainWindow::handleDbUpdate()
+{
+    getDbData();
+}
+
+void MainWindow::handleDbUpdateError()
+{
+    waitForDbUdates();
+}
+
+void MainWindow::waitForDbUdates()
+{
+    qDebug() << "Start waiting for DB updates loop";
+    Requester::handleFunc getData = [this](const QJsonObject &o) {
+        qDebug() << "Got data " << this->data;
+        emit this->gotDbUpdateEvent();
+    };
+
+    Requester::handleFunc errData = [this](const QJsonObject &o) {
+        qDebug() << "Error: connection dropped";
+        emit this->gotDbUpdateError();
+
+    };
+
+    httpClient->sendRequest("v2/keys/?wait=true&recursive=true",
+                            getData,
+                            errData);
 }
 
 void MainWindow::getVal(QString key) {

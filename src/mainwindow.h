@@ -49,6 +49,8 @@ public:
 Q_SIGNALS:
     void dataLoaded();
     void gotReplyFromDB();
+    void gotDbUpdateEvent();
+    void gotDbUpdateError();
 
 public slots:
     void escapePressed();
@@ -58,10 +60,14 @@ public slots:
     void handleDataLoad();
     void doHide();
     void quitApp();
+    void updateDbIndex(int newIndex);
+    void handleDbUpdate();
+    void handleDbUpdateError();
 
 private:
     void createTrayIcon();
     void createActions();
+    void waitForDbUdates();
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
@@ -78,6 +84,7 @@ private:
     QAction *quitAction;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
+    int dbIndex = 0;
 };
 
 #endif // MAINWINDOW_H
