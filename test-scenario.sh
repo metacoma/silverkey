@@ -39,7 +39,7 @@ xdotool search ${silverkey_filter} key KP_Enter
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"
 xdotool search ${term_filter} type "echo -n \$SILVERKEY_VALUE > $TMP_FILE"
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"
-kill -9 ${xterm_pid}
+#kill -9 ${xterm_pid}
 if [ "`cat $TMP_FILE`" = "$VALUE" ]; then
   echo "TEST OK"
   exit 0
