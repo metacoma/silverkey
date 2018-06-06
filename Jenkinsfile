@@ -131,16 +131,18 @@ EOF
       }
       agent {
         dockerfile {
-          filename 'linux-test.Dockerfile'
+          filename 'ci-xfce.Dockerfile'
           reuseNode true
           label 'master'
           args "--privileged -v /opt/silverkey:/opt/silverkey"
         }
       }
       steps {
+/*
         sh """
           startlxde &
         """
+*/
         checkout scm
         dir('.') {
           sh "chmod +x /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
