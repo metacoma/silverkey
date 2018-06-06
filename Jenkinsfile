@@ -138,11 +138,9 @@ EOF
         }
       }
       steps {
-/*
         sh """
-          startlxde &
+          startxfce4 &
         """
-*/
         checkout scm
         dir('.') {
           sh "chmod +x /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
