@@ -19,6 +19,10 @@ xdotool_wait() {
   return 1
 }
 
+xmessage_notify() {
+	xmessage -timeout 5 -center -file -
+} 
+
 WINDOW_NAME="some-roxterm"
 xterm -xrm "xterm*allowTitleOps: false" -g 200x40+20+30 -title "${WINDOW_NAME}" &
 #roxterm --geometry=100x30+20+30 -T "${WINDOW_NAME}" &
@@ -39,11 +43,14 @@ xdotool search ${silverkey_filter} key KP_Enter
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"
 xdotool search ${term_filter} type "echo -n \$SILVERKEY_VALUE > $TMP_FILE"
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"
-#kill -9 ${xterm_pid}
+sleep 5
+kill -9 ${xterm_pid}
 if [ "`cat $TMP_FILE`" = "$VALUE" ]; then
   echo "TEST OK"
+  echo "TEST OK" | xmessage_notify
   exit 0
 else
   echo "TEST FAIL"
+  echo "TEST FAIL" | xmessage_notify
   exit 1
 fi

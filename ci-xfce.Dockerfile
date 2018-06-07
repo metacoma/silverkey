@@ -24,6 +24,3 @@ RUN useradd -ms /bin/bash -u 1000 user && \
 ADD /xfce-config.tgz /home/user/.config/xfce4
 
 RUN chmod +x /usr/local/bin/start
-
-
-
