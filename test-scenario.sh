@@ -21,7 +21,11 @@ xdotool_wait() {
 
 xmessage_notify() {
 	xmessage -timeout 5 -center -file -
-} 
+}
+irssi_notify() {
+	:
+	#printf "msg #silverkey_project $*\n\n" >> ~/.irssi/remote-control
+}
 
 WINDOW_NAME="some-roxterm"
 xterm -xrm "xterm*allowTitleOps: false" -g 200x40+20+30 -title "${WINDOW_NAME}" &
@@ -35,7 +39,7 @@ xdotool search ${term_filter} windowactivate --sync %1 type 'export SILVERKEY_VA
 ${SILVERKEY_BIN} >/dev/null 2>&1 &
 silverkey_filter="--all --pid $! --class silverkey"
 xdotool_wait 20 ${silverkey_filter}
-xdotool search ${silverkey_filter} windowactivate --sync %1 type --delay 100 "/${KEY}"
+xdotool search ${silverkey_filter} windowactivate --sync %1 type --delay 180 "/${KEY}"
 xdotool mousemove 250 200
 xdotool search ${term_filter} windowactivate
 xdotool search ${silverkey_filter} key KP_Enter
@@ -48,9 +52,11 @@ kill -9 ${xterm_pid}
 if [ "`cat $TMP_FILE`" = "$VALUE" ]; then
   echo "TEST OK"
   echo "TEST OK" | xmessage_notify
+  irssi_notify "$$ TEST OK"
   exit 0
 else
   echo "TEST FAIL"
   echo "TEST FAIL" | xmessage_notify
+  irssi_notify "$$ TEST FAIL"
   exit 1
 fi
