@@ -4,15 +4,15 @@
 #import <Cocoa/Cocoa.h>
 #import <AppKit/AppKit.h>
 
-class FocusControllerMac
-{
-public:
-    FocusControllerMac();
-    void switchFocusToOld();
-    void savePrevActive();
-private:
-    NSRunningApplication *_oldApp;
-};
+@interface FocusControllerMac: NSObject {
+    NSString *_oldAppID;
+
+}
+-(void) switchFocusToOld;
+-(void) savePrevActive;
+-(void) sendToFront;
+-(void) eraseOldAppPtr;
+@end
 
 
 #endif // FOCUSCONTROLLER_MAC_H

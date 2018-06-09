@@ -11,6 +11,8 @@ public:
     ~FocusController();
     void switchFocus();
     void savePrevActive();
+    void sendToFront();
+    void eraseOldAppPtr();
 
 private:
     void *controller;

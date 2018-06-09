@@ -70,6 +70,7 @@ private:
     void createTrayIcon();
     void createActions();
     void waitForDbUdates();
+    void updateWinPosition();
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
@@ -85,6 +86,7 @@ private:
     FocusController *fc;
 
     QAction *quitAction;
+    QAction *showAction;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     int dbIndex = 0;
