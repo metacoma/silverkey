@@ -8,6 +8,7 @@ RUN apt-get install -y  \
   xdotool               \
   git                   \
   sudo                  \
+  x11-utils             \
   x11-apps              \
   fuse
 
