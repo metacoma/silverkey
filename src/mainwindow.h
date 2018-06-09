@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QLocalServer>
 #include "fuzzycompleter.h"
 #include "requester.h"
 #include "focuscontroller.h"
@@ -71,6 +72,7 @@ private:
     void createActions();
     void waitForDbUdates();
     void updateWinPosition();
+    void setUpLocalServer();
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
@@ -90,7 +92,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     int dbIndex = 0;
-
+    QLocalServer *server;
 };
 
 #endif // MAINWINDOW_H

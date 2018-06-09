@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
     fc = new FocusController();
+    setUpLocalServer();
     createActions();
     createTrayIcon();
 
@@ -273,7 +274,15 @@ void MainWindow::updateWinPosition()
             size(),
             ag
         )
-    );
+                );
+}
+
+void MainWindow::setUpLocalServer()
+{
+    server = new QLocalServer();
+    QLocalServer::removeServer("SKApp");
+    server->listen("SKApp");
+    connect(server, &QLocalServer::newConnection, this, &MainWindow::show);
 }
 
 void MainWindow::getVal(QString key) {
@@ -395,6 +404,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
             }
             keyboard.Click(SK_PASTE_KEY);
             keyboard.Release(SK_PASTE_MODIFIER);
+            lineEdit->setText("");
         }
     }
 
@@ -418,7 +428,10 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::escapePressed() {
     clipboardData->setText("");
+    lineEdit->setText("");
     lineEdit->setSelectedItem("");
+    lineEdit->completer()->popup()->hide();
+    fc->switchFocus();
     this->hide();
 }
 
