@@ -30,7 +30,8 @@ latest_build_number=`jenkins_latest_build`
 latest_commit=`jenkins_silverkey_commit ${latest_build_number}`
 #SILVERKEY_BIN=${1:-/tmp/silverkey}
 #SILVERKEY_BIN=~/bin/silverkey
-SILVERKEY_BIN=`jenkins_silverkey_path ${latest_build_number}`
+latest_build=`jenkins_silverkey_path ${latest_build_number}`
+SILVERKEY_BIN=${1:-${latest_build}}
 
 
 echo "Test build: ${latest_build_number} commit $latest_commit" | xmessage_notify
