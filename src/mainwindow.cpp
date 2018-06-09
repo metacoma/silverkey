@@ -141,30 +141,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(settingsButton, &QPushButton::clicked, this, &MainWindow::showSettings);
     connect(addDataButton, &QPushButton::clicked, this, &MainWindow::showTextEdit);
 
-    this->activateWindow();
-    QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
-    qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
-
     QPoint pos(lineEdit->width()-5, 5);
     QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
     qApp->sendEvent(lineEdit, &e);
     QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, 0);
     qApp->sendEvent(lineEdit, &f);
-
-    QWidget::setFocusProxy(this);
-
-    QPoint globalCursorPos = QCursor::pos();
-    int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
-    qDebug() << "Screen " << mouseScreen;
-    QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
-    setGeometry(
-        QStyle::alignedRect(
-            Qt::LeftToRight,
-            Qt::AlignCenter,
-            size(),
-            ag
-        )
-    );
 
     lockInput();
     int w = settingsButton->width() +
@@ -218,6 +199,7 @@ void MainWindow::doHide()
 void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(showAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -233,7 +215,9 @@ void MainWindow::createTrayIcon()
 void MainWindow::createActions()
 {
     quitAction = new QAction(tr("&Quit"), this);
+    showAction = new QAction(tr("&Show"), this);
     connect(quitAction, &QAction::triggered, this, &MainWindow::quitApp);
+    connect(showAction, &QAction::triggered, this, &MainWindow::show);
 }
 
 void MainWindow::quitApp()
@@ -273,6 +257,23 @@ void MainWindow::waitForDbUdates()
     httpClient->sendRequest("v2/keys/?wait=true&recursive=true",
                             getData,
                             errData);
+}
+
+void MainWindow::updateWinPosition()
+{
+    QPoint globalCursorPos = QCursor::pos();
+    int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
+    qDebug() << "Screen " << mouseScreen;
+    QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
+    ag.setHeight(ag.height()/2);
+    setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignCenter,
+            size(),
+            ag
+        )
+    );
 }
 
 void MainWindow::getVal(QString key) {
@@ -374,14 +375,10 @@ void MainWindow::setData(QString d) {
 void MainWindow::hideEvent(QHideEvent *e) {
     if (clipboardData->toPlainText() == "") {
         qDebug() << "Hide action, value is " << data;
-#ifdef Q_OS_MACOS
-        write(wfd, data.toStdString().c_str(), data.toStdString().length()+1);
-#endif
-        if (data != "") {
 
+        if (data != "") {
             QClipboard *cb = QApplication::clipboard();
             cb->setText(data);
-
             fc->switchFocus();
 
 #ifdef Q_OS_LINUX
@@ -401,16 +398,22 @@ void MainWindow::hideEvent(QHideEvent *e) {
         }
     }
 
-
     e->accept();
-    qApp->closeAllWindows();
-    qApp->exit();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
 {
     qDebug() << "Window show";
+    this->activateWindow();
+    QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
+    qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
+
+    QWidget::setFocusProxy(this);
+
+    updateWinPosition();
     fc->savePrevActive();
+    fc->sendToFront();
+    event->accept();
 }
 
 void MainWindow::escapePressed() {

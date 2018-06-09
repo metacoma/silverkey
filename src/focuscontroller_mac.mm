@@ -1,29 +1,50 @@
 #include "focuscontroller.h"
 #include "focuscontroller_mac.h"
 
+@implementation FocusControllerMac
 
-FocusControllerMac::FocusControllerMac()
+
+-(void) switchFocusToOld
 {
-    NSLog(@"%@", [[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier);
-    _oldApp = [[NSWorkspace sharedWorkspace] frontmostApplication];
+    NSLog(@"Switching to %@", self->_oldAppID);
+    NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+    NSArray * apps = [ws runningApplications];
+    for (NSRunningApplication *app in apps)
+    {
+        if ([self->_oldAppID isEqualToString:app.bundleIdentifier])
+        {
+            NSLog(@"Found app %@", app);
+            [app activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+            //self->_oldAppID = nil;
+            break;
+        }
+    }
 }
 
-void FocusControllerMac::switchFocusToOld()
+-(void) savePrevActive
 {
-    NSLog(@"%@", [_oldApp isActive]);
-    [_oldApp activateWithOptions:NSApplicationActivateIgnoringOtherApps];
-    NSLog(@"%@", [_oldApp isActive]);
+    self->_oldAppID = [[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier;
+    NSLog(@"Saving previous focus %@", self->_oldAppID);
+
 }
 
-void FocusControllerMac::savePrevActive()
+-(void) sendToFront
 {
-    _oldApp = [[NSWorkspace sharedWorkspace] frontmostApplication];
+    [NSApp activateIgnoringOtherApps:YES];
 }
+
+-(void) eraseOldAppPtr
+{
+    self->_oldAppID = nil;
+}
+@end
 
 FocusController::FocusController(QObject *parent) :
     QObject(parent)
 {
-    controller = new FocusControllerMac();
+    controller = [[FocusControllerMac alloc] init];
+    FocusControllerMac *ctrl = (FocusControllerMac *) controller;
+    [ctrl savePrevActive];
 }
 
 
@@ -31,12 +52,24 @@ FocusController::FocusController(QObject *parent) :
 void FocusController::switchFocus()
 {
     FocusControllerMac *ctrl = (FocusControllerMac *) controller;
-    ctrl->switchFocusToOld();
+    [ctrl switchFocusToOld];
 }
 
 void FocusController::savePrevActive() {
     FocusControllerMac *ctrl = (FocusControllerMac *) controller;
-    ctrl->savePrevActive();
+    [ctrl savePrevActive];
+}
+
+void FocusController::sendToFront()
+{
+    FocusControllerMac *ctrl = (FocusControllerMac *) controller;
+    [ctrl sendToFront];
+}
+
+void FocusController::eraseOldAppPtr()
+{
+    FocusControllerMac *ctrl = (FocusControllerMac *) controller;
+    [ctrl eraseOldAppPtr];
 }
 
 FocusController::~FocusController()
