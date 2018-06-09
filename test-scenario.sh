@@ -4,8 +4,36 @@ TMP_FILE="/tmp/`date +%s`"
 KEY="chemistry/gold/boil"
 VALUE="3243"
 
-SILVERKEY_BIN=${1:-/tmp/silverkey}
+jenkins_latest_build() {
+  ls -ltr /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/ | awk '/^d.*[0-9]+?$/ {build=$NF} END {print build}'
+}
+
+jenkins_build_dir() {
+  echo /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/$1
+}
+
+jenkins_silverkey_path() {
+  echo `jenkins_build_dir $1`/archive/Silverkey-x86_64.AppImage
+}
+
+jenkins_silverkey_commit() {
+  # xxx fixme use xmldoc
+  cat `jenkins_build_dir $1`/build.xml | sed -nr '/<commit>/ {s,(</?commit>| ),,g;p}'
+}
+
+xmessage_notify() {
+	xmessage -timeout 5 -center -file -
+}
+
+
+latest_build_number=`jenkins_latest_build`
+latest_commit=`jenkins_silverkey_commit ${latest_build_number}`
+#SILVERKEY_BIN=${1:-/tmp/silverkey}
 #SILVERKEY_BIN=~/bin/silverkey
+SILVERKEY_BIN=`jenkins_silverkey_path ${latest_build_number}`
+
+
+echo "Test build: ${latest_build_number} commit $latest_commit" | xmessage_notify
 
 xdotool_wait() {
   local tries=$1
@@ -19,16 +47,13 @@ xdotool_wait() {
   return 1
 }
 
-xmessage_notify() {
-	xmessage -timeout 5 -center -file -
-}
 irssi_notify() {
 	:
 	#printf "msg #silverkey_project $*\n\n" >> ~/.irssi/remote-control
 }
 
 WINDOW_NAME="some-roxterm"
-xterm -xrm "xterm*allowTitleOps: false" -g 200x40+20+30 -title "${WINDOW_NAME}" &
+xterm -fa monaco -fs 23 -xrm "xterm*allowTitleOps: false" -g 200x40+20+30 -title "${WINDOW_NAME}" &
 #roxterm --geometry=100x30+20+30 -T "${WINDOW_NAME}" &
 xterm_pid=$!
 term_filter="--all --pid ${xterm_pid} --name ${WINDOW_NAME}"
@@ -44,6 +69,7 @@ xdotool mousemove 250 200
 xdotool search ${term_filter} windowactivate
 xdotool search ${silverkey_filter} key KP_Enter
 
+sleep 2
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"
 xdotool search ${term_filter} type "echo -n \$SILVERKEY_VALUE > $TMP_FILE"
 xdotool search ${term_filter} windowactivate --sync %1 type "$(printf '\n ')"

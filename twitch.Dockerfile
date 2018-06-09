@@ -14,7 +14,7 @@ RUN apt update && apt install -y                      \
       fuse                                            \
       x11-apps
 
-apt-get install -y dbus-x11 procps psmisc x11-utils x11-xserver-utils
+RUN apt-get install -y dbus-x11 procps psmisc x11-utils x11-xserver-utils xosd-bin
 
 # Xfce
 RUN apt-get install -y --no-install-recommends xfce4
@@ -36,18 +36,22 @@ RUN apt-get install -y --no-install-recommends xfce4-battery-plugin \
     xfce4-genmon-plugin xfce4-smartbookmark-plugin xfce4-timer-plugin \
     xfce4-verve-plugin xfce4-weather-plugin
 
+ADD irssi_config /home/user/.irssi/config
 
 ENV DISPLAY ":99"
 RUN echo '#! /bin/sh\n\
+sed -i"" "s,%TWITCH_OAUTH%%,${TWITCH_OAUTH},g" /home/user/.irssi/config\n\
 Xvfb ${DISPLAY} -pixdepths 24 32 -listen tcp -ac -screen 0 1920x1080x24\n\
 [ -n "$HOME" ] && [ ! -e "$HOME/.config" ] && cp -R /etc/skel/. $HOME/ \n\
 exec $*\n\
 ' > /usr/local/bin/start
 
+#xterm -g 600x50+0+350 -T chat -e sh -c 'tmux attach -t irssi'
 RUN useradd -ms /bin/bash -u 1000 user && \
     echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/default
 
 ADD /xfce-config.tgz /home/user/.config/xfce4
-ADD ./silverkey.conf:/home/user/.config/Unknown\ Organization/silverkey.conf
+ENV IRSSI_CONFIG "/home/user/.config/Unknown Organization/silverkey.conf"
+COPY ./silverkey.conf $IRSSI_CONFIG
 
 RUN chmod +x /usr/local/bin/start
