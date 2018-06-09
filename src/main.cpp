@@ -8,6 +8,7 @@
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QClipboard>
+#include <QLocalSocket>
 
 void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
     QApplication a(argc, argv);
@@ -29,6 +30,11 @@ void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
 
 int main(int argc, char *argv[])
 {
+    QLocalSocket *probe = new QLocalSocket();
+    probe->connectToServer("SKApp");
+    if (probe->waitForConnected(1000)) {
+        return 0;
+    }
     show_window(argc, argv);
     return EXIT_SUCCESS;
 }
