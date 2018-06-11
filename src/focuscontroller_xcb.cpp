@@ -1,15 +1,10 @@
 #include <QDebug>
-<<<<<<< HEAD
 #include <xcb/xcb_ewmh.h>
-=======
->>>>>>> a39f4fe3ce0806d153bc8c1c0e4ff4cb00fd0639
 #include "focuscontroller.h"
 #include "focuscontroller_xcb.h"
 
 FocusControllerXcb::FocusControllerXcb()
 {
-<<<<<<< HEAD
-
     this->dpy = xcb_connect(NULL, &this->defaultScreen);
     this->ewmh = (xcb_ewmh_connection_t *)malloc(sizeof(xcb_ewmh_connection_t));
     xcb_intern_atom_cookie_t *ewmh_cookies = xcb_ewmh_init_atoms(this->dpy, this->ewmh);
@@ -31,7 +26,6 @@ void FocusControllerXcb::switchFocusToOld()
 
 void FocusControllerXcb::savePrevActive()
 {
-<<<<<<< HEAD
     //char msg[1024];
     xcb_ewmh_get_utf8_strings_reply_t ewmh_txt_prop;
     xcb_ewmh_get_active_window_reply(this->ewmh, xcb_ewmh_get_active_window(this->ewmh, this->defaultScreen), &this->win, NULL);
