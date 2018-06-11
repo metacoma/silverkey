@@ -4,18 +4,21 @@
 #include <QX11Info>
 #include <QObject>
 #include <xcb/xcb.h>
+#include <xcb/xcb_ewmh.h>
 
 class FocusControllerXcb
 {
 public:
     FocusControllerXcb();
+    ~FocusControllerXcb();
     void switchFocusToOld();
     void savePrevActive();
     //void switchFocus();
 private:
-    xcb_connection_t *xcbConnection;
-    xcb_get_input_focus_cookie_t focusCookie;
-    xcb_generic_error_t *xcbError;
-    xcb_get_input_focus_reply_t *focusReply;
+    xcb_connection_t *dpy;
+    int defaultScreen;
+    xcb_window_t win;
+    xcb_ewmh_connection_t *ewmh;
+
 };
 #endif // FOCUSCONTROLLER_XCB_H
