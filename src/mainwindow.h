@@ -9,7 +9,9 @@
 #include <QSystemTrayIcon>
 #include "fuzzycompleter.h"
 #include "requester.h"
+#ifdef Q_OS_LINUX
 #include "focuscontroller_xcb.h"
+#endif // Q_OS_LINUX
 #define KEYBOARD_SPEED 20
 
 #ifdef Q_OS_MACOS
