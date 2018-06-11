@@ -1,4 +1,5 @@
 #ifndef MAINWINDOW_H
+
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -9,6 +10,7 @@
 #include <QSystemTrayIcon>
 #include "fuzzycompleter.h"
 #include "requester.h"
+#include "focuscontroller.h"
 #ifdef Q_OS_LINUX
 #include "focuscontroller_xcb.h"
 #endif // Q_OS_LINUX
@@ -81,6 +83,7 @@ private:
     int wfd;
     QString data = "";
     FocusController *fc;
+
     QAction *quitAction;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
