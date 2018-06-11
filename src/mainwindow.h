@@ -9,8 +9,7 @@
 #include <QSystemTrayIcon>
 #include "fuzzycompleter.h"
 #include "requester.h"
-#include "focuscontroller.h"
-
+#include "focuscontroller_xcb.h"
 #define KEYBOARD_SPEED 20
 
 #ifdef Q_OS_MACOS
@@ -44,7 +43,6 @@ public:
     void getVal(QString key);
     void setVal(QString key, QString val);
     void connectDB();
-
 
 Q_SIGNALS:
     void dataLoaded();
@@ -85,6 +83,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     int dbIndex = 0;
+
 };
 
 #endif // MAINWINDOW_H

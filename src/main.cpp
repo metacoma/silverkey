@@ -13,6 +13,12 @@ void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
     QApplication a(argc, argv);
     MainWindow w;
 
+#ifdef Q_OS_LINUX
+    int screenNum;
+
+    //w.focusCookie =  xcb_get_input_focus(w.xcbConnection, &w.focus_reply);
+#endif
+
     if (child) {
         w.setWriteFd(fd);
     }
