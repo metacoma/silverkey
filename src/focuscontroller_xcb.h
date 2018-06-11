@@ -19,6 +19,5 @@ private:
     int defaultScreen;
     xcb_window_t win;
     xcb_ewmh_connection_t *ewmh;
-
 };
 #endif // FOCUSCONTROLLER_XCB_H
