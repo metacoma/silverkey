@@ -37,6 +37,7 @@ HEADERS += \
         sksettings.h \
         robothelper.h \
         hotkeys.h \
+        focuscontroller.h \
     requester.h
 
 FORMS += \

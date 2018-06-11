@@ -5,21 +5,17 @@
 #include <QObject>
 #include <xcb/xcb.h>
 
-class FocusController : public QObject
+class FocusControllerXcb
 {
-    Q_OBJECT
 public:
-    explicit FocusController(QObject *parent = nullptr);
-    ~FocusController();
+    FocusControllerXcb();
     void switchFocusToOld();
     void savePrevActive();
-    void switchFocus();
+    //void switchFocus();
 private:
     xcb_connection_t *xcbConnection;
     xcb_get_input_focus_cookie_t focusCookie;
     xcb_generic_error_t *xcbError;
     xcb_get_input_focus_reply_t *focusReply;
 };
-
-
 #endif // FOCUSCONTROLLER_XCB_H
