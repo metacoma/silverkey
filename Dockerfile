@@ -49,6 +49,7 @@ WORKDIR /tmp/xcb-util-wm-0.4.1
 RUN ./configure
 RUN make
 RUN make install
+RUN ldconfig -v
 WORKDIR /tmp
 ADD https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 RUN chmod +x /usr/local/bin/appimagetool
