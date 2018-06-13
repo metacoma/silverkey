@@ -9,6 +9,7 @@
 
 }
 -(void) switchFocusToOld;
+-(void) setOldAppId:(NSString *)bID;
 -(void) savePrevActive;
 -(void) sendToFront;
 -(void) eraseOldAppPtr;
