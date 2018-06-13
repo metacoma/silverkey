@@ -29,7 +29,7 @@ SOURCES += \
         fuzzycompleter.cpp \
         sksettings.cpp \
         robothelper.cpp \
-    requester.cpp
+        requester.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -37,8 +37,9 @@ HEADERS += \
         sksettings.h \
         robothelper.h \
         hotkeys.h \
+        requester.h \
         focuscontroller.h \
-    requester.h
+        skappdelegate-c-interface.h
 
 FORMS += \
         mainwindow.ui \
@@ -53,6 +54,7 @@ DEFINES += ROBOT_ARCH_64
 macx {
     HEADERS += \
             mac_service.h \
+            skappdelegate.h \
             focuscontroller_mac.h
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
@@ -62,7 +64,8 @@ macx {
     QMAKE_LFLAGS += -framework Cocoa
     OBJECTIVE_SOURCES += \
                         mac_service.mm \
-                        focuscontroller_mac.mm
+                        focuscontroller_mac.mm \
+                        skappdelegate.mm
 }
 
 linux {

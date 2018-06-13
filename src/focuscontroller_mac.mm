@@ -3,7 +3,6 @@
 
 @implementation FocusControllerMac
 
-
 -(void) switchFocusToOld
 {
     NSLog(@"Switching to %@", self->_oldAppID);
@@ -36,6 +35,12 @@
 -(void) eraseOldAppPtr
 {
     self->_oldAppID = nil;
+}
+
+-(void) setOldAppId:(NSString *)bID
+{
+    _oldAppID = [bID mutableCopy];
+    NSLog(@"Saving previous focus %@", self->_oldAppID);
 }
 @end
 
@@ -70,6 +75,12 @@ void FocusController::eraseOldAppPtr()
 {
     FocusControllerMac *ctrl = (FocusControllerMac *) controller;
     [ctrl eraseOldAppPtr];
+}
+
+void FocusController::setOldAppId(QString bid)
+{
+    FocusControllerMac *ctrl = (FocusControllerMac *) controller;
+    [ctrl setOldAppId:bid.toNSString()];
 }
 
 FocusController::~FocusController()

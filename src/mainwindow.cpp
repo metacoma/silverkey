@@ -17,8 +17,6 @@
 #include <QMenu>
 #include <QSettings>
 #include <QDesktopWidget>
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QClipboard>
@@ -155,7 +153,6 @@ MainWindow::MainWindow(QWidget *parent) :
             widgetPadding +
             addDataButton->width();
     resize(w,lineEdit->height());
-    registerService();
 }
 
 QStringList MainWindow::getKeys(const QJsonObject &o) {
@@ -336,6 +333,11 @@ void MainWindow::connectDB()
                               nullptr);
 }
 
+void MainWindow::savePreviouslyActiveWindow(QString bundleID)
+{
+    fc->setOldAppId(bundleID);
+}
+
 
 void MainWindow::getDbData()
 {
@@ -413,6 +415,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
 
 void MainWindow::showEvent(QShowEvent *event)
 {
+
     qDebug() << "Window show";
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
@@ -421,7 +424,9 @@ void MainWindow::showEvent(QShowEvent *event)
     QWidget::setFocusProxy(this);
 
     updateWinPosition();
+#ifdef Q_OS_LINUX
     fc->savePrevActive();
+#endif
     fc->sendToFront();
     event->accept();
 }

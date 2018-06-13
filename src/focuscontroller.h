@@ -13,6 +13,7 @@ public:
     void savePrevActive();
     void sendToFront();
     void eraseOldAppPtr();
+    void setOldAppId(QString bid);
 
 private:
     void *controller;

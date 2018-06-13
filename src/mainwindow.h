@@ -48,6 +48,7 @@ public:
     void getVal(QString key);
     void setVal(QString key, QString val);
     void connectDB();
+    void savePreviouslyActiveWindow(QString bundleID);
 
 Q_SIGNALS:
     void dataLoaded();
