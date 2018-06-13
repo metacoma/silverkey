@@ -3,6 +3,19 @@
 #include "focuscontroller.h"
 #include "focuscontroller_xcb.h"
 
+void FocusControllerXcb::FocusWindowDebug(char *prefix, xcb_window_t win) {
+    xcb_ewmh_get_utf8_strings_reply_t ewmh_txt_prop;
+    ewmh_txt_prop.strings = NULL;
+#define MIN(a,b) ((a) < (b) ? a : b)
+
+    const xcb_get_property_cookie_t cookie = xcb_ewmh_get_wm_name_unchecked(this->ewmh, win);
+    if (xcb_ewmh_get_wm_name_reply(this->ewmh, cookie, &ewmh_txt_prop, NULL)) {
+        qDebug("%s %.*s", prefix, MIN(ewmh_txt_prop.strings_len, (int)sizeof(msg)), ewmh_txt_prop.strings);
+    } else {
+        qDebug("%s xcb_ewmh_get_wm_name failed", prefix);
+    }
+}
+
 FocusControllerXcb::FocusControllerXcb()
 {
     this->dpy = xcb_connect(NULL, &this->defaultScreen);
@@ -19,20 +32,16 @@ FocusControllerXcb::~FocusControllerXcb()
 
 void FocusControllerXcb::switchFocusToOld()
 {
-  //qDebug() << "Swtich focus to previous window #" << this->focusReply->focus;
-  //xcb_set_input_focus(this->xcbConnection, XCB_INPUT_FOCUS_PARENT, this->focusReply->focus, XCB_CURRENT_TIME);
+      this->FocusWindowDebug("switchFocusToOld", this->win);
   xcb_ewmh_set_active_window(this->ewmh, this->defaultScreen, this->win);
+
+
 }
 
 void FocusControllerXcb::savePrevActive()
 {
-    //char msg[1024];
-    xcb_ewmh_get_utf8_strings_reply_t ewmh_txt_prop;
     xcb_ewmh_get_active_window_reply(this->ewmh, xcb_ewmh_get_active_window(this->ewmh, this->defaultScreen), &this->win, NULL);
-
-    //snprintf(msg, "%.*s", qMin(*ewmh_txt_prop.strings_len, sizeof(msg), ewmh_txt_prop.strings);
-    //qDebug << msg;
-    //printf("Window title: %.*s, id: %X\n", ewmh_txt_prop.strings_len, ewmh_txt_prop.strings, this->win);
+    this->FocusWindowDebug("savePrevActive", this->win);
 }
 
 FocusController::FocusController(QObject *parent) :

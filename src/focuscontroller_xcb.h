@@ -15,6 +15,7 @@ public:
     void savePrevActive();
     //void switchFocus();
 private:
+    void FocusWindowDebug(char *, xcb_window_t);
     xcb_connection_t *dpy;
     int defaultScreen;
     xcb_window_t win;
