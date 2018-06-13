@@ -34,6 +34,5 @@ COPY ./silverkey.conf $SILVERKEY_CONFIG
 
 RUN chown -R user:user /home/user
 
-
 ENTRYPOINT [ "/usr/local/bin/start" ]
 
