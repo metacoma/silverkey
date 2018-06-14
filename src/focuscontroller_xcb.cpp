@@ -6,11 +6,10 @@
 void FocusControllerXcb::FocusWindowDebug(char *prefix, xcb_window_t win) {
     xcb_ewmh_get_utf8_strings_reply_t ewmh_txt_prop;
     ewmh_txt_prop.strings = NULL;
-#define MIN(a,b) ((a) < (b) ? a : b)
 
     const xcb_get_property_cookie_t cookie = xcb_ewmh_get_wm_name_unchecked(this->ewmh, win);
     if (xcb_ewmh_get_wm_name_reply(this->ewmh, cookie, &ewmh_txt_prop, NULL)) {
-        qDebug("%s %.*s", prefix, MIN(ewmh_txt_prop.strings_len, (int)sizeof(msg)), ewmh_txt_prop.strings);
+        qDebug("%s %.*s", prefix, ewmh_txt_prop.strings_len, ewmh_txt_prop.strings);
     } else {
         qDebug("%s xcb_ewmh_get_wm_name failed", prefix);
     }
@@ -32,10 +31,9 @@ FocusControllerXcb::~FocusControllerXcb()
 
 void FocusControllerXcb::switchFocusToOld()
 {
-      this->FocusWindowDebug("switchFocusToOld", this->win);
+  this->FocusWindowDebug("switchFocusToOld", this->win);
   xcb_ewmh_set_active_window(this->ewmh, this->defaultScreen, this->win);
-
-
+  xcb_set_input_focus(this->dpy, XCB_INPUT_FOCUS_POINTER_ROOT, this->win, XCB_CURRENT_TIME);
 }
 
 void FocusControllerXcb::savePrevActive()
@@ -55,6 +53,7 @@ void FocusController::switchFocus()
       FocusControllerXcb *ctrl = (FocusControllerXcb *) controller;
       ctrl->switchFocusToOld();
 }
+
 
 void FocusController::savePrevActive() {
       FocusControllerXcb *ctrl = (FocusControllerXcb *) controller;
