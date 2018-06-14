@@ -1,4 +1,5 @@
 #ifndef MAINWINDOW_H
+
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -10,7 +11,9 @@
 #include "fuzzycompleter.h"
 #include "requester.h"
 #include "focuscontroller.h"
-
+#ifdef Q_OS_LINUX
+#include "focuscontroller_xcb.h"
+#endif // Q_OS_LINUX
 #define KEYBOARD_SPEED 20
 
 #ifdef Q_OS_MACOS
@@ -44,7 +47,6 @@ public:
     void getVal(QString key);
     void setVal(QString key, QString val);
     void connectDB();
-
 
 Q_SIGNALS:
     void dataLoaded();
@@ -81,10 +83,12 @@ private:
     int wfd;
     QString data = "";
     FocusController *fc;
+
     QAction *quitAction;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     int dbIndex = 0;
+
 };
 
 #endif // MAINWINDOW_H

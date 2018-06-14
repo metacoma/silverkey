@@ -37,8 +37,8 @@ HEADERS += \
         sksettings.h \
         robothelper.h \
         hotkeys.h \
-    requester.h \
-    focuscontroller.h
+        focuscontroller.h \
+    requester.h
 
 FORMS += \
         mainwindow.ui \
@@ -66,12 +66,15 @@ macx {
 }
 
 linux {
+    HEADERS += \
+            focuscontroller_xcb.h
     SOURCES += \
             hotkeys.cpp \
-            focuscontroller.cpp
+            focuscontroller_xcb.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
-    LIBS += -lRobot -lXtst -lX11
+    LIBS += -lRobot -lXtst -lX11 -lxcb -lxcb-ewmh
+    QT += x11extras
 }
 
 windows {

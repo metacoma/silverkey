@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   wget                                                \
   cmake                                               \
   libfuse2                                            \
+  m4                                                  \
   rapidjson-dev
 
 RUN apt-get install -y libcurl4-nss-dev
@@ -41,6 +42,15 @@ WORKDIR /tmp/linuxdeployqt
 RUN qmake
 RUN make -j4 -f Makefile
 RUN make install
+WORKDIR /tmp
+ADD https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/xcb-util-wm/0.4.1-1ubuntu1/xcb-util-wm_0.4.1.orig.tar.gz /tmp/xcb-util-wm_0.4.1.orig.tar.gz
+RUN tar zxvf xcb-util-wm_0.4.1.orig.tar.gz
+WORKDIR /tmp/xcb-util-wm-0.4.1
+RUN ./configure
+RUN make
+RUN make install
+RUN ldconfig -v
+WORKDIR /tmp
 ADD https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 RUN chmod +x /usr/local/bin/appimagetool
 ADD --chown=root:root http://res.freestockphotos.biz/pictures/16/16161-illustration-of-a-silver-key-pv.png /tmp/silverkey-icon.png
