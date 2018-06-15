@@ -125,21 +125,22 @@ EOF
         }
       }
     }
-    stage('linux funcational test') {
+    stage('linux xfce4 funcational test') {
       environment {
         ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
       }
       agent {
         dockerfile {
-          filename 'ci-xfce.Dockerfile'
+          filename 'wm-xfce.Dockerfile'
           reuseNode true
           label 'master'
-          args "--privileged -v /opt/silverkey:/opt/silverkey"
+          args "--network=silverkey-ci-test --privileged -v /opt/silverkey:/opt/silverkey --volumes-from=silverkeyci_ci_1"
         }
       }
       steps {
         sh """
           startxfce4 &
+          sleep 5
         """
         checkout scm
         dir('.') {
@@ -148,6 +149,32 @@ EOF
         }
       }
     }
+
+    stage('linux fvwm2 funcational test') {
+      environment {
+        ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
+      }
+      agent {
+        dockerfile {
+          filename 'wm-fvwm.Dockerfile'
+          reuseNode true
+          label 'master'
+          args "--network=silverkey-ci-test --privileged -v /opt/silverkey:/opt/silverkey --volumes-from=silverkeyci_ci_1"
+        }
+      }
+      steps {
+        sh """
+          fvwm -replace &
+          sleep 5
+        """
+        checkout scm
+        dir('.') {
+          sh "chmod +x /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
+          sh "./test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
+        }
+      }
+    }
+
     stage('Publish latest artifacts') {
       environment {
         ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
