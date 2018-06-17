@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   m4
 
 RUN apt-get install -y libcurl4-nss-dev
-RUN apt-get install -y libcurl4-openssl-dev patchelf
+RUN apt-get install -y libcurl4-openssl-dev
 #USER jenkins
 RUN git clone https://github.com/Robot/robot
 WORKDIR /tmp/robot
