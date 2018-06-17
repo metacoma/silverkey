@@ -1,5 +1,6 @@
 #FROM oldfrostdragon/qt-5.7-xenial-docker:latest
-FROM rabits/qt:5.11-desktop
+#FROM rabits/qt:5.11-desktop
+FROM metacoma/qt-5.11:trusty
 WORKDIR /tmp/
 USER root
 RUN apt-get purge -y libcurl3 libcurl3-gnutls
