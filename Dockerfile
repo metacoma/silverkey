@@ -29,8 +29,8 @@ RUN git checkout a19be1863405fa4dd5c970946d0f3f59d06b74f1
 RUN make -j4 build
 USER root
 RUN make install
-ADD https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage /usr/local/bin/linuxdeployqt
-RUN chmod +x /usr/local/bin/linuxdeployqt
+ADD https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt
+RUN chmod +x /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt
 WORKDIR /tmp
 ENV LD_LIBRARY_PATH=/opt/Qt/5.11.0/gcc_64/lib/
 WORKDIR /tmp
