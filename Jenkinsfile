@@ -66,7 +66,7 @@ Icon=${JOB_QT_APP}
 Categories=Office;
 EOF
               export PATH=/opt/Qt/5.11.0/gcc_64/bin/:${PATH}
-              sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage
+              sudo /opt/Qt/5.11.0/gcc_64/bin/linuxdeployqt usr/share/applications/silverkey-qt.desktop -appimage -qmake=/opt/Qt/5.11.0/gcc_64/bin/qmake
               sudo chown user: ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage
               ls -ltr ${env.WORKSPACE}/
               cp -vr ${LINUXDEPLOYQT_BUILD_DIR}/Silverkey-x86_64.AppImage ${env.WORKSPACE}/
