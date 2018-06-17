@@ -150,6 +150,32 @@ EOF
       }
     }
 
+    stage('linux xfce4 trusty funcational test') {
+      environment {
+        ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
+      }
+      agent {
+        dockerfile {
+          filename 'wm-xfce-trusty.Dockerfile'
+          reuseNode true
+          label 'master'
+          args "--network=silverkey-ci-test --privileged -v /opt/silverkey:/opt/silverkey --volumes-from=silverkeyci_ci_1"
+        }
+      }
+      steps {
+        sh """
+          startxfce4 &
+          sleep 5
+        """
+        checkout scm
+        dir('.') {
+          sh "chmod +x /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
+          sh "./test-scenario.sh /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/Silverkey-x86_64.AppImage"
+        }
+      }
+    }
+
+
     /*
     stage('linux fvwm2 funcational test') {
       environment {
