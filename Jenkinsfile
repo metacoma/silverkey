@@ -150,6 +150,7 @@ EOF
       }
     }
 
+    /*
     stage('linux fvwm2 funcational test') {
       environment {
         ARTIFACT_SHARE_CONTAINER_DIR = "/opt/silverkey"
@@ -174,6 +175,7 @@ EOF
         }
       }
     }
+    */
 
     stage('Publish latest artifacts') {
       environment {
