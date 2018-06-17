@@ -54,7 +54,7 @@ RUN ldconfig -v
 WORKDIR /tmp
 RUN git clone https://github.com/NixOS/patchelf
 WORKDIR /tmp/patchelf
-RUN ./bootstraph.sh           &&\
+RUN ./bootstrap.sh            &&\
     ./configure               &&\
     make                      &&\
     make install
