@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libfuse2                                            \
   gcc-5                                               \
   g++-5                                               \
+  autoconf                                            \
   m4
 
 RUN apt-get install -y libcurl4-nss-dev
@@ -50,6 +51,13 @@ RUN ./configure
 RUN make
 RUN make install
 RUN ldconfig -v
+WORKDIR /tmp
+RUN git clone https://github.com/NixOS/patchelf
+WORKDIR /tmp/patchelf
+RUN ./bootstraph.sh           &&\
+    ./configure               &&\
+    make                      &&\
+    make install
 WORKDIR /tmp
 ADD https://github.com/probonopd/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 RUN chmod +x /usr/local/bin/appimagetool
