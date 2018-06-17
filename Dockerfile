@@ -4,6 +4,11 @@ FROM metacoma/qt-5.11:trusty
 WORKDIR /tmp/
 USER root
 RUN apt-get purge -y libcurl3 libcurl3-gnutls
+RUN apt-get update && apt  install -y                 \
+  python-software-properties                          \
+  software-properties-common
+ENV DEBIAN_FRONTEND=noninteractive
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get update && apt-get install -y --upgrade    \
   git build-essential                                 \
   libxtst-dev                                         \
@@ -16,10 +21,13 @@ RUN apt-get update && apt-get install -y --upgrade    \
   wget                                                \
   cmake                                               \
   libfuse2                                            \
+  gcc-5                                               \
+  g++-5                                               \
   m4
 
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
 #USER jenkins
 RUN git clone https://github.com/Robot/robot
 WORKDIR /tmp/robot
