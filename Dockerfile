@@ -12,13 +12,11 @@ RUN apt-get update && apt-get install -y --upgrade    \
   libcurlpp-dev                                       \
   libcurl4-openssl-dev                                \
   libegl1-mesa                                        \
-  libcpprest-dev                                      \
   libboost-all-dev                                    \
   wget                                                \
   cmake                                               \
   libfuse2                                            \
-  m4                                                  \
-  rapidjson-dev
+  m4
 
 RUN apt-get install -y libcurl4-nss-dev
 RUN apt-get install -y libcurl4-openssl-dev patchelf
@@ -28,13 +26,6 @@ WORKDIR /tmp/robot
 RUN git checkout a19be1863405fa4dd5c970946d0f3f59d06b74f1
 RUN make -j4 build
 USER root
-RUN make install
-WORKDIR /tmp
-RUN git clone https://github.com/metacoma/etcd-cpp-api
-WORKDIR /tmp/etcd-cpp-api
-ADD https://github.com/catchorg/Catch2/releases/download/v2.2.2/catch.hpp /tmp/etcd-cpp-api/catch.hpp
-RUN cmake .
-RUN make
 RUN make install
 WORKDIR /tmp
 ENV LD_LIBRARY_PATH=/opt/Qt/5.11.0/gcc_64/lib/
