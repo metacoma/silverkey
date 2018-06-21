@@ -398,7 +398,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
 #endif
             Keyboard keyboard;
 #ifdef Q_OS_OSX
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
 #endif
             while (!keyboard.GetState(SK_PASTE_MODIFIER)) {
                 keyboard.Press(SK_PASTE_MODIFIER);
