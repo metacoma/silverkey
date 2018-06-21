@@ -11,9 +11,11 @@ public:
     ~FocusController();
     void switchFocus();
     void savePrevActive();
+#ifdef Q_OS_OSX
     void sendToFront();
-    void eraseOldAppPtr();
     void setOldAppId(QString bid);
+    void eraseOldAppPtr();
+#endif // Q_OS_OSX
 
 private:
     void *controller;
