@@ -412,6 +412,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
         }
     }
     hideTextEdit();
+    data = "";
 
     e->accept();
 }
