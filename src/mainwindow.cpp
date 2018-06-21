@@ -432,8 +432,8 @@ void MainWindow::showEvent(QShowEvent *event)
     updateWinPosition();
 #ifdef Q_OS_LINUX
     fc->savePrevActive();
-#endif
     fc->sendToFront();
+#endif
     event->accept();
 }
 
