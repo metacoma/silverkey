@@ -337,7 +337,9 @@ void MainWindow::connectDB()
 
 void MainWindow::savePreviouslyActiveWindow(QString bundleID)
 {
+#ifdef Q_OS_OSX
     fc->setOldAppId(bundleID);
+#endif // Q_OS_OSX
 }
 
 
