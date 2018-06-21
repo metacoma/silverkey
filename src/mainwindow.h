@@ -44,6 +44,7 @@ public:
     void setData(QString d);
     void getDbData();
     void showTextEdit();
+    void hideTextEdit();
     static QStringList getKeys(const QJsonObject &o);
     void getVal(QString key);
     void setVal(QString key, QString val);
