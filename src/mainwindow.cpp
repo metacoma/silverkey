@@ -409,6 +409,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
             lineEdit->setText("");
         }
     }
+    hideTextEdit();
 
     e->accept();
 }
@@ -471,6 +472,19 @@ void MainWindow::showSettings() {
         this->connectDB();
         this->getDbData();
     }
+}
+
+void MainWindow::hideTextEdit() {
+    clipboardData->setText("");
+    clipboardData->hide();
+    addDataButton->show();
+    int w = settingsButton->width() +
+            widgetPadding +
+            lineEdit->width() +
+            widgetPadding +
+            addDataButton->width();
+    resize(w,lineEdit->height());
+
 }
 
 void MainWindow::showTextEdit() {
