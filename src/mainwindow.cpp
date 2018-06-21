@@ -220,7 +220,9 @@ void MainWindow::createActions()
 
 void MainWindow::quitApp()
 {
-    qApp->quit();
+    QLocalServer::removeServer("SKApp");
+    qApp->closeAllWindows();
+    qApp->exit();
 }
 
 void MainWindow::updateDbIndex(int newIndex)
