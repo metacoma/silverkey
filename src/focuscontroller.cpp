@@ -19,3 +19,8 @@ void FocusController::savePrevActive()
 {
 
 }
+
+void FocusController::sendToFront()
+{
+
+}

@@ -1,34 +1,42 @@
 #include "mainwindow.h"
-#include "robothelper.h"
+#ifdef Q_OS_OSX
+# include "skappdelegate-c-interface.h"
+#endif
 #include <iostream>
 #include <QApplication>
 #include <Robot.h>
 #include <QDebug>
-#include <QFuture>
-#include <QFutureWatcher>
-#include <QtConcurrent/QtConcurrentRun>
-#include <QClipboard>
+#include <QLocalSocket>
 
 void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
     QApplication a(argc, argv);
-    MainWindow w;
+    MainWindow *w = new MainWindow();
+    initSKAppDelegate(w);
+
 
     if (child) {
-        w.setWriteFd(fd);
+        w->setWriteFd(fd);
     }
 
-    w.setAttribute(Qt::WA_DeleteOnClose);
+    w->setAttribute(Qt::WA_DeleteOnClose);
 
-    w.show();
+    w->show();
 
-    w.raise();  // for MacOS
-    w.activateWindow(); // for Windows
+    w->raise();  // for MacOS
+    w->activateWindow(); // for Windows
 
     qDebug() << a.exec();
 }
 
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_LINUX
+    QLocalSocket *probe = new QLocalSocket();
+    probe->connectToServer("SKApp");
+    if (probe->waitForConnected(1000)) {
+        return 0;
+    }
+#endif
     show_window(argc, argv);
     return EXIT_SUCCESS;
 }

@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QLocalServer>
 #include "fuzzycompleter.h"
 #include "requester.h"
 #include "focuscontroller.h"
@@ -43,10 +44,12 @@ public:
     void setData(QString d);
     void getDbData();
     void showTextEdit();
+    void hideTextEdit();
     static QStringList getKeys(const QJsonObject &o);
     void getVal(QString key);
     void setVal(QString key, QString val);
     void connectDB();
+    void savePreviouslyActiveWindow(QString bundleID);
 
 Q_SIGNALS:
     void dataLoaded();
@@ -70,6 +73,8 @@ private:
     void createTrayIcon();
     void createActions();
     void waitForDbUdates();
+    void updateWinPosition();
+    void setUpLocalServer();
     const int widgetPadding = 5;
     FuzzyLineEdit *lineEdit;
     QPushButton *settingsButton;
@@ -85,10 +90,11 @@ private:
     FocusController *fc;
 
     QAction *quitAction;
+    QAction *showAction;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     int dbIndex = 0;
-
+    QLocalServer *server;
 };
 
 #endif // MAINWINDOW_H

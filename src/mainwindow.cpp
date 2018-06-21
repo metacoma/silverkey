@@ -17,8 +17,6 @@
 #include <QMenu>
 #include <QSettings>
 #include <QDesktopWidget>
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QClipboard>
@@ -30,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
     fc = new FocusController();
+    setUpLocalServer();
     createActions();
     createTrayIcon();
 
@@ -141,30 +140,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(settingsButton, &QPushButton::clicked, this, &MainWindow::showSettings);
     connect(addDataButton, &QPushButton::clicked, this, &MainWindow::showTextEdit);
 
-    this->activateWindow();
-    QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
-    qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
-
     QPoint pos(lineEdit->width()-5, 5);
     QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
     qApp->sendEvent(lineEdit, &e);
     QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, 0);
     qApp->sendEvent(lineEdit, &f);
-
-    QWidget::setFocusProxy(this);
-
-    QPoint globalCursorPos = QCursor::pos();
-    int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
-    qDebug() << "Screen " << mouseScreen;
-    QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
-    setGeometry(
-        QStyle::alignedRect(
-            Qt::LeftToRight,
-            Qt::AlignCenter,
-            size(),
-            ag
-        )
-    );
 
     lockInput();
     int w = settingsButton->width() +
@@ -173,7 +153,6 @@ MainWindow::MainWindow(QWidget *parent) :
             widgetPadding +
             addDataButton->width();
     resize(w,lineEdit->height());
-    registerService();
 }
 
 QStringList MainWindow::getKeys(const QJsonObject &o) {
@@ -218,6 +197,7 @@ void MainWindow::doHide()
 void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(showAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -233,12 +213,16 @@ void MainWindow::createTrayIcon()
 void MainWindow::createActions()
 {
     quitAction = new QAction(tr("&Quit"), this);
+    showAction = new QAction(tr("&Show"), this);
     connect(quitAction, &QAction::triggered, this, &MainWindow::quitApp);
+    connect(showAction, &QAction::triggered, this, &MainWindow::show);
 }
 
 void MainWindow::quitApp()
 {
-    qApp->quit();
+    QLocalServer::removeServer("SKApp");
+    qApp->closeAllWindows();
+    qApp->exit();
 }
 
 void MainWindow::updateDbIndex(int newIndex)
@@ -273,6 +257,31 @@ void MainWindow::waitForDbUdates()
     httpClient->sendRequest("v2/keys/?wait=true&recursive=true",
                             getData,
                             errData);
+}
+
+void MainWindow::updateWinPosition()
+{
+    QPoint globalCursorPos = QCursor::pos();
+    int mouseScreen = qApp->desktop()->screenNumber(globalCursorPos);
+    qDebug() << "Screen " << mouseScreen;
+    QRect ag = qApp->desktop()->screen(mouseScreen)->geometry();
+    ag.setHeight(ag.height()/2);
+    setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignCenter,
+            size(),
+            ag
+        )
+                );
+}
+
+void MainWindow::setUpLocalServer()
+{
+    server = new QLocalServer();
+    QLocalServer::removeServer("SKApp");
+    server->listen("SKApp");
+    connect(server, &QLocalServer::newConnection, this, &MainWindow::show);
 }
 
 void MainWindow::getVal(QString key) {
@@ -326,6 +335,11 @@ void MainWindow::connectDB()
                               nullptr);
 }
 
+void MainWindow::savePreviouslyActiveWindow(QString bundleID)
+{
+    fc->setOldAppId(bundleID);
+}
+
 
 void MainWindow::getDbData()
 {
@@ -374,14 +388,10 @@ void MainWindow::setData(QString d) {
 void MainWindow::hideEvent(QHideEvent *e) {
     if (clipboardData->toPlainText() == "") {
         qDebug() << "Hide action, value is " << data;
-#ifdef Q_OS_MACOS
-        write(wfd, data.toStdString().c_str(), data.toStdString().length()+1);
-#endif
-        if (data != "") {
 
+        if (data != "") {
             QClipboard *cb = QApplication::clipboard();
             cb->setText(data);
-
             fc->switchFocus();
 
 #ifdef Q_OS_LINUX
@@ -390,7 +400,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
 #endif
             Keyboard keyboard;
 #ifdef Q_OS_OSX
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
 #endif
             while (!keyboard.GetState(SK_PASTE_MODIFIER)) {
                 keyboard.Press(SK_PASTE_MODIFIER);
@@ -398,24 +408,39 @@ void MainWindow::hideEvent(QHideEvent *e) {
             }
             keyboard.Click(SK_PASTE_KEY);
             keyboard.Release(SK_PASTE_MODIFIER);
+            lineEdit->setText("");
         }
     }
-
+    hideTextEdit();
+    data = "";
 
     e->accept();
-    qApp->closeAllWindows();
-    qApp->exit();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
 {
+
     qDebug() << "Window show";
+    this->activateWindow();
+    QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
+    qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
+
+    QWidget::setFocusProxy(this);
+
+    updateWinPosition();
+#ifdef Q_OS_LINUX
     fc->savePrevActive();
+#endif
+    fc->sendToFront();
+    event->accept();
 }
 
 void MainWindow::escapePressed() {
     clipboardData->setText("");
+    lineEdit->setText("");
     lineEdit->setSelectedItem("");
+    lineEdit->completer()->popup()->hide();
+    fc->switchFocus();
     this->hide();
 }
 
@@ -450,6 +475,19 @@ void MainWindow::showSettings() {
         this->connectDB();
         this->getDbData();
     }
+}
+
+void MainWindow::hideTextEdit() {
+    clipboardData->setText("");
+    clipboardData->hide();
+    addDataButton->show();
+    int w = settingsButton->width() +
+            widgetPadding +
+            lineEdit->width() +
+            widgetPadding +
+            addDataButton->width();
+    resize(w,lineEdit->height());
+
 }
 
 void MainWindow::showTextEdit() {
