@@ -11,7 +11,9 @@
 void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
     QApplication a(argc, argv);
     MainWindow *w = new MainWindow();
+#ifdef Q_OS_OSX
     initSKAppDelegate(w);
+#endif // Q_OS_OSX
 
 
     if (child) {
