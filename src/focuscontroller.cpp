@@ -20,7 +20,9 @@ void FocusController::savePrevActive()
 
 }
 
+#ifdef Q_OS_OSX
 void FocusController::sendToFront()
 {
 
 }
+#endif // Q_OS_OSX
