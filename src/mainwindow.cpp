@@ -430,8 +430,8 @@ void MainWindow::showEvent(QShowEvent *event)
     QWidget::setFocusProxy(this);
 
     updateWinPosition();
-#ifdef Q_OS_LINUX
     fc->savePrevActive();
+#ifdef Q_OS_OSX
     fc->sendToFront();
 #endif
     event->accept();
