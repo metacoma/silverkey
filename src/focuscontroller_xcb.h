@@ -5,6 +5,9 @@
 #include <QObject>
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
+#include <X11/Xlib.h>
+#include <xdo.h>
+
 
 class FocusControllerXcb
 {
