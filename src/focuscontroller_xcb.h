@@ -5,8 +5,19 @@
 #include <QObject>
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
-#include <X11/Xlib.h>
 #include <xdo.h>
+
+#undef Bool
+#undef CursorShape
+#undef Expose
+#undef KeyPress
+#undef KeyRelease
+#undef FocusIn
+#undef FocusOut
+#undef FontChange
+#undef None
+#undef Status
+#undef Unsorted
 
 
 class FocusControllerXcb
