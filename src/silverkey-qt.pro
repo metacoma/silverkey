@@ -76,7 +76,7 @@ linux {
             focuscontroller_xcb.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
-    LIBS += -lRobot -lXtst -lX11 -lxcb -lxcb-ewmh
+    LIBS += -lRobot -lXtst -lX11 -lxcb -lxcb-ewmh -lxdo
     QT += x11extras
 }
 

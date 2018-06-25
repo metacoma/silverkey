@@ -11,6 +11,8 @@
 # include <sys/wait.h>
 #endif
 
+
+
 #include <QKeyEvent>
 #include <QDebug>
 #include <QAbstractItemView>
@@ -397,8 +399,11 @@ void MainWindow::hideEvent(QHideEvent *e) {
             fc->switchFocus();
 
 #ifdef Q_OS_LINUX
+            Clipboard::SetText ("Text");
+
             cb->setText(data, QClipboard::Selection);
             qDebug() << "Selection CB data" << cb->text(QClipboard::Selection);
+
 #endif
             Keyboard keyboard;
 #ifdef Q_OS_OSX
@@ -409,6 +414,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
                 qDebug() << "Command key state " << keyboard.GetState(KeyShift);
             }
             keyboard.Click(SK_PASTE_KEY);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
             keyboard.Release(SK_PASTE_MODIFIER);
             lineEdit->setText("");
         }

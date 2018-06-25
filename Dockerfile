@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y --upgrade    \
   wget                                                \
   cmake                                               \
   libfuse2                                            \
+  libxdo3                                             \
+  libxdo-dev                                          \
   autoconf                                            \
   m4
 

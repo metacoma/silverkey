@@ -31,9 +31,28 @@ FocusControllerXcb::~FocusControllerXcb()
 
 void FocusControllerXcb::switchFocusToOld()
 {
+  int ret;
+  xdo_t *dpy;
   this->FocusWindowDebug("switchFocusToOld", this->win);
-  xcb_ewmh_set_active_window(this->ewmh, this->defaultScreen, this->win);
+
+  dpy = xdo_new(NULL)
+
+  if (dpy == NULL) {
+    qDebug("dpy init fail");
+    return
+  }
+
+  ret = xdo_activate_window(dpy, this->win);
+
+  if (ret) {
+    qDebug("xdo_activate_window fail, ret: %d", ret);
+    return
+  }
+
+  xdo_wait_for_window_active(dpy, this->win, 1);
+
   xcb_set_input_focus(this->dpy, XCB_INPUT_FOCUS_POINTER_ROOT, this->win, XCB_CURRENT_TIME);
+
 }
 
 void FocusControllerXcb::savePrevActive()
