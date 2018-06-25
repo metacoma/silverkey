@@ -5,7 +5,9 @@
 #include <QObject>
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
+extern "C" {
 #include <xdo.h>
+}
 
 #undef Bool
 #undef CursorShape
