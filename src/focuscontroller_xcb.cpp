@@ -35,18 +35,18 @@ void FocusControllerXcb::switchFocusToOld()
   xdo_t *dpy;
   this->FocusWindowDebug("switchFocusToOld", this->win);
 
-  dpy = xdo_new(NULL)
+  dpy = xdo_new(NULL);
 
   if (dpy == NULL) {
     qDebug("dpy init fail");
-    return
+    return ;
   }
 
   ret = xdo_activate_window(dpy, this->win);
 
   if (ret) {
     qDebug("xdo_activate_window fail, ret: %d", ret);
-    return
+    return ;
   }
 
   xdo_wait_for_window_active(dpy, this->win, 1);
