@@ -104,6 +104,7 @@ EOF
           }
         }
         */
+        /*
         stage('osx') {
           environment {
             STAGE_ARTIFACT = "${JOB_QT_APP}.app/**"
@@ -124,6 +125,7 @@ EOF
             }
           }
         }
+        */
       }
     }
     stage('linux xfce4 funcational test') {
@@ -224,7 +226,7 @@ EOF
         sh """
           cd /var/jenkins_home/jobs/silverkey-ui-crossplatform-build-pipeline/builds/${env.BUILD_NUMBER}/archive/
           sudo chmod +x silverkey-qt.app/Contents/MacOS/silverkey-qt
-          sudo zip -r ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-osx.zip silverkey-qt.app
+          //sudo zip -r ${ARTIFACT_SHARE_CONTAINER_DIR}/artifacts/silverkey-latest-osx.zip silverkey-qt.app
         """
       }
     }
