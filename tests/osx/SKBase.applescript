@@ -63,6 +63,16 @@ BaseTestCase.prototype.quitByHotkey = function() {
     this.sendKeyCombination(['command down'], 'q')
 }
 
+BaseTestCase.prototype.quitApp = function(appname = '') {
+    if (appname != '') {
+        an = appname
+    } else {
+        an = this.appname
+    }
+    app = Application(an)
+    app.quit()
+}
+
 BaseTestCase.prototype.typeString = function(str) {
     var customKeyCodes = {
         "0":29,
