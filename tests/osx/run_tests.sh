@@ -16,7 +16,7 @@ function runAll() {
         echo  -e "${BASE_LIB}\n${tst}" | osascript -l JavaScript
         if [ $? != 0 ]
         then
-            let ERR_COUNT=${ERR_COUNT} + 1
+            let ERR_COUNT=${ERR_COUNT}+1
         fi
         echo
     done

@@ -9,7 +9,7 @@ function SKBasePasteOps() {
         this.runApp(this.bundle_path, this.appname, 1)
         assert(this.isAppRunning(this.appname), true)
 
-        this.quitByHotkey()
+        this.quitApp()
         delay(1)
         assert(this.isAppRunning(this.appname), false)
     }
@@ -23,7 +23,7 @@ function SKBasePasteOps() {
         assert(this.isAppRunning(this.appname), true)
 
         this.runApp(this.bundle_path, this.appname, 1)
-        this.quitByHotkey()
+        this.quitApp()
         delay(1)
         assert(this.isAppRunning(this.appname), false)
     }
@@ -53,7 +53,7 @@ function SKBasePasteOps() {
 	    delay(1)
 
         this.runApp(this.terminal_bundle, this.terminal_app, 2)
-        this.quitByHotkey()
+        this.quitApp(this.terminal_app)
         delay(2)
 
 	    res = this.runShellCmd("cat /tmp/test" + timeStamp)
