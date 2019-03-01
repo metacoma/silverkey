@@ -27,22 +27,22 @@ services:
     ports:
       - 0.0.0.0:2888:8000
 
-  gui:
-    build:
-      context: .
-      dockerfile: Dockerfile.client
-    image: metacoma/silverkey-client:latest
-    environment:
-      - DISPLAY
-      - SILVERKEY_HOST
-    volumes:
-      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
-      # required to run gui from non-root user inside a docker container
-      # not supported yet
-      # - "/etc/group:/etc/group:ro"
-      # - "/etc/passwd:/etc/passwd:ro"
-      # - "/etc/shadow:/etc/shadow:ro"
-      # - "/etc/sudoers.d:/etc/sudoers.d:ro"
+#  gui:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.client
+#    image: metacoma/silverkey-client:latest
+#    environment:
+#      - DISPLAY
+#      - SILVERKEY_HOST
+#    volumes:
+#      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+#      # required to run gui from non-root user inside a docker container
+#      # not supported yet
+#      # - "/etc/group:/etc/group:ro"
+#      # - "/etc/passwd:/etc/passwd:ro"
+#      # - "/etc/shadow:/etc/shadow:ro"
+#      # - "/etc/sudoers.d:/etc/sudoers.d:ro"
 
 networks:
   silverkey:
