@@ -32,7 +32,7 @@ public:
         DELET
     };
 
-    explicit Requester(QObject *parent = 0);
+    explicit Requester(QObject *parent = nullptr);
 
     void initRequester(const QString& host, int port, QSslConfiguration *value);
 

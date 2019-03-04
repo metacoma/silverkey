@@ -13,8 +13,8 @@ class UGLOBALHOTKEY_EXPORT UKeySequence : public QObject
 {
     Q_OBJECT
 public:
-    explicit UKeySequence(QObject *parent = 0);
-    explicit UKeySequence(const QString& str, QObject *parent = 0);
+    explicit UKeySequence(QObject *parent = nullptr);
+    explicit UKeySequence(const QString& str, QObject *parent = nullptr);
     void FromString(const QString& str);
     QString ToString();
     void AddKey(int key);
@@ -22,13 +22,13 @@ public:
     void AddModifiers(Qt::KeyboardModifiers mod);
     void AddKey(const QKeyEvent* event);
     inline size_t Size() const {
-        return Keys.size();
+        return static_cast<size_t>(Keys.size());
     }
-    inline int operator [] (size_t n) const {
-        if ((int)n > Keys.size()) {
+    inline size_t operator [] (size_t n) const {
+        if (static_cast<int>(n) > Keys.size()) {
             throw UException("Out of bounds");
         }
-        return Keys[n];
+        return static_cast<size_t>(Keys[static_cast<int>(n)]);
     }
     QVector<int> GetSimpleKeys() const;
     QVector<int> GetModifiers() const;

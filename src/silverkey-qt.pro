@@ -1,42 +1,20 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2018-04-12T02:10:11
-#
-#-------------------------------------------------
-
-QT       += core gui network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 TARGET = silverkey-qt
 TEMPLATE = app
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which has been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
-
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
+QT += core gui network widgets
+CONFIG += c++14
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
         fuzzycompleter.cpp \
         sksettings.cpp \
-        robothelper.cpp \
         requester.cpp
 
 HEADERS += \
         mainwindow.h \
         fuzzycompleter.h \
         sksettings.h \
-        robothelper.h \
-        hotkeys.h \
         requester.h \
         focuscontroller.h \
         skappdelegate-c-interface.h
@@ -45,10 +23,8 @@ FORMS += \
         mainwindow.ui \
     sksettings.ui
 
-LIBS += \
-        -lQt5Concurrent
-
-DEFINES += ROBOT_ARCH_64
+include(UGlobalHotkey/uglobalhotkey.pri)
+INCLUDEPATH += ./UGlobalHotkey
 
 macx {
     HEADERS += \
@@ -71,7 +47,6 @@ linux {
     HEADERS += \
             focuscontroller_xcb.h
     SOURCES += \
-            hotkeys.cpp \
             focuscontroller_xcb.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
@@ -80,16 +55,18 @@ linux {
 }
 
 windows {
-    DEFINES += ROBOT_OS_WIN
     INCLUDEPATH += ../include/robot
-    LIBS += -L../bin/Win64/ -lRobot
+    LIBS += -L../bin -lRobot
 
-  SOURCES += focuscontroller_win.cpp
+    SOURCES += focuscontroller_win.cpp
     HEADERS += focuscontroller_win.h
+
+    target.files += $$OUT_PWD/$(DESTDIR)/$(TARGET)
+    target.path += $$PWD/../bin
+    INSTALLS += target
 }
 
 RESOURCES += \
     skimages.qrc
 
-include(UGlobalHotkey/uglobalhotkey.pri)
-INCLUDEPATH += ./UGlobalHotkey
+

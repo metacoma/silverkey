@@ -7,6 +7,7 @@ FocusControllerWin::FocusControllerWin()
 {
 
 }
+
 FocusControllerWin::~FocusControllerWin()
 {
 }
@@ -36,7 +37,7 @@ void FocusController::switchFocus()
 
 
 void FocusController::savePrevActive() {
-      FocusControllerWin *ctrl = (FocusControllerWin *) controller;
+      FocusControllerWin *ctrl = reinterpret_cast<FocusControllerWin *>(controller);
       ctrl->savePrevActive();
 }
 

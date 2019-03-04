@@ -5,7 +5,7 @@
 #include <QKeyEvent>
 
 
-int compareStr(const std::string& s, const std::string& t) {
+std::size_t compareStr(const std::string& s, const std::string& t) {
     const std::size_t n = t.size();
     const std::size_t m = s.size();
     if (n == 0) {
@@ -49,10 +49,12 @@ bool sorter(QString a, QString b, QString pat) {
 }
 
 void FuzzyPopup::showEvent(QShowEvent *event) {
+    Q_UNUSED(event);
     emit popupShow();
 }
 
 void FuzzyPopup::hideEvent(QHideEvent *event) {
+    Q_UNUSED(event);
     emit popupHide();
 }
 

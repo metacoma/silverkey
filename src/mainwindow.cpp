@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "fuzzycompleter.h"
 #include "sksettings.h"
-#include "hotkeys.h"
 #include "uglobalhotkeys.h"
 #include <Robot.h>
 #include <chrono>
@@ -79,12 +78,12 @@ MainWindow::MainWindow(QWidget *parent) :
     settingsButton = new QPushButton("",this);
     settingsButton->setObjectName("settings");
     settingsButton->setStyleSheet("#settings {"
-                                  "border-image:url(:/images/if_cog_35873.png);"
+                                  "border-image:url(:/images/gear.png);"
                                   "}"
                                   "#settings:pressed {"
-                                  "border-image:url(:/images/if_cog_35873_pressed.png);"
+                                  "border-image:url(:/images/gear-pressed.png);"
                                   "}");
-    settingsButton->resize(QImage(":/images/if_cog_35873.png").size());
+    settingsButton->resize(QImage(":/images/gear.png").size());
     settingsButton->setGeometry(
                 QStyle::alignedRect(
                     Qt::LeftToRight,
@@ -96,12 +95,12 @@ MainWindow::MainWindow(QWidget *parent) :
     addDataButton = new QPushButton("", this);
     addDataButton->setObjectName("addData");
     addDataButton->setStyleSheet("#addData {"
-                                 "border-image:url(:/images/if_edit_add_7710.png);"
+                                 "border-image:url(:/images/add.png);"
                                  "}"
                                  "#addData:pressed {"
-                                 "border-image:url(:/images/if_edit_add_7710_pressed.png);"
+                                 "border-image:url(:/images/add-pressed.png);"
                                  "}");
-    addDataButton->resize(QImage(":/images/if_edit_add_7710.png").size());
+    addDataButton->resize(QImage(":/images/add.png").size());
 
 
     lineEdit->move(settingsButton->x() + settingsButton->width() + widgetPadding,
@@ -154,9 +153,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addDataButton, &QPushButton::clicked, this, &MainWindow::showTextEdit);
 
     QPoint pos(lineEdit->width()-5, 5);
-    QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, 0);
+    QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
     qApp->sendEvent(lineEdit, &e);
-    QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, 0);
+    QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
     qApp->sendEvent(lineEdit, &f);
 
     lockInput();
@@ -217,7 +216,7 @@ void MainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    QIcon icon = QIcon(":/images/if_tray_active.png");
+    QIcon icon = QIcon(":/images/tray.png");
     trayIcon->setIcon(icon);
     setWindowIcon(icon);
     trayIcon->show();
@@ -256,12 +255,12 @@ void MainWindow::handleDbUpdateError()
 void MainWindow::waitForDbUdates()
 {
     qDebug() << "Start waiting for DB updates loop";
-    Requester::handleFunc getData = [this](const QJsonObject &o) {
+    Requester::handleFunc getData = [this](const QJsonObject &) {
         qDebug() << "Got data " << this->data;
         emit this->gotDbUpdateEvent();
     };
 
-    Requester::handleFunc errData = [this](const QJsonObject &o) {
+    Requester::handleFunc errData = [this](const QJsonObject &) {
         qDebug() << "Error: connection dropped";
         emit this->gotDbUpdateError();
 
@@ -305,7 +304,7 @@ void MainWindow::getVal(QString key) {
         emit this->gotReplyFromDB();
     };
 
-    Requester::handleFunc errData = [this](const QJsonObject &o) {
+    Requester::handleFunc errData = [this](const QJsonObject &) {
         qDebug() << "Error retrieving key";
         emit this->gotReplyFromDB();
     };
@@ -322,7 +321,7 @@ void MainWindow::setVal(QString key, QString val) {
         emit this->gotReplyFromDB();
     };
 
-    Requester::handleFunc errData = [](const QJsonObject &o) {
+    Requester::handleFunc errData = [](const QJsonObject &) {
         qDebug() << "Error writing data";
     };
     QString path;
@@ -352,7 +351,10 @@ void MainWindow::savePreviouslyActiveWindow(QString bundleID)
 {
 #ifdef Q_OS_OSX
     fc->setOldAppId(bundleID);
+#else
+    Q_UNUSED(bundleID);
 #endif // Q_OS_OSX
+
 }
 
 
@@ -365,7 +367,7 @@ void MainWindow::getDbData()
         c->setUp(this->wordlist);
         emit this->dataLoaded();
     };
-    Requester::handleFunc errData = [this](const QJsonObject &o){
+    Requester::handleFunc errData = [this](const QJsonObject &){
         qDebug() << "Got err obj";
         emit this->dataLoaded();
     };
@@ -442,7 +444,7 @@ void MainWindow::showEvent(QShowEvent *event)
     qDebug() << "Window show";
     this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
-    qApp->postEvent(this, (QEvent *)eventFocus, Qt::LowEventPriority);
+    qApp->postEvent(this, static_cast<QEvent *>(eventFocus), Qt::LowEventPriority);
 
     QWidget::setFocusProxy(this);
 
