@@ -82,7 +82,7 @@ linux {
 windows {
     DEFINES += ROBOT_OS_WIN
     INCLUDEPATH += ../../robot/Source
-    LIBS += -L../../robot/Binaries/Win64/ -lRobot
+    LIBS += -L./robot/Binaries/Win64/ -lRobot
 
   SOURCES += focuscontroller_win.cpp
     HEADERS += focuscontroller_win.h
@@ -91,5 +91,5 @@ windows {
 RESOURCES += \
     skimages.qrc
 
-include(C:\work\silverkey\UGlobalHotkey\uglobalhotkey.pri)
-INCLUDEPATH += C:\work\silverkey\UGlobalHotkey
+include(UGlobalHotkey/uglobalhotkey.pri)
+INCLUDEPATH += ./UGlobalHotkey
