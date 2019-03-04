@@ -3,6 +3,7 @@
 #include "fuzzycompleter.h"
 #include "sksettings.h"
 #include "hotkeys.h"
+#include "uglobalhotkeys.h"
 #include <Robot.h>
 #include <chrono>
 #include <thread>
@@ -34,6 +35,16 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createTrayIcon();
 
+    QSettings settings("HKEY_CURRENT_USER\\Control Panel\\Desktop ", QSettings::NativeFormat, this);
+    settings.setValue("ForegroundFlashCount", 3);
+    settings.setValue("ForegroundLockTimeout", 0 );
+
+    UGlobalHotkeys *hotkeyManager = new UGlobalHotkeys();
+    hotkeyManager->registerHotkey("Ctrl+F1");
+    QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t){
+        qDebug() << "I'm hotkey!";
+        activateWindow();
+    });
 
     httpClient = new Requester(this);
     connectDB();
@@ -332,7 +343,7 @@ void MainWindow::setVal(QString key, QString val) {
 void MainWindow::connectDB()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    httpClient->initRequester(settings.value("server", "hw2").toString(),
+    httpClient->initRequester(settings.value("server", "192.168.0.45").toString(),
                               settings.value("port", 2379).toInt(),
                               nullptr);
 }
