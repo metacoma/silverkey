@@ -61,8 +61,7 @@ windows {
     SOURCES += focuscontroller_win.cpp
     HEADERS += focuscontroller_win.h
 
-    target.files += $$OUT_PWD/$(DESTDIR)/$(TARGET)
-    target.path += $$PWD/../bin
+    target.path = $$PWD/../bin
     INSTALLS += target
 }
 

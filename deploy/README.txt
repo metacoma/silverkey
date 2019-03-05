@@ -1,0 +1,1 @@
+You need set QTDIR env variable first.
