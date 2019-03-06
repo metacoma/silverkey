@@ -16,7 +16,7 @@ public:
     void setOldAppId(QString bid);
     void eraseOldAppPtr();
 #endif // Q_OS_OSX
-#ifdef Q_OS_WIN64
+#ifdef Q_OS_WIN
     void detachThread();
 #endif
 

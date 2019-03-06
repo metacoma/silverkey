@@ -437,7 +437,9 @@ void MainWindow::hideEvent(QHideEvent *e) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             keyboard.Release(SK_PASTE_MODIFIER);
             lineEdit->setText("");
+#ifdef Q_OS_WIN
             fc->detachThread();
+#endif
         }
     }
     hideTextEdit();
