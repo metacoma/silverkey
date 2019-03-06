@@ -213,7 +213,7 @@ void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(showAction);
-  //  trayIconMenu->addAction(hideAction);
+    trayIconMenu->addAction(hideAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -452,14 +452,12 @@ void MainWindow::showEvent(QShowEvent *event)
 {
 
     qDebug() << "Window show";
-   // this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, static_cast<QEvent *>(eventFocus), Qt::LowEventPriority);
 
     QWidget::setFocusProxy(this);
-
+    lineEdit->setFocus();
     updateWinPosition();
-   // fc->savePrevActive();
 #ifdef Q_OS_OSX
     fc->sendToFront();
 #endif

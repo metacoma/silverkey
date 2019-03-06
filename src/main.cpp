@@ -27,7 +27,7 @@ void show_window(int argc, char *argv[], int fd = 0, bool child = false) {
 
     w->raise();  // for MacOS
     w->activateWindow(); // for Windows
-
+    w->hide();
     qDebug() << a.exec();
 }
 
