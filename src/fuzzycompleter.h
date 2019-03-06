@@ -60,7 +60,7 @@ class FuzzyLineEdit : public QLineEdit
     Q_OBJECT
 
 public:
-    FuzzyLineEdit(QWidget *parent = 0);
+    FuzzyLineEdit(QWidget *parent = nullptr);
     ~FuzzyLineEdit();
 
     void setCompleter(FuzzyCompleter *c);
@@ -77,7 +77,7 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
-    FuzzyCompleter *c;
+    FuzzyCompleter *c = nullptr;
     QString selectedItem;
 };
 

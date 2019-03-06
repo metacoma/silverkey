@@ -56,7 +56,7 @@ linux {
 
 windows {
     INCLUDEPATH += ../include/robot
-    LIBS += -L../bin -lRobot
+    LIBS += -L$$PWD/../bin -lRobot
 
     SOURCES += focuscontroller_win.cpp
     HEADERS += focuscontroller_win.h

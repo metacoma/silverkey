@@ -42,7 +42,10 @@ MainWindow::MainWindow(QWidget *parent) :
     hotkeyManager->registerHotkey("Ctrl+F1");
     QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t){
         qDebug() << "I'm hotkey!";
+        fc->savePrevActive();
         activateWindow();
+        show();
+
     });
 
     httpClient = new Requester(this);
@@ -210,6 +213,7 @@ void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(showAction);
+  //  trayIconMenu->addAction(hideAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -226,8 +230,10 @@ void MainWindow::createActions()
 {
     quitAction = new QAction(tr("&Quit"), this);
     showAction = new QAction(tr("&Show"), this);
+    hideAction = new QAction(tr("&Hide"), this);
     connect(quitAction, &QAction::triggered, this, &MainWindow::quitApp);
     connect(showAction, &QAction::triggered, this, &MainWindow::show);
+    connect(hideAction, &QAction::triggered, this, &MainWindow::hide);
 }
 
 void MainWindow::quitApp()
@@ -419,6 +425,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
 
 #endif
             Keyboard keyboard;
+
 #ifdef Q_OS_OSX
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
 #endif
@@ -430,6 +437,7 @@ void MainWindow::hideEvent(QHideEvent *e) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             keyboard.Release(SK_PASTE_MODIFIER);
             lineEdit->setText("");
+            fc->detachThread();
         }
     }
     hideTextEdit();
@@ -442,14 +450,14 @@ void MainWindow::showEvent(QShowEvent *event)
 {
 
     qDebug() << "Window show";
-    this->activateWindow();
+   // this->activateWindow();
     QFocusEvent* eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, static_cast<QEvent *>(eventFocus), Qt::LowEventPriority);
 
     QWidget::setFocusProxy(this);
 
     updateWinPosition();
-    fc->savePrevActive();
+   // fc->savePrevActive();
 #ifdef Q_OS_OSX
     fc->sendToFront();
 #endif

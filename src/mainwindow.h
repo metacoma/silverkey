@@ -15,16 +15,17 @@
 #ifdef Q_OS_LINUX
 #include "focuscontroller_xcb.h"
 #endif // Q_OS_LINUX
-#define KEYBOARD_SPEED 20
 
 #ifdef Q_OS_MACOS
 #define SK_PASTE_MODIFIER KeySystem
 #define SK_PASTE_KEY "v"
-#else
+#elseif Q_OS_LINUX
 #define SK_PASTE_MODIFIER KeyShift
 #define SK_PASTE_KEY "{INSERT}"
+#else
+#define SK_PASTE_MODIFIER KeyControl
+#define SK_PASTE_KEY "v"
 #endif
-
 
 namespace Ui {
 class MainWindow;
@@ -32,9 +33,10 @@ class MainWindow;
 
 class MainWindow : public QDialog
 {
+    Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     void EnterPressed();
     void EndOfWorkflow();
     void SearchEvent();
@@ -75,26 +77,28 @@ private:
     void waitForDbUdates();
     void updateWinPosition();
     void setUpLocalServer();
-    const int widgetPadding = 5;
-    FuzzyLineEdit *lineEdit;
-    QPushButton *settingsButton;
-    QPushButton *addDataButton;
-    QTextEdit *clipboardData;
-    Requester *httpClient;
     void lockInput();
     void unlockInput();
-    Q_OBJECT
-    QStringList wordlist;
-    int wfd;
-    QString data = "";
-    FocusController *fc;
 
-    QAction *quitAction;
-    QAction *showAction;
-    QSystemTrayIcon *trayIcon;
-    QMenu *trayIconMenu;
+private:
+    const int widgetPadding = 5;
+    FuzzyLineEdit *lineEdit = nullptr;
+    QPushButton *settingsButton = nullptr;
+    QPushButton *addDataButton = nullptr;
+    QTextEdit *clipboardData = nullptr;
+    Requester *httpClient = nullptr;
+    QStringList wordlist;
+    int wfd = 0;
+    QString data;
+    FocusController *fc = nullptr;
+
+    QAction *quitAction = nullptr;
+    QAction *showAction = nullptr;
+    QAction *hideAction = nullptr;
+    QSystemTrayIcon *trayIcon = nullptr;
+    QMenu *trayIconMenu = nullptr;
     int dbIndex = 0;
-    QLocalServer *server;
+    QLocalServer *server = nullptr;
 };
 
 #endif // MAINWINDOW_H
