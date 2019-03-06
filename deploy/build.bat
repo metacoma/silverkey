@@ -1,12 +1,17 @@
 @echo off
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+cd /d %~dp0
 
+call "%QTDIR%\bin\qtenv2.bat"
+call "%VS150COMNTOOLS%..\..\VC\Auxiliary\Build\vcvars64.bat"
+
+cd /d %~dp0
 cd ../src
 
-%QTDIR%\bin\qmake.exe CONFIG+=release
+qmake CONFIG+=release
 nmake
 nmake install
-%QTDIR%\bin\windeployqt.exe --no-translations ../bin/silverkey-qt.exe
+windeployqt --no-translations ../bin/silverkey-qt.exe
 
-cd ../deploy
+cd /d %~dp0
+
