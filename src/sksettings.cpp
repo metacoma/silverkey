@@ -1,20 +1,21 @@
 #include "sksettings.h"
+
 #include "ui_sksettings.h"
+
 #include <QSettings>
 
-SKSettings::SKSettings(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::SKSettings)
+SKSettings::SKSettings(QWidget *parent) : QDialog(parent), ui(new Ui::SKSettings)
 {
     ui->setupUi(this);
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     ui->skUser->setText(settings.value("user", "").toString());
     ui->skPassword->setText(settings.value("password", "").toString());
     ui->skServer->setText(settings.value("server", "192.168.0.45").toString());
-    ui->skServerPort->setText(settings.value("port",2379).toString());
+    ui->skServerPort->setText(settings.value("port", 2379).toString());
 }
 
-void SKSettings::accept() {
+void SKSettings::accept()
+{
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     settings.setValue("user", ui->skUser->text());
     settings.setValue("password", ui->skPassword->text());

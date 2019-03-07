@@ -1,16 +1,16 @@
-#include <QDebug>
-#include <Windows.h>
-#include "focuscontroller.h"
 #include "focuscontroller_win.h"
 
-FocusControllerWin::FocusControllerWin()
-{
+#include "focuscontroller.h"
 
-}
+#include <QDebug>
+
+#include <Windows.h>
+
+FocusControllerWin::FocusControllerWin()
+{}
 
 FocusControllerWin::~FocusControllerWin()
-{
-}
+{}
 
 void FocusControllerWin::switchFocusToOld()
 {
@@ -36,7 +36,6 @@ void FocusControllerWin::switchFocusToOld()
     }
 }
 
-
 void FocusControllerWin::savePrevActive()
 {
     LPGUITHREADINFO pgui = new GUITHREADINFO;
@@ -44,11 +43,12 @@ void FocusControllerWin::savePrevActive()
     if (GetGUIThreadInfo(NULL, pgui)) {
         m_lastHwnd = pgui->hwndFocus;
         m_threadId = GetWindowThreadProcessId(GetForegroundWindow(), nullptr);
-        qDebug() << "Got GUI Thread" << pgui->flags << "," << pgui->hwndCaret << ","<< pgui->hwndActive << ","<< pgui->hwndFocus;
+        qDebug() << "Got GUI Thread" << pgui->flags << "," << pgui->hwndCaret << "," << pgui->hwndActive << ","
+                 << pgui->hwndFocus;
     } else {
         m_lastHwnd = nullptr;
         m_threadId = 0;
-        qDebug() << "Error:" <<GetLastError();
+        qDebug() << "Error:" << GetLastError();
     }
 }
 
@@ -58,8 +58,7 @@ void FocusControllerWin::detachThread()
     m_threadId = 0;
 }
 
-FocusController::FocusController(QObject *parent) :
-    QObject(parent)
+FocusController::FocusController(QObject *parent) : QObject(parent)
 {
     this->controller = new FocusControllerWin();
 }
@@ -70,8 +69,8 @@ void FocusController::switchFocus()
     ctrl->switchFocusToOld();
 }
 
-
-void FocusController::savePrevActive() {
+void FocusController::savePrevActive()
+{
     FocusControllerWin *ctrl = reinterpret_cast<FocusControllerWin *>(controller);
     ctrl->savePrevActive();
 }
@@ -80,11 +79,10 @@ void FocusController::detachThread()
 {
     FocusControllerWin *ctrl = reinterpret_cast<FocusControllerWin *>(controller);
     ctrl->detachThread();
-
 }
 
 FocusController::~FocusController()
 {
-    delete &controller;
+    FocusControllerXcb *ctrl = reinterpret_cast<FocusControllerXcb *>(controller);
+    delete &ctrl;
 }
-

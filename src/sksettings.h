@@ -12,14 +12,14 @@ class SKSettings : public QDialog
     Q_OBJECT
 
 public:
-    explicit SKSettings(QWidget *parent = 0);
+    explicit SKSettings(QWidget *parent = nullptr);
     ~SKSettings();
 
 public Q_SLOTS:
     void accept() override;
 
 private:
-    Ui::SKSettings *ui;
+    Ui::SKSettings *ui = nullptr;
 };
 
 #endif // SKSETTINGS_H

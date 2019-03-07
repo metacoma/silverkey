@@ -2,30 +2,20 @@
 
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QDialog>
-#include <QTextEdit>
-#include <QAction>
-#include <QMenu>
-#include <QSystemTrayIcon>
-#include <QLocalServer>
+#include "focuscontroller.h"
 #include "fuzzycompleter.h"
 #include "requester.h"
-#include "focuscontroller.h"
-#ifdef Q_OS_LINUX
-#include "focuscontroller_xcb.h"
-#endif // Q_OS_LINUX
 
-#ifdef Q_OS_MACOS
-#define SK_PASTE_MODIFIER KeySystem
-#define SK_PASTE_KEY "v"
-#elseif Q_OS_LINUX
-#define SK_PASTE_MODIFIER KeyShift
-#define SK_PASTE_KEY "{INSERT}"
-#else
-#define SK_PASTE_MODIFIER KeyControl
-#define SK_PASTE_KEY "v"
-#endif
+#include <QAction>
+#include <QDialog>
+#include <QLocalServer>
+#include <QMainWindow>
+#include <QMenu>
+#include <QSystemTrayIcon>
+#include <QTextEdit>
+#ifdef Q_OS_LINUX
+#    include "focuscontroller_xcb.h"
+#endif // Q_OS_LINUX
 
 namespace Ui {
 class MainWindow;
@@ -34,44 +24,40 @@ class MainWindow;
 class MainWindow : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    void EnterPressed();
-    void EndOfWorkflow();
-    void SearchEvent();
-    void hideEvent(QHideEvent *e);
-    void showEvent(QShowEvent *event);
-    void setWriteFd(int fd);
-    void setData(QString d);
-    void getDbData();
-    void showTextEdit();
-    void hideTextEdit();
-    static QStringList getKeys(const QJsonObject &o);
-    void getVal(QString key);
-    void setVal(QString key, QString val);
-    void connectDB();
-    void savePreviouslyActiveWindow(QString bundleID);
 
 Q_SIGNALS:
     void dataLoaded();
-    void gotReplyFromDB();
+    void gotReplyFromDb();
     void gotDbUpdateEvent();
     void gotDbUpdateError();
 
-public slots:
+private:
+    void enterPressed();
+    void endOfWorkflow();
+    void searchEvent();
+    void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
+    void setData(const QString &m_data);
+    void dbData();
+    void showTextEdit();
+    void hideTextEdit();
+    void getValue(const QString &key);
+    void setValue(const QString &key, const QString &value);
+    void connectToDb();
+    void savePreviouslyActiveWindow(const QString &bundleId);
+
     void escapePressed();
     void showSettings();
     void setAngleCorners();
     void setRoundedCorners();
     void handleDataLoad();
-    void doHide();
-    void quitApp();
+    void quitApplication();
     void updateDbIndex(int newIndex);
     void handleDbUpdate();
     void handleDbUpdateError();
 
-private:
     void createTrayIcon();
     void createActions();
     void waitForDbUdates();
@@ -81,24 +67,22 @@ private:
     void unlockInput();
 
 private:
-    const int widgetPadding = 5;
-    FuzzyLineEdit *lineEdit = nullptr;
-    QPushButton *settingsButton = nullptr;
-    QPushButton *addDataButton = nullptr;
-    QTextEdit *clipboardData = nullptr;
-    Requester *httpClient = nullptr;
-    QStringList wordlist;
-    int wfd = 0;
-    QString data;
-    FocusController *fc = nullptr;
+    FuzzyLineEdit *m_lineEdit = nullptr;
+    QPushButton *m_settingsButton = nullptr;
+    QPushButton *m_addDataButton = nullptr;
+    QTextEdit *m_clipboardData = nullptr;
+    Requester *m_httpClient = nullptr;
+    QStringList m_wordList;
+    QString m_data;
+    FocusController *m_focusController = nullptr;
 
-    QAction *quitAction = nullptr;
-    QAction *showAction = nullptr;
-    QAction *hideAction = nullptr;
-    QSystemTrayIcon *trayIcon = nullptr;
-    QMenu *trayIconMenu = nullptr;
-    int dbIndex = 0;
-    QLocalServer *server = nullptr;
+    QAction *m_quitAction = nullptr;
+    QAction *m_showAction = nullptr;
+    QAction *m_hideAction = nullptr;
+    QSystemTrayIcon *m_trayIcon = nullptr;
+    QMenu *m_trayIconMenu = nullptr;
+    int m_dbIndex = 0;
+    QLocalServer *m_server = nullptr;
 };
 
 #endif // MAINWINDOW_H

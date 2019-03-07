@@ -1,8 +1,9 @@
 #ifndef FOCUSCONTROLLER_XCB_H
 #define FOCUSCONTROLLER_XCB_H
 
-#include <QX11Info>
 #include <QObject>
+#include <QX11Info>
+
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
 extern "C" {
@@ -21,7 +22,6 @@ extern "C" {
 #undef Status
 #undef Unsorted
 
-
 class FocusControllerXcb
 {
 public:
@@ -29,12 +29,13 @@ public:
     ~FocusControllerXcb();
     void switchFocusToOld();
     void savePrevActive();
-    //void switchFocus();
+
 private:
-    void FocusWindowDebug(char *, xcb_window_t);
-    xcb_connection_t *dpy;
-    int defaultScreen;
-    xcb_window_t win;
-    xcb_ewmh_connection_t *ewmh;
+    void focusWindowDebug(const QString &prefix, xcb_window_t window);
+
+    xcb_connection_t *m_dpy;
+    int m_defaultScreen;
+    xcb_window_t m_win;
+    xcb_ewmh_connection_t *m_ewmh = nullptr;
 };
 #endif // FOCUSCONTROLLER_XCB_H

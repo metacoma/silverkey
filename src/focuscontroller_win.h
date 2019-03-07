@@ -11,6 +11,7 @@ public:
     void switchFocusToOld();
     void savePrevActive();
     void detachThread();
+
 private:
     HWND m_lastHwnd = nullptr;
     DWORD m_threadId = 0;

@@ -1,169 +1,166 @@
 #include "fuzzycompleter.h"
-#include <QLineEdit>
-#include <QCompleter>
+
 #include <QDebug>
 #include <QKeyEvent>
 
+int compareStrings(const QString &s1, const QString &s2)
+{
+    const auto s1Length = s1.length();
+    const auto s2Length = s2.length();
+    if (s2Length == 0)
+        return s1Length;
 
-std::size_t compareStr(const std::string& s, const std::string& t) {
-    const std::size_t n = t.size();
-    const std::size_t m = s.size();
-    if (n == 0) {
-        return m;
+    if (s1Length == 0)
+        return s2Length;
+
+    int deletionCost = 0;
+    int insertionCost = 0;
+    int substitutionCost = 0;
+    QVector<int> v1(s2Length + 1);
+    QVector<int> v2(s2Length + 1);
+
+    for (int i = 0; i < v1.size(); ++i) {
+        v1[i] = i;
     }
-    if (m == 0) {
-        return n;
-    }
-    int deletionCost;
-    int insertionCost;
-    int substitutionCost;
-    std::vector<int> v0(n+1);
-    std::vector<int> v1(n+1);
 
+    for (int i = 0; i < s1Length; ++i) {
+        v2[0] = i + 1;
+        for (int j = 0; j < s2Length; ++j) {
+            deletionCost = v1[j + 1] + 1;
+            insertionCost = v2[j] + 1;
+            substitutionCost = s1[i].toLower() == s2[j].toLower() ? v1[j] : v1[j] + 1;
 
-    for (int i=0; i<v0.size(); ++i){
-        v0[i] = i;
-    }
-
-    for (int i=0; i<m; ++i){
-        v1[0] = i+1;
-        for (int j=0; j<n; ++j) {
-            deletionCost = v0[j+1] + 1;
-            insertionCost = v1[j] + 1;
-            substitutionCost = tolower(s[i]) == tolower(t[j]) ? v0[j]: v0[j] + 1;
-
-            v1[j+1] = std::min({deletionCost, insertionCost, substitutionCost});
+            v2[j + 1] = std::min({deletionCost, insertionCost, substitutionCost});
         }
-        v1.swap(v0);
+        v2.swap(v1);
     }
-    return v0[n];
-
+    return v1[s2Length];
 }
 
-bool sorter(QString a, QString b, QString pat) {
-    int lenA = std::max(pat.length(), a.length());
-    int lenB = std::max(pat.length(), b.length());
-    double x = 1.0 - (double)compareStr(pat.toStdString(),a.toStdString())/lenA;
-    double y = 1.0 - (double)compareStr(pat.toStdString(),b.toStdString())/lenB;
-    return ( x > y );
+bool sorter(QString s1, QString s2, QString pattern)
+{
+    int s1Length = qMax(pattern.length(), s1.length());
+    int s2Length = qMax(pattern.length(), s2.length());
+    double delta1 = 1.0 - (1.0 * compareStrings(pattern, s1)) / s1Length;
+    double delta2 = 1.0 - (1.0 * compareStrings(pattern, s2)) / s2Length;
+    return (delta1 > delta2);
 }
 
-void FuzzyPopup::showEvent(QShowEvent *event) {
+void FuzzyPopup::showEvent(QShowEvent *event)
+{
     Q_UNUSED(event);
     emit popupShow();
 }
 
-void FuzzyPopup::hideEvent(QHideEvent *event) {
+void FuzzyPopup::hideEvent(QHideEvent *event)
+{
     Q_UNUSED(event);
     emit popupHide();
 }
 
-FuzzySortFilterProxyModel::FuzzySortFilterProxyModel(QObject *parent)
-    : QSortFilterProxyModel(parent)
+FuzzySortFilterProxyModel::FuzzySortFilterProxyModel(QObject *parent) : QSortFilterProxyModel(parent)
+{}
+
+bool FuzzySortFilterProxyModel::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
 {
+    QVariant leftData = sourceModel()->data(sourceLeft);
+    QVariant rightData = sourceModel()->data(sourceRight);
+    return sorter(leftData.toString(), rightData.toString(), m_pattern);
 }
 
-bool FuzzySortFilterProxyModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const {
-    QVariant leftData = sourceModel()->data(source_left);
-    QVariant rightData = sourceModel()->data(source_right);
-    return sorter(leftData.toString(),rightData.toString(), pattern);
-}
-
-QString FuzzySortFilterProxyModel::sortPattern() {
-    return pattern;
-}
-
-void FuzzySortFilterProxyModel::setSortPattern(QString pat) {
-    pattern = pat;
-}
-
-FuzzyCompleter::FuzzyCompleter(QObject *parent)
-    : QCompleter(parent)
+QString FuzzySortFilterProxyModel::sortPattern()
 {
-    m_model = new QStringListModel();
-    p_model = new FuzzySortFilterProxyModel(this);
-    p_model->setSourceModel(m_model);
-    setModel(p_model);
+    return m_pattern;
 }
 
-void FuzzyCompleter::cleanUp() {
+void FuzzySortFilterProxyModel::setSortPattern(const QString &pattern)
+{
+    m_pattern = pattern;
+}
+
+FuzzyCompleter::FuzzyCompleter(QObject *parent) : QCompleter(parent)
+{
+    m_innerModel = new QStringListModel();
+    m_model = new FuzzySortFilterProxyModel(this);
+    m_model->setSourceModel(m_innerModel);
+    setModel(m_model);
+}
+
+void FuzzyCompleter::cleanUp()
+{
     qDebug() << "Model cleanup executed";
-    m_model->setStringList(QStringList{});
-    dataSet = false;
+    m_innerModel->setStringList(QStringList{});
+    m_dataSet = false;
 }
 
 void FuzzyCompleter::setUp(const QStringList &words)
 {
-    m_model->setStringList(words);
-    dataSet = true;
+    m_innerModel->setStringList(words);
+    m_dataSet = true;
 }
 
-void FuzzyCompleter::update(QString pattern){
-    p_model->setSortPattern(pattern);
-    p_model->setDynamicSortFilter(false);
-    p_model->sort(0);
+void FuzzyCompleter::update(const QString &pattern)
+{
+    m_model->setSortPattern(pattern);
+    m_model->setDynamicSortFilter(false);
+    m_model->sort(0);
     complete();
-
 }
 
-bool FuzzyCompleter::isDataSet()
+bool FuzzyCompleter::isDataSet() const
 {
-    return dataSet;
+    return m_dataSet;
 }
 
-FuzzyLineEdit::FuzzyLineEdit(QWidget *parent)
-    : QLineEdit(parent), c(0)
-{
-}
+FuzzyLineEdit::FuzzyLineEdit(QWidget *parent) : QLineEdit(parent), m_completer(nullptr)
+{}
 
 FuzzyLineEdit::~FuzzyLineEdit()
+{}
+
+FuzzyCompleter *FuzzyLineEdit::completer() const
 {
+    return m_completer;
 }
 
-FuzzyCompleter *FuzzyLineEdit::completer() const {
-    return c;
-}
-
-QString FuzzyLineEdit::getSelectedItem() const
+QString FuzzyLineEdit::selectedItem() const
 {
-    return selectedItem;
+    return m_selectedItem;
 }
 
 void FuzzyLineEdit::setSelectedItem(const QString &value)
 {
-    selectedItem = value;
+    m_selectedItem = value;
 }
 
-void FuzzyLineEdit::setCompleter(FuzzyCompleter *completer) {
-    if (c) {
-        disconnect(c, 0, this, 0);
-        c->setWidget(0);
-        if (c->parent() == this) {
-            delete c;
-        }
+void FuzzyLineEdit::setCompleter(FuzzyCompleter *completer)
+{
+    if (m_completer) {
+        disconnect(m_completer, nullptr, this, nullptr);
+        m_completer->setWidget(nullptr);
+        delete m_completer;
     }
-    c = completer;
 
-    if (!c) {
+    m_completer = completer;
+
+    if (!m_completer)
         return;
-    }
 
-    if (c->widget() == 0) {
-        c->setWidget(this);
-    }
+    if (m_completer->widget() == nullptr)
+        m_completer->setWidget(this);
 
-    QObject::connect(this->completer(), SIGNAL(activated(QString)),
-                     this, SLOT(setSelectedItem(QString)));
-    QObject::connect(this->completer(), SIGNAL(highlighted(QString)),
-                     this, SLOT(setSelectedItem(QString)));
+    QObject::connect(m_completer, qOverload<const QString &>(&FuzzyCompleter::activated), this,
+                     &FuzzyLineEdit::setSelectedItem);
+    QObject::connect(m_completer, qOverload<const QString &>(&FuzzyCompleter::highlighted), this,
+                     &FuzzyLineEdit::setSelectedItem);
 }
 
-void FuzzyLineEdit::keyPressEvent(QKeyEvent *e) {
-    if (e->key() == Qt::Key_Escape) {
+void FuzzyLineEdit::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
         setSelectedItem("");
-        emit hideApp();
+        emit hideApplication();
     } else {
-        QLineEdit::keyPressEvent(e);
+        QLineEdit::keyPressEvent(event);
     }
 }
-
