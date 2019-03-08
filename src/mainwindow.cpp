@@ -3,7 +3,6 @@
 #include "fuzzycompleter.h"
 #include "sksettings.h"
 #include "uglobalhotkeys.h"
-#include "ui_mainwindow.h"
 
 #include <Robot.h>
 #include <chrono>
@@ -14,6 +13,7 @@
 #endif
 
 #include <QAbstractItemView>
+#include <QApplication>
 #include <QClipboard>
 #include <QDebug>
 #include <QDesktopWidget>
@@ -61,10 +61,11 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent)
 
     UGlobalHotkeys *hotkeyManager = new UGlobalHotkeys();
     //TODO: Make hotkey configurable
-    hotkeyManager->registerHotkey("Ctrl+F1");
+    hotkeyManager->registerHotkey("Ctrl+D");
     QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t) {
         qDebug() << "I've got hotkey;";
         m_focusController->savePrevActive();
+        raise();
         activateWindow();
         show();
     });
@@ -75,18 +76,14 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent)
     setObjectName("skDialog");
 
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 
     m_lineEdit = new FuzzyLineEdit(this);
     m_lineEdit->setObjectName("skInput");
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->setFocus();
     m_lineEdit->setGeometry(0, 0, 500, 50);
-    m_lineEdit->setStyleSheet("#skInput {"
-                              "background-color: #f6f6f6;"
-                              "border-radius: 10px;"
-                              "font: 30pt Courier"
-                              "}");
+    setRoundedCorners();
     m_lineEdit->setTextMargins(5, 0, 0, 0);
     m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
 
@@ -94,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent)
     connect(this, &MainWindow::gotReplyFromDb, this, &MainWindow::hide);
     connect(this, &MainWindow::gotDbUpdateEvent, this, &MainWindow::handleDbUpdate);
     connect(this, &MainWindow::gotDbUpdateError, this, &MainWindow::handleDbUpdateError);
-    dbData();
+    requestDbData();
 
     m_settingsButton = new QPushButton("", this);
     m_settingsButton->setObjectName("settings");
@@ -161,10 +158,10 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent)
     connect(m_addDataButton, &QPushButton::clicked, this, &MainWindow::showTextEdit);
 
     QPoint pos(m_lineEdit->width() - 5, 5);
-    QMouseEvent e(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
-    qApp->sendEvent(m_lineEdit, &e);
-    QMouseEvent f(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
-    qApp->sendEvent(m_lineEdit, &f);
+    QMouseEvent pressEvent(QEvent::MouseButtonPress, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
+    qApp->sendEvent(m_lineEdit, &pressEvent);
+    QMouseEvent releaseEvent(QEvent::MouseButtonRelease, pos, Qt::LeftButton, Qt::LeftButton, nullptr);
+    qApp->sendEvent(m_lineEdit, &releaseEvent);
 
     lockInput();
     int width = m_settingsButton->width() + WIDGET_PADDING + m_lineEdit->width() + WIDGET_PADDING
@@ -230,7 +227,7 @@ void MainWindow::updateDbIndex(int newIndex)
 
 void MainWindow::handleDbUpdate()
 {
-    dbData();
+    requestDbData();
 }
 
 void MainWindow::handleDbUpdateError()
@@ -313,7 +310,7 @@ void MainWindow::setValue(const QString &key, const QString &value)
 void MainWindow::connectToDb()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    m_httpClient->initRequester(settings.value("server", "192.168.0.45").toString(),
+    m_httpClient->initRequester(settings.value("server", "silverkey.app").toString(),
                                 settings.value("port", 2379).toInt(), nullptr);
 }
 
@@ -326,7 +323,7 @@ void MainWindow::savePreviouslyActiveWindow(const QString &bundleId)
 #endif // Q_OS_OSX
 }
 
-void MainWindow::dbData()
+void MainWindow::requestDbData()
 {
     Requester::handleFunction successHandler = [this](const QJsonObject &object) {
         m_wordList = getKeys(object.value("node").toObject());
@@ -448,6 +445,11 @@ void MainWindow::searchEvent()
     completer->popup()->setCurrentIndex(completer->popup()->model()->index(0, 0));
 }
 
+void MainWindow::focusOutEvent(QFocusEvent *)
+{
+    hide();
+}
+
 void MainWindow::showSettings()
 {
     SKSettings settings;
@@ -457,7 +459,7 @@ void MainWindow::showSettings()
         lockInput();
         m_lineEdit->completer()->cleanUp();
         connectToDb();
-        dbData();
+        requestDbData();
     }
 }
 

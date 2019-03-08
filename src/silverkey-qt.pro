@@ -20,7 +20,6 @@ HEADERS += \
         skappdelegate-c-interface.h
 
 FORMS += \
-        mainwindow.ui \
     sksettings.ui
 
 include(UGlobalHotkey/uglobalhotkey.pri)

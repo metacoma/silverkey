@@ -17,10 +17,6 @@
 #    include "focuscontroller_xcb.h"
 #endif // Q_OS_LINUX
 
-namespace Ui {
-class MainWindow;
-}
-
 class MainWindow : public QDialog
 {
     Q_OBJECT
@@ -37,10 +33,11 @@ private:
     void enterPressed();
     void endOfWorkflow();
     void searchEvent();
-    void hideEvent(QHideEvent *event);
-    void showEvent(QShowEvent *event);
+    void focusOutEvent(QFocusEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) override;
     void setData(const QString &m_data);
-    void dbData();
+    void requestDbData();
     void showTextEdit();
     void hideTextEdit();
     void getValue(const QString &key);
