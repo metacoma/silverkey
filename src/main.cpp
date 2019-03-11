@@ -1,10 +1,14 @@
-#include "mainwindow.h"
 #ifdef Q_OS_OSX
 #    include "skappdelegate-c-interface.h"
 #endif
-#include <QApplication>
+#include "keysmodel.h"
+#include "worker.h"
+
 #include <QDebug>
+#include <QGuiApplication>
 #include <QLocalSocket>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
@@ -15,16 +19,17 @@ int main(int argc, char *argv[])
         return 0;
 #endif
 
-    QApplication a(argc, argv);
-    MainWindow *window = new MainWindow();
-#ifdef Q_OS_OSX
-    initSKAppDelegate(w);
-#endif // Q_OS_OSX
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    window->setAttribute(Qt::WA_DeleteOnClose);
-    window->show();
-    window->raise(); // for MacOS
-    window->activateWindow(); // for Windows
-    window->hide();
-    return a.exec();
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("worker", new Worker());
+    qmlRegisterUncreatableType<KeysModel>("SilverKey", 1, 0, "KeysModel", "C++ Only");
+
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    return app.exec();
 }

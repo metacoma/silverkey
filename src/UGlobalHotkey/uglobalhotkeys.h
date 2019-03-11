@@ -2,7 +2,6 @@
 
 #include <QAbstractNativeEventFilter>
 #include <QSet>
-#include <QWidget>
 
 #if defined(Q_OS_LINUX)
 #    include "xcb/xcb.h"
@@ -24,7 +23,7 @@ struct UHotkeyData
 };
 #endif
 
-class UGLOBALHOTKEY_EXPORT UGlobalHotkeys : public QWidget
+class UGLOBALHOTKEY_EXPORT UGlobalHotkeys : public QObject
 #if defined(Q_OS_LINUX)
     ,
                                             public QAbstractNativeEventFilter
@@ -32,7 +31,7 @@ class UGLOBALHOTKEY_EXPORT UGlobalHotkeys : public QWidget
 {
     Q_OBJECT
 public:
-    explicit UGlobalHotkeys(QWidget *parent = nullptr);
+    explicit UGlobalHotkeys(QObject *parent = nullptr);
     void registerHotkey(const QString &keySeq, size_t id = 1);
     void registerHotkey(const UKeySequence &keySeq, size_t id = 1);
     void unregisterHotkey(size_t id = 1);

@@ -1,26 +1,23 @@
 TARGET = silverkey-qt
 TEMPLATE = app
 
-QT += core gui network widgets
+QT += core gui network quick
 CONFIG += c++14
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-        fuzzycompleter.cpp \
-        sksettings.cpp \
-        requester.cpp
+        requester.cpp \
+    worker.cpp \
+    keysmodel.cpp
 
 HEADERS += \
-        mainwindow.h \
-        fuzzycompleter.h \
-        sksettings.h \
         requester.h \
         focuscontroller.h \
-        skappdelegate-c-interface.h
+        skappdelegate-c-interface.h \
+    worker.h \
+    keysmodel.h
 
-FORMS += \
-    sksettings.ui
+FORMS +=
 
 include(UGlobalHotkey/uglobalhotkey.pri)
 INCLUDEPATH += ./UGlobalHotkey
@@ -65,6 +62,7 @@ windows {
 }
 
 RESOURCES += \
-    skimages.qrc
+    qml.qrc \
+    images.qrc
 
 

@@ -1,6 +1,6 @@
 #ifndef SKAPPDELEGATECINTERFACE_H
 #define SKAPPDELEGATECINTERFACE_H
-#include "mainwindow.h"
+#include "worker.h"
 
 void initSKAppDelegate(MainWindow *mw);
 

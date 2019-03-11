@@ -3,7 +3,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <AppKit/AppKit.h>
-#include "mainwindow.h"
+#include "worker.h"
 
 @interface SKObserver : NSObject
 - (void)setPreviousApplication:(NSNotification *)aNotification;
