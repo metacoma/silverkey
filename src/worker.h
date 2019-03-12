@@ -15,17 +15,22 @@ class Worker : public QObject
 public:
     explicit Worker(QObject *parent = nullptr);
     KeysModel *keysModel() const;
+
+    Q_INVOKABLE void insertValue(const QString &key);
+    Q_INVOKABLE void escapePressed();
+    Q_INVOKABLE void sendResult();
+    Q_INVOKABLE void onRaise();
+
 signals:
     void dataLoaded(const QJsonObject &object);
+    void dataLoadError();
     void gotReplyFromDb();
     void gotDbUpdateEvent();
     void gotDbUpdateError();
     void keysModelChanged();
+    void raiseWindow();
 
 private:
-    void enterPressed();
-    void endOfWorkflow();
-
     void setData(const QString &m_data);
     void requestDbData();
     void showTextEdit();
@@ -35,23 +40,13 @@ private:
     void connectToDb();
     void savePreviouslyActiveWindow(const QString &bundleId);
 
-    void escapePressed();
-    void showSettings();
-    void setAngleCorners();
-    void setRoundedCorners();
-    void handleDataLoad();
-    void quitApplication();
+    void handleDataLoad(const QJsonObject &object);
     void updateDbIndex(int newIndex);
     void handleDbUpdate();
     void handleDbUpdateError();
 
-    void createTrayIcon();
-    void createActions();
     void waitForDbUdates();
-    void updateWinPosition();
     void setUpLocalServer();
-    void lockInput();
-    void unlockInput();
 
 private:
     Requester *m_httpClient = nullptr;
