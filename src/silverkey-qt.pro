@@ -8,16 +8,18 @@ SOURCES += \
         main.cpp \
         requester.cpp \
     worker.cpp \
-    keysmodel.cpp
+    keysmodel.cpp \
+    datainserter.cpp
 
 HEADERS += \
         requester.h \
         focuscontroller.h \
         skappdelegate-c-interface.h \
     worker.h \
-    keysmodel.h
+    keysmodel.h \
+    datainserter.h
 
-FORMS +=
+LIBS += -lyaml-cpp
 
 include(UGlobalHotkey/uglobalhotkey.pri)
 INCLUDEPATH += ./UGlobalHotkey
