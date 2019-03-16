@@ -12,6 +12,8 @@ public:
     Q_INVOKABLE void setSortPattern(const QString &pattern);
     Q_INVOKABLE void setFilter(const QString &filter);
 
+    void append(const QString &key);
+
 protected:
     bool lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const override;
     bool filterAcceptsRow(int sourceRow, const QModelIndex &) const override;

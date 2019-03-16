@@ -23,6 +23,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLocalServer>
 #include <QMimeData>
 #include <QSettings>
 
@@ -39,6 +40,10 @@
 
 Worker::Worker(QObject *parent) : QObject(parent)
 {
+    auto server = new QLocalServer();
+    QLocalServer::removeServer("SKApp");
+    server->listen("SKApp");
+
     m_focusController = new FocusController(this);
     m_keysModel = new KeysModel({}, this);
     m_dataManager = new DataManager(this);
@@ -59,6 +64,12 @@ Worker::Worker(QObject *parent) : QObject(parent)
         emit keysModelChanged();
     });
 
+    connect(m_dataManager, &DataManager::valueSaved, this, [this](const QString &key, const QString &) {
+        if (!m_keysModel)
+            return;
+        m_keysModel->append(key);
+    });
+
     connect(m_dataManager, &DataManager::wordListLoadError, this,
             [this]() { emit showErrorMessage(tr("Can't load word list from server")); });
     connect(m_dataManager, &DataManager::updateRequestError,
@@ -74,6 +85,11 @@ Worker::Worker(QObject *parent) : QObject(parent)
 KeysModel *Worker::keysModel() const
 {
     return m_keysModel;
+}
+
+void Worker::insertData(const QString &rawData)
+{
+    m_dataManager->insertData(rawData);
 }
 
 void Worker::insertValue(const QString &key)

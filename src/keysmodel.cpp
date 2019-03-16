@@ -72,3 +72,12 @@ void KeysModel::setFilter(const QString &filter)
     m_filter = filter;
     invalidateFilter();
 }
+
+void KeysModel::append(const QString &key)
+{
+    auto model = qobject_cast<QStringListModel *>(sourceModel());
+    if (model->insertRow(model->rowCount())) {
+        QModelIndex index = model->index(model->rowCount() - 1, 0);
+        model->setData(index, key);
+    }
+}

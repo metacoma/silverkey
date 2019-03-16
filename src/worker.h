@@ -15,6 +15,7 @@ public:
     explicit Worker(QObject *parent = nullptr);
     KeysModel *keysModel() const;
 
+    Q_INVOKABLE void insertData(const QString &rawData);
     Q_INVOKABLE void insertValue(const QString &key);
     Q_INVOKABLE void escapePressed();
     Q_INVOKABLE void onRaise();

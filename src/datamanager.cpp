@@ -13,6 +13,8 @@
 #include <QSettings>
 #include <QUrl>
 
+#include <exception>
+
 //TODO: !!! Build yaml-cpp for Windows
 
 inline QStringList getKeys(const QJsonObject &object)
@@ -102,15 +104,20 @@ void DataManager::insertFromUrl(const QUrl &url)
 
 void DataManager::insertFromYaml(const QString &yaml)
 {
-    auto nodes = YAML::LoadAll(yaml.toStdString());
-    if (nodes.empty()) {
-        //TODO: emit error
-        return;
-    }
+    try {
+        auto nodes = YAML::LoadAll(yaml.toStdString());
 
-    for (const auto &node : nodes) {
-        if (node.IsMap())
-            recursiveInsertFromYaml(node, {});
+        if (nodes.empty()) {
+            //TODO: emit error
+            return;
+        }
+
+        for (const auto &node : nodes) {
+            if (node.IsMap())
+                recursiveInsertFromYaml(node, {});
+        }
+    } catch (std::exception *e) {
+        //TODO: emit error
     }
 }
 
@@ -182,7 +189,7 @@ void DataManager::requestValue(const QString &key)
                               [this, key](const QJsonObject &object) {
                                   auto value = object.value("node").toObject().value("value").toString();
                                   qDebug() << "Got value" << value << "for key" << key;
-                                  emit valueLoaded(key, value);
+                                  emit valueLoaded(key.front() != '/' ? "/" + key : key, value);
                               },
                               [this](const QJsonObject &) { emit loadFromServerError(); });
 }
@@ -196,7 +203,7 @@ void DataManager::requestSaveValue(const QString &key, const QString &value)
                               [this, key](const QJsonObject &object) {
                                   QString value = object.value("node").toObject().value("value").toString();
                                   qDebug() << "Successfully written data" << value << "for key" << key;
-                                  emit valueSaved(key, value);
+                                  emit valueSaved(key.front() != '/' ? "/" + key : key, value);
                               },
                               [this](const QJsonObject &) { emit writeToServerError(); }, Requester::Type::PUT,
                               QString("value=%1").arg(encodedVal));

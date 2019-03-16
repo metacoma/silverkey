@@ -66,6 +66,8 @@ Window {
         icon.width: 32
         icon.height: 32
         icon.color: "transparent"
+
+        onClicked: insertDataDialog.open()
     }
 
     Rectangle {
@@ -180,8 +182,8 @@ Window {
         onRejected: Qt.quit()
 
         onAccepted: {
-            visible = false
-            settingsDialog.visible = true
+            messageDialog.close()
+            settingsDialog.open()
         }
     }
 
@@ -189,32 +191,18 @@ Window {
     OldControls.Dialog {
         id: settingsDialog
         title: "Settings"
-
         width: mainWindow.width / 2
-        height: width
-
-        standardButtons: OldControls.StandardButton.Save | OldControls.StandardButton.Cancel
-
-        onAccepted: {
-            worker.saveSettings(contentItem.login,
-                                contentItem.password,
-                                contentItem.host,
-                                contentItem.port)
-            close()
-        }
-
-        onRejected: {
-            close()
-        }
+        height: 400
 
         contentItem: Item {
-            anchors.fill: parent
+
             property alias login: loginEdit.text
             property alias password: passwordEdit.text
             property alias host: hostEdit.text
             property alias port: portEdit.text
 
             Column {
+                anchors.fill: parent
                 spacing: 10
                 NewControls.TextField {
                     id: loginEdit
@@ -232,9 +220,79 @@ Window {
                     id: portEdit
                     placeholderText: qsTr("2379")
                 }
+
+                Row {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    spacing: 10
+
+                    NewControls.Button {
+                        text: qsTr("Save")
+                        onClicked: {
+                            worker.saveSettings(contentItem.login,
+                                                contentItem.password,
+                                                contentItem.host,
+                                                contentItem.port)
+                            settingsDialog.close()
+                        }
+                    }
+
+                    NewControls.Button {
+                        text: qsTr("Cancel")
+                        onClicked: settingsDialog.close()
+                    }
+                }
             }
-
         }
+    }
 
+    OldControls.Dialog {
+        id: insertDataDialog
+        title: "Insert Data"
+
+        width: mainWindow.width
+        height: 400
+
+        contentItem: Item {
+            id: content
+            width: mainWindow.width / 2
+            height: width
+
+            Column {
+                anchors.fill: parent
+                spacing: 10
+                NewControls.ScrollView {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: insertDataDialog.height - buttonsRow.height * 1.2
+                    NewControls.TextArea {
+                        id: dataArea
+
+                    }
+
+                }
+                Row {
+                    id: buttonsRow
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    spacing: 10
+
+                    NewControls.Button {
+                        text: qsTr("Save")
+                        onClicked: {
+                            worker.insertData(dataArea.text)
+                            insertDataDialog.close()
+                        }
+                    }
+
+                    NewControls.Button {
+                        text: qsTr("Cancel")
+                        onClicked: insertDataDialog.close()
+                    }
+                }
+            }
+        }
     }
 }

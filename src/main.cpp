@@ -4,9 +4,7 @@
 #include "keysmodel.h"
 #include "worker.h"
 
-#include <QDebug>
 #include <QGuiApplication>
-#include <QLocalServer>
 #include <QLocalSocket>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -22,12 +20,6 @@ int main(int argc, char *argv[])
     else
         delete probe;
 #endif
-
-    auto server = new QLocalServer();
-    QLocalServer::removeServer("SKApp");
-    server->listen("SKApp");
-    // --
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
@@ -37,8 +29,6 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<KeysModel>("SilverKey", 1, 0, "KeysModel", "C++ Only");
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    if (engine.rootObjects().isEmpty())
-        return -1;
 
     return app.exec();
 }
