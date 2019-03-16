@@ -31,9 +31,9 @@ public:
         DELETE
     };
 
-    explicit Requester(QObject *parent = nullptr);
+    explicit Requester(const QString &host, int port, QSslConfiguration *sslConfiguration, QObject *parent = nullptr);
 
-    void initRequester(const QString &host, int port, QSslConfiguration *sslConfiguration);
+    void updateConfig(const QString &host, int port, QSslConfiguration *sslConfiguration);
 
     void sendRequest(const QString &apiStr, const handleFunction &funcSuccess, const handleFunction &funcError,
                      Type type = Type::GET, const QString &data = "");

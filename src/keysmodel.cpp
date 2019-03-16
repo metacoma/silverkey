@@ -62,11 +62,6 @@ bool KeysModel::filterAcceptsRow(int sourceRow, const QModelIndex &) const
     return data.toString().startsWith(m_filter);
 }
 
-QString KeysModel::sortPattern()
-{
-    return m_pattern;
-}
-
 void KeysModel::setSortPattern(const QString &pattern)
 {
     m_pattern = pattern;

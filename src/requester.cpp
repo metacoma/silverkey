@@ -9,10 +9,13 @@ static const QString HTTPS_TEMPLATE = "https://%1:%2/api/%3";
 static const QString KEY_QNETWORK_REPLY_ERROR = "QNetworkReplyError";
 static const QString KEY_CONTENT_NOT_FOUND = "ContentNotFoundError";
 
-Requester::Requester(QObject *parent) : QObject(parent), m_manager(new QNetworkAccessManager(this))
-{}
+Requester::Requester(const QString &host, int port, QSslConfiguration *sslConfiguration, QObject *parent)
+    : QObject(parent), m_manager(new QNetworkAccessManager(this))
+{
+    updateConfig(host, port, sslConfiguration);
+}
 
-void Requester::initRequester(const QString &host, int port, QSslConfiguration *sslConfiguration)
+void Requester::updateConfig(const QString &host, int port, QSslConfiguration *sslConfiguration)
 {
     m_host = host;
     m_port = port;

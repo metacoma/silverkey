@@ -9,7 +9,7 @@ SOURCES += \
         requester.cpp \
     worker.cpp \
     keysmodel.cpp \
-    datainserter.cpp
+    datamanager.cpp
 
 HEADERS += \
         requester.h \
@@ -17,7 +17,7 @@ HEADERS += \
         skappdelegate-c-interface.h \
     worker.h \
     keysmodel.h \
-    datainserter.h
+    datamanager.h
 
 LIBS += -lyaml-cpp
 

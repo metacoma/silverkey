@@ -1,8 +1,8 @@
 #include "worker.h"
 
+#include "datamanager.h"
 #include "focuscontroller.h"
 #include "keysmodel.h"
-#include "requester.h"
 #include "uglobalhotkeys.h"
 
 #include <Robot.h>
@@ -23,7 +23,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QLocalServer>
 #include <QMimeData>
 #include <QSettings>
 
@@ -38,26 +37,13 @@
 #    define PASTE_KEY "v"
 #endif
 
-inline QStringList getKeys(const QJsonObject &object)
-{
-    QStringList result;
-    if (object.value("dir") == QJsonValue::Undefined) {
-        result.append(object.value("key").toString());
-    } else {
-        const QJsonArray nodes = object.value("nodes").toArray();
-        for (const auto &node : nodes)
-            result += getKeys(node.toObject());
-    }
-    return result;
-}
-
 Worker::Worker(QObject *parent) : QObject(parent)
 {
     m_focusController = new FocusController(this);
-    setUpLocalServer();
     m_keysModel = new KeysModel({}, this);
+    m_dataManager = new DataManager(this);
 
-    UGlobalHotkeys *hotkeyManager = new UGlobalHotkeys();
+    auto *hotkeyManager = new UGlobalHotkeys(this);
     //TODO: Make hotkey configurable
     hotkeyManager->registerHotkey("Ctrl+D");
     QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t) {
@@ -66,15 +52,23 @@ Worker::Worker(QObject *parent) : QObject(parent)
         emit raiseWindow();
     });
 
-    m_httpClient = new Requester(this);
-    connectToDb();
+    connect(m_dataManager, &DataManager::wordListUpdated, this, [this](const QStringList &wordList) {
+        if (m_keysModel)
+            delete m_keysModel;
+        m_keysModel = new KeysModel(wordList, this);
+        emit keysModelChanged();
+    });
 
-    //TODO: check in qml: m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+    connect(m_dataManager, &DataManager::wordListLoadError, this,
+            [this]() { emit showErrorMessage(tr("Can't load word list from server")); });
+    connect(m_dataManager, &DataManager::updateRequestError,
+            [this]() { emit showErrorMessage(tr("Can't connect to server")); });
+    connect(m_dataManager, &DataManager::writeToServerError, this,
+            [this]() { emit showErrorMessage(tr("Can't load value from server")); });
+    connect(m_dataManager, &DataManager::loadFromServerError,
+            [this]() { emit showErrorMessage(tr("Can't write value to server")); });
 
-    connect(this, &Worker::dataLoaded, this, &Worker::handleDataLoad);
-    connect(this, &Worker::gotDbUpdateEvent, this, &Worker::handleDbUpdate);
-    connect(this, &Worker::gotDbUpdateError, this, &Worker::handleDbUpdateError);
-    requestDbData();
+    //TODO: (for Mac developer) check in qml: m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
 }
 
 KeysModel *Worker::keysModel() const
@@ -85,102 +79,7 @@ KeysModel *Worker::keysModel() const
 void Worker::insertValue(const QString &key)
 {
     qDebug() << "Insert value for key:" << key;
-    getValue(key);
-}
-
-void Worker::handleDataLoad(const QJsonObject &object)
-{
-    if (!object.isEmpty() && object.contains("node")) {
-        m_wordList = getKeys(object.value("node").toObject());
-        qDebug() << "Got obj" << m_wordList.join(" ");
-        m_keysModel = new KeysModel(m_wordList, this);
-        emit keysModelChanged();
-    } else {
-        emit dataLoadError();
-    }
-}
-
-void Worker::updateDbIndex(int newIndex)
-{
-    m_dbIndex = newIndex;
-}
-
-void Worker::handleDbUpdate()
-{
-    requestDbData();
-}
-
-void Worker::handleDbUpdateError()
-{
-    waitForDbUdates();
-}
-
-void Worker::waitForDbUdates()
-{
-    qDebug() << "Start waiting for DB updates loop";
-    Requester::handleFunction successHandler = [this](const QJsonObject &) {
-        qDebug() << "Got data " << m_data;
-        emit gotDbUpdateEvent();
-    };
-
-    Requester::handleFunction errorHandler = [this](const QJsonObject &) {
-        qDebug() << "Error: connection dropped";
-        emit gotDbUpdateError();
-    };
-
-    m_httpClient->sendRequest("v2/keys/?wait=true&recursive=true", successHandler, errorHandler);
-}
-
-void Worker::setUpLocalServer()
-{
-    m_server = new QLocalServer();
-    QLocalServer::removeServer("SKApp");
-    m_server->listen("SKApp");
-}
-
-void Worker::getValue(const QString &key)
-{
-    qDebug() << "Getting value from DB";
-    Requester::handleFunction getData = [this](const QJsonObject &o) {
-        m_data = o.value("node").toObject().value("value").toString();
-        qDebug() << "Got data " << m_data;
-        emit gotReplyFromDb();
-    };
-
-    Requester::handleFunction errData = [this](const QJsonObject &) {
-        qDebug() << "Error retrieving key";
-        emit gotReplyFromDb();
-    };
-
-    m_httpClient->sendRequest("v2/keys" + key, getData, errData);
-}
-
-void Worker::setValue(const QString &key, const QString &value)
-{
-    qDebug() << "Setting value to DB" << value;
-    Requester::handleFunction getData = [this](const QJsonObject &o) {
-        QString resp = o.value("node").toObject().value("value").toString();
-        qDebug() << "Successfully written data" << resp;
-        emit gotReplyFromDb();
-    };
-
-    Requester::handleFunction errData = [](const QJsonObject &) { qDebug() << "Error writing data"; };
-    QString path;
-    if (key[0] != '/') {
-        path = "v2/keys/" + key;
-    } else {
-        path = "v2/keys" + key;
-    }
-
-    QByteArray encodedVal = QUrl::toPercentEncoding(value);
-    m_httpClient->sendRequest(path, getData, errData, Requester::Type::PUT, "value=" + encodedVal);
-}
-
-void Worker::connectToDb()
-{
-    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    m_httpClient->initRequester(settings.value("server", "silverkey.app").toString(),
-                                settings.value("port", 2379).toInt(), nullptr);
+    m_dataManager->requestValue(key);
 }
 
 void Worker::savePreviouslyActiveWindow(const QString &bundleId)
@@ -192,32 +91,19 @@ void Worker::savePreviouslyActiveWindow(const QString &bundleId)
 #endif // Q_OS_OSX
 }
 
-void Worker::requestDbData()
+void Worker::setValue(const QString &value)
 {
-    Requester::handleFunction successHandler = [this](const QJsonObject &object) { emit dataLoaded(object); };
-    Requester::handleFunction errorHandler = [this](const QJsonObject &object) { emit dataLoaded(object); };
-
-    m_httpClient->sendRequest("v2/keys/?recursive=true&sorted=true", successHandler, errorHandler);
-}
-
-void Worker::setData(const QString &data)
-{
-    m_data = data;
-}
-
-void Worker::sendResult()
-{
-    qDebug() << "Hide action, value is " << m_data;
-
-    if (!m_data.isEmpty()) {
+    qDebug() << "Hide action, value is " << value;
+    emit hideWindow();
+    if (!value.isEmpty()) {
         QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(m_data);
+        clipboard->setText(value);
         m_focusController->switchFocus();
 
 #ifdef Q_OS_LINUX
         Robot::Clipboard::SetText("Text");
 
-        clipboard->setText(m_data, QClipboard::Selection);
+        clipboard->setText(value, QClipboard::Selection);
         qDebug() << "Selection CB data" << clipboard->text(QClipboard::Selection);
 
 #endif
@@ -228,7 +114,7 @@ void Worker::sendResult()
 #endif
         while (!keyboard.GetState(PASTE_MODIFIER)) {
             keyboard.Press(PASTE_MODIFIER);
-            qDebug() << "Command key state " << keyboard.GetState(Robot::KeyShift);
+            qDebug() << "Command key state " << keyboard.GetState(PASTE_MODIFIER);
         }
         keyboard.Click(PASTE_KEY);
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -237,12 +123,11 @@ void Worker::sendResult()
         m_focusController->detachThread();
 #endif
     }
-    m_data = "";
 }
 
 void Worker::onRaise()
 {
-    qDebug() << "Window show";
+    qDebug() << "Reise, Reise";
     QFocusEvent *eventFocus = new QFocusEvent(QEvent::FocusIn);
     qApp->postEvent(this, static_cast<QEvent *>(eventFocus), Qt::LowEventPriority);
 

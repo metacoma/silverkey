@@ -21,13 +21,14 @@ Window {
 
     Connections {
         target: worker
-        onGotReplyFromDb: {
-            mainWindow.hide()
-        }
+        onHideWindow: mainWindow.hide()
 
-        onDataLoadError: {
+
+        onShowErrorMessage: {
+            messageDialog.setDetailedText(error)
             messageDialog.visible = true
         }
+
 
         onRaiseWindow: {
             mainWindow.show()
@@ -48,6 +49,7 @@ Window {
         icon.width: 32
         icon.height: 32
         icon.color: "transparent"
+        onClicked: settingsDialog.open()
 
     }
 
