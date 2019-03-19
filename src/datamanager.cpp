@@ -105,18 +105,21 @@ void DataManager::insertFromUrl(const QUrl &url)
 void DataManager::insertFromYaml(const QString &yaml)
 {
     try {
-        auto nodes = YAML::LoadAll(yaml.toStdString());
+        auto nodes = YAML::Load(yaml.toStdString());
 
-        if (nodes.empty()) {
-            //TODO: emit error
+        if (!nodes.IsMap())
             return;
+        for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+            if ((*it).second.IsScalar()) {
+                insertKeyValue(QString::fromStdString((*it).first.as<std::string>()),
+                               QString::fromStdString((*it).second.as<std::string>()));
+
+            } else if ((*it).second.IsMap()) {
+                recursiveInsertFromYaml((*it).second, {QString::fromStdString((*it).first.as<std::string>())});
+            }
         }
 
-        for (const auto &node : nodes) {
-            if (node.IsMap())
-                recursiveInsertFromYaml(node, {});
-        }
-    } catch (std::exception *e) {
+    } catch (YAML::InvalidNode *e) {
         //TODO: emit error
     }
 }
@@ -153,15 +156,15 @@ void DataManager::recursiveInsertFromYaml(const YAML::Node &node, const QStringL
 {
     for (auto it = node.begin(); it != node.end(); ++it) {
         //NOTE: all array items will be ignored
-        if ((*it).IsSequence() || (*it).IsNull())
+        if (!(*it).second.IsDefined() || (*it).second.IsNull() || (*it).second.IsSequence())
             continue;
         auto newPath = path;
-        newPath << QString::fromStdString(node.Tag());
+        newPath << QString::fromStdString((*it).first.as<std::string>());
 
-        if ((*it).IsMap())
-            recursiveInsertFromYaml((*it), newPath);
+        if (!(*it).second.IsScalar() && (*it).second.IsMap())
+            recursiveInsertFromYaml((*it).second, newPath);
         else
-            insertKeyValue(newPath.join('/'), QString::fromStdString(node.Scalar()));
+            insertKeyValue(newPath.join('/'), QString::fromStdString((*it).second.as<std::string>()));
     }
 }
 

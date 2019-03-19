@@ -75,9 +75,9 @@ Worker::Worker(QObject *parent) : QObject(parent)
     connect(m_dataManager, &DataManager::updateRequestError,
             [this]() { emit showErrorMessage(tr("Can't connect to server")); });
     connect(m_dataManager, &DataManager::writeToServerError, this,
-            [this]() { emit showErrorMessage(tr("Can't load value from server")); });
-    connect(m_dataManager, &DataManager::loadFromServerError,
             [this]() { emit showErrorMessage(tr("Can't write value to server")); });
+    connect(m_dataManager, &DataManager::loadFromServerError,
+            [this]() { emit showErrorMessage(tr("Can't load value from server")); });
 
     //TODO: (for Mac developer) check in qml: m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
 }
