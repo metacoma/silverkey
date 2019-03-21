@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
+        <file>qml/SettingsDialog.qml</file>
+        <file>qml/CompleterEdit.qml</file>
+        <file>qml/InsertDataDialog.qml</file>
+        <file>qml/MessageDialog.qml</file>
     </qresource>
 </RCC>
