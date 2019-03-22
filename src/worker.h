@@ -16,17 +16,18 @@ public:
     KeysModel *keysModel() const;
 
     Q_INVOKABLE void insertData(const QString &rawData);
-    Q_INVOKABLE void insertValue(const QString &key);
+    Q_INVOKABLE void getValue(const QString &key);
     Q_INVOKABLE void escapePressed();
     Q_INVOKABLE void onRaise();
 
-    void setValue(const QString &value);
+    Q_INVOKABLE void insertValue(const QString &value);
 
 signals:
     void keysModelChanged();
     void raiseWindow();
     void hideWindow();
     void showErrorMessage(const QString &error);
+    void valueLoaded(const QString &key, const QString &value);
 
 private:
     void savePreviouslyActiveWindow(const QString &bundleId);

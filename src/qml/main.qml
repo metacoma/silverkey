@@ -11,10 +11,10 @@ Window {
     color: "transparent"
 
     readonly property int realHeight: 80
-
-    width: screen.width / 3
+    property int realWidth : completerEdit.width + settingsButton.width + addButton.width + 20
+    width: realWidth + (valueBalloon.visible ? (valueBalloon.width + 20) : 0)
     height: completerEdit.height
-    x: (screen.width - width) / 2
+    x: (screen.width - realWidth) / 2
     y: screen.height / 2 - realHeight
     title: qsTr("SilverKey")
 
@@ -32,6 +32,16 @@ Window {
         onRaiseWindow: {
             mainWindow.show()
             mainWindow.raise()
+        }
+
+        onValueLoaded: {
+            if (completerEdit.needInsert) {
+                completerEdit.needInsert = false
+                worker.insertValue(value)
+                return
+            }
+
+            valueBalloon.text = value
         }
     }
 
@@ -55,7 +65,8 @@ Window {
     ToolButton {
         id: addButton
 
-        anchors.right: parent.right
+        anchors.left: completerEdit.right
+        anchors.leftMargin: 10
         y: (realHeight - height) / 2
 
         width: height
@@ -74,10 +85,30 @@ Window {
 
         anchors.top: parent.top
         anchors.left: settingsButton.right
-        anchors.right: addButton.left
         anchors.leftMargin: 10
-        anchors.rightMargin: 10
 
+        onNeedClearValueInfo: {
+            valueBalloon.visible = !hide
+            valueBalloon.text = ""
+        }
+    }
+
+    ValueBalloon {
+        id: valueBalloon
+        width : completerEdit.width / 2
+        height: realHeight / 1.5
+        anchors.left: addButton.right
+        y: (realHeight - height) / 2
+        anchors.leftMargin: 10
+
+        BusyIndicator {
+            visible: valueBalloon.text.length === 0
+            anchors.right: parent.right
+            anchors.margins: 3
+            height: parent.height - 3
+            width: height
+            running: true
+        }
     }
 
     SystemTrayIcon {
@@ -122,8 +153,4 @@ Window {
     InsertDataDialog {
         id: insertDataDialog
     }
-
-
-
-
 }

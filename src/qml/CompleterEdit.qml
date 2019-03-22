@@ -5,15 +5,18 @@ import QtQuick.Controls 2.5
 Item {
     id: completerEdit
 
+    property bool needInsert: false
+    signal needClearValueInfo(bool hide)
+
     height: inputContainer.height + (suggestions.visible ? (suggestions.height + 2) : 0)
+    width: inputContainer.width
 
     Rectangle {
         id: inputContainer
         color: "white"
         radius: 5
         anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        width: screen.width / 3
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         height: realHeight
@@ -36,16 +39,27 @@ Item {
                 suggestions.visible = true
             }
 
-            Keys.onUpPressed: view.currentIndex = view.currentIndex > 0 ? view.currentIndex - 1 : view.count - 1
-            Keys.onDownPressed: view.currentIndex = view.currentIndex < view.count - 1 ? view.currentIndex + 1 : 0
+            Keys.onUpPressed: {
+                view.canChangeInput = true
+                view.currentIndex = view.currentIndex > 0 ? view.currentIndex - 1 : view.count - 1
+            }
+            Keys.onDownPressed: {
+                view.canChangeInput = true
+                view.currentIndex = view.currentIndex < view.count - 1 ? view.currentIndex + 1 : 0
+            }
             Keys.onEscapePressed: {
                 mainInput.clear()
                 worker.escapePressed()
                 Window.window.hide()
             }
             onAccepted: {
-                worker.insertValue(view.currentItem.key);
-                suggestions.visible = false
+                if (view.currentItem) {
+                    completerEdit.needInsert = true
+                    worker.getValue(view.currentItem.key);
+                    suggestions.visible = false
+                    view.canChangeInput = false
+                    completerEdit.needClearValueInfo(false)
+                }
             }
         }
     }
@@ -65,6 +79,7 @@ Item {
             anchors.margins: 5
             ListView {
                 id: view
+                property bool canChangeInput: false
                 anchors.left: parent.left
                 anchors.right: parent.right
                 model: worker.keysModel
@@ -74,17 +89,29 @@ Item {
                     width: view.width
                     font.pointSize: 20
                     textFormat: Text.RichText
-                    text: "<span style=\"background-color: #8080ff\">" + (model && display ? display.substring(0, mainInput.text.length) : "")
-                          + "</span>" + (model && display ? display.substring(mainInput.text.length) : "")
+                    text: (model && display) ? ( key.startsWith(mainInput.text)
+                                              ? ("<span style=\"background-color: #8080ff\">"
+                                                 + key.substring(0, mainInput.text.length)
+                                                 + "</span>"
+                                                 + key.substring(mainInput.text.length))
+                                              : key) : ""
+
+
                 }
 
                 highlight: Rectangle {
+                    radius: 5
                     color: "lightgray"
                 }
 
                 onCurrentItemChanged: {
-                    if (currentItem)
+                    if (currentItem && canChangeInput) {
                         mainInput.text = currentItem.key
+                        worker.getValue(view.currentItem.key);
+                        completerEdit.needClearValueInfo(false)
+                    } else {
+                        completerEdit.needClearValueInfo(true)
+                    }
                 }
             }
         }

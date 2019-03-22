@@ -5,5 +5,6 @@
         <file>qml/CompleterEdit.qml</file>
         <file>qml/InsertDataDialog.qml</file>
         <file>qml/MessageDialog.qml</file>
+        <file>qml/ValueBalloon.qml</file>
     </qresource>
 </RCC>

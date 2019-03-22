@@ -70,6 +70,7 @@ Worker::Worker(QObject *parent) : QObject(parent)
         m_keysModel->append(key);
     });
 
+    connect(m_dataManager, &DataManager::valueLoaded, this, &Worker::valueLoaded);
     connect(m_dataManager, &DataManager::wordListLoadError, this,
             [this]() { emit showErrorMessage(tr("Can't load word list from server")); });
     connect(m_dataManager, &DataManager::updateRequestError,
@@ -92,7 +93,7 @@ void Worker::insertData(const QString &rawData)
     m_dataManager->insertData(rawData);
 }
 
-void Worker::insertValue(const QString &key)
+void Worker::getValue(const QString &key)
 {
     qDebug() << "Insert value for key:" << key;
     m_dataManager->requestValue(key);
@@ -107,7 +108,7 @@ void Worker::savePreviouslyActiveWindow(const QString &bundleId)
 #endif // Q_OS_OSX
 }
 
-void Worker::setValue(const QString &value)
+void Worker::insertValue(const QString &value)
 {
     qDebug() << "Hide action, value is " << value;
     emit hideWindow();
