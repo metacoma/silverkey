@@ -8,6 +8,6 @@ OldControls.MessageDialog{
     title: "Error"
     icon: OldControls.StandardIcon.Question
     text: "Failed to load data from database"
-    standardButtons: StandardButton.Abort | StandardButton.Open
+    standardButtons: OldControls.StandardButton.Abort | OldControls.StandardButton.Open
     onRejected: Qt.quit()
 }

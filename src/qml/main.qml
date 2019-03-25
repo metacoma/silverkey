@@ -137,7 +137,7 @@ Window {
         }
     }
 
-    MessageDialog{
+    SKMessageDialog {
         id: messageDialog
 
         onAccepted: {
@@ -153,4 +153,6 @@ Window {
     InsertDataDialog {
         id: insertDataDialog
     }
+
+    Component.onCompleted: worker.registerHotKey(this)
 }

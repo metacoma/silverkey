@@ -10,7 +10,7 @@
 #include "hotkeymap.h"
 #include "uglobalhotkeys.h"
 
-UGlobalHotkeys::UGlobalHotkeys(QObject *parent) : QObject(parent)
+UGlobalHotkeys::UGlobalHotkeys(QObject *parent, WId winId) : QObject(parent), m_winId(winId)
 {
 #if defined(Q_OS_LINUX)
     qApp->installNativeEventFilter(this);
@@ -69,7 +69,7 @@ void UGlobalHotkeys::registerHotkey(const UKeySequence &keySeq, size_t id)
         }
     }
 
-    if (!RegisterHotKey(reinterpret_cast<HWND>(winId()), static_cast<int>(id), winMod, key)) {
+    if (!RegisterHotKey(reinterpret_cast<HWND>(m_winId), static_cast<int>(id), winMod, key)) {
         qDebug() << "Error activating hotkey!";
     } else {
         Registered.insert(id);
@@ -106,7 +106,7 @@ void UGlobalHotkeys::unregisterHotkey(size_t id)
     Q_ASSERT(Registered.find(id) != Registered.end() && "Unregistered hotkey");
 #endif
 #if defined(Q_OS_WIN)
-    UnregisterHotKey(reinterpret_cast<HWND>(winId()), static_cast<int>(id));
+    UnregisterHotKey(reinterpret_cast<HWND>(m_winId), static_cast<int>(id));
 #elif defined(Q_OS_LINUX)
     unregLinuxHotkey(id);
 #endif
@@ -135,7 +135,7 @@ UGlobalHotkeys::~UGlobalHotkeys()
 {
 #if defined(Q_OS_WIN)
     for (QSet<size_t>::iterator i = Registered.begin(); i != Registered.end(); i++) {
-        UnregisterHotKey(reinterpret_cast<HWND>(winId()), static_cast<int>(*i));
+        UnregisterHotKey(reinterpret_cast<HWND>(m_winId), static_cast<int>(*i));
     }
 #elif defined(Q_OS_LINUX)
     xcb_key_symbols_free(X11KeySymbs);

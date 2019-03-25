@@ -4,7 +4,7 @@
         <file>qml/SettingsDialog.qml</file>
         <file>qml/CompleterEdit.qml</file>
         <file>qml/InsertDataDialog.qml</file>
-        <file>qml/MessageDialog.qml</file>
+        <file>qml/SKMessageDialog.qml</file>
         <file>qml/ValueBalloon.qml</file>
     </qresource>
 </RCC>

@@ -6,6 +6,7 @@
 class FocusController;
 class KeysModel;
 class DataManager;
+class QQuickWindow;
 class Worker : public QObject
 {
     Q_OBJECT
@@ -15,6 +16,7 @@ public:
     explicit Worker(QObject *parent = nullptr);
     KeysModel *keysModel() const;
 
+    Q_INVOKABLE void registerHotKey(QQuickWindow *window);
     Q_INVOKABLE void insertData(const QString &rawData);
     Q_INVOKABLE void getValue(const QString &key);
     Q_INVOKABLE void escapePressed();

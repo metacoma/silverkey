@@ -26,6 +26,7 @@
 #include <QLocalServer>
 #include <QMimeData>
 #include <QSettings>
+#include <QQuickWindow>
 
 #ifdef Q_OS_MACOS
 #    define PASTE_MODIFIER KeySystem
@@ -47,15 +48,6 @@ Worker::Worker(QObject *parent) : QObject(parent)
     m_focusController = new FocusController(this);
     m_keysModel = new KeysModel({}, this);
     m_dataManager = new DataManager(this);
-
-    auto *hotkeyManager = new UGlobalHotkeys(this);
-    //TODO: Make hotkey configurable
-    hotkeyManager->registerHotkey("Ctrl+D");
-    QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t) {
-        qDebug() << "I've got hotkey;";
-        m_focusController->savePrevActive();
-        emit raiseWindow();
-    });
 
     connect(m_dataManager, &DataManager::wordListUpdated, this, [this](const QStringList &wordList) {
         if (m_keysModel)
@@ -86,6 +78,26 @@ Worker::Worker(QObject *parent) : QObject(parent)
 KeysModel *Worker::keysModel() const
 {
     return m_keysModel;
+}
+
+void Worker::registerHotKey(QQuickWindow *window)
+{
+    if (!window){
+        qDebug() << "Window is null!";
+        return;
+    }
+
+    WId winId = window->winId();
+    qDebug() << "winId=" << winId;
+
+    auto *hotkeyManager = new UGlobalHotkeys(this, winId);
+    //TODO: Make hotkey configurable
+    hotkeyManager->registerHotkey("Ctrl+D");
+    QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t) {
+        qDebug() << "I've got hotkey;";
+        m_focusController->savePrevActive();
+        emit raiseWindow();
+    });
 }
 
 void Worker::insertData(const QString &rawData)

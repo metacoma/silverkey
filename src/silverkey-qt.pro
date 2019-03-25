@@ -19,7 +19,6 @@ HEADERS += \
     keysmodel.h \
     datamanager.h
 
-LIBS += -lyaml-cpp
 
 include(UGlobalHotkey/uglobalhotkey.pri)
 INCLUDEPATH += ./UGlobalHotkey
@@ -32,7 +31,7 @@ macx {
     DEFINES += ROBOT_OS_MAC
     INCLUDEPATH += /usr/local/Cellar/rapidjson/1.1.0/include
     INCLUDEPATH += /usr/local/include/Robot/
-    LIBS += -L/usr/local/lib/robot -lRobot -framework ApplicationServices
+    LIBS += -L/usr/local/lib/robot -lRobot -framework ApplicationServices -lyaml-cpp
     QMAKE_INFO_PLIST = ../contrib/Info.plist
     QMAKE_LFLAGS += -framework Cocoa
     OBJECTIVE_SOURCES += \
@@ -48,13 +47,14 @@ linux {
             focuscontroller_xcb.cpp
     DEFINES += ROBOT_OS_LINUX
     INCLUDEPATH += /usr/local/include/Robot/
-    LIBS += -lRobot -lXtst -lX11 -lxcb -lxcb-ewmh -lxdo
+    LIBS += -lRobot -lXtst -lX11 -lxcb -lxcb-ewmh -lxdo -lyaml-cpp
+
     QT += x11extras
 }
 
 windows {
-    INCLUDEPATH += ../include/robot
-    LIBS += -L$$PWD/../bin -lRobot
+    INCLUDEPATH += ../include ../include/robot
+    LIBS += -L$$PWD/../bin -lRobot -llibyaml-cppmd
 
     SOURCES += focuscontroller_win.cpp
     HEADERS += focuscontroller_win.h

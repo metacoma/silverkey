@@ -33,7 +33,7 @@ inline QStringList getKeys(const QJsonObject &object)
 DataManager::DataManager(QObject *parent) : QObject(parent)
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    m_httpClient = new Requester(settings.value("server", "silverkey.app").toString(),
+    m_httpClient = new Requester(settings.value("server", "192.168.0.45").toString(),
                                  settings.value("port", 2379).toInt(), nullptr, this);
 
     connect(this, &DataManager::updateRequestError, this, &DataManager::waitForUpdates);
@@ -119,7 +119,7 @@ void DataManager::insertFromYaml(const QString &yaml)
             }
         }
 
-    } catch (YAML::InvalidNode *e) {
+    } catch (YAML::InvalidNode *) {
         //TODO: emit error
     }
 }

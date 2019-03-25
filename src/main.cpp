@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("worker", new Worker());
+    engine.rootContext()->setContextProperty("worker", new Worker(&engine));
     qmlRegisterUncreatableType<KeysModel>("SilverKey", 1, 0, "KeysModel", "C++ Only");
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));

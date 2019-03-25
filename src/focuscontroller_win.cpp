@@ -83,6 +83,6 @@ void FocusController::detachThread()
 
 FocusController::~FocusController()
 {
-    FocusControllerXcb *ctrl = reinterpret_cast<FocusControllerXcb *>(controller);
+    FocusControllerWin *ctrl = reinterpret_cast<FocusControllerWin *>(controller);
     delete &ctrl;
 }

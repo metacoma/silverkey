@@ -31,7 +31,7 @@ class UGLOBALHOTKEY_EXPORT UGlobalHotkeys : public QObject
 {
     Q_OBJECT
 public:
-    explicit UGlobalHotkeys(QObject *parent = nullptr);
+    explicit UGlobalHotkeys(QObject *parent = nullptr, WId winId = 0);
     void registerHotkey(const QString &keySeq, size_t id = 1);
     void registerHotkey(const UKeySequence &keySeq, size_t id = 1);
     void unregisterHotkey(size_t id = 1);
@@ -66,4 +66,5 @@ private:
 #elif defined(Q_OS_MAC)
     QHash<size_t, EventHotKeyRef> HotkeyRefs;
 #endif
+    WId m_winId = 0;
 };
