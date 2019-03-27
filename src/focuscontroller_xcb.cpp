@@ -82,5 +82,5 @@ void FocusController::savePrevActive()
 FocusController::~FocusController()
 {
     FocusControllerXcb *ctrl = reinterpret_cast<FocusControllerXcb *>(controller);
-    delete &ctrl;
+    delete ctrl;
 }
