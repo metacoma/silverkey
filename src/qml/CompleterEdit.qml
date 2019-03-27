@@ -5,8 +5,12 @@ import QtQuick.Controls 2.5
 Item {
     id: completerEdit
 
+    property string text: mainInput.text
     property bool needInsert: false
     signal needClearValueInfo(bool hide)
+    function giveFocus() {
+        mainInput.forceActiveFocus()
+    }
 
     height: inputContainer.height + (suggestions.visible ? (suggestions.height + 2) : 0)
     width: inputContainer.width
@@ -24,6 +28,7 @@ Item {
         TextField {
             id: mainInput
             focus: true
+
             anchors.fill: parent
             anchors.margins: 5
             palette {
@@ -37,6 +42,14 @@ Item {
             onTextEdited:{
                 worker.keysModel.setFilter(text)
                 suggestions.visible = true
+            }
+
+            onFocusChanged: {
+                if (!focus) {
+                    mainInput.clear()
+                    worker.escapePressed()
+                    Window.window.hide()
+                }
             }
 
             Keys.onUpPressed: {
@@ -59,6 +72,7 @@ Item {
                     suggestions.visible = false
                     view.canChangeInput = false
                     completerEdit.needClearValueInfo(false)
+                    mainInput.clear()
                 }
             }
         }

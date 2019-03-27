@@ -7,7 +7,8 @@ Window {
     id: mainWindow
 
     visible: false
-    flags: Qt.FramelessWindowHint | Qt.Tool | Qt.Dialog | Qt.WA_TranslucentBackground
+    property int defaultFlags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool | Qt.Dialog | Qt.WA_TranslucentBackground
+    flags: defaultFlags
     color: "transparent"
 
     readonly property int realHeight: 80
@@ -30,8 +31,9 @@ Window {
 
 
         onRaiseWindow: {
-            mainWindow.show()
             mainWindow.raise()
+            mainWindow.show()
+            completerEdit.giveFocus()
         }
 
         onValueLoaded: {
@@ -83,6 +85,7 @@ Window {
     CompleterEdit {
         id: completerEdit
 
+
         anchors.top: parent.top
         anchors.left: settingsButton.right
         anchors.leftMargin: 10
@@ -90,6 +93,11 @@ Window {
         onNeedClearValueInfo: {
             valueBalloon.visible = !hide
             valueBalloon.text = ""
+        }
+
+        onTextChanged: {
+            if (text.length === 0)
+                valueBalloon.visible = false
         }
     }
 
@@ -127,8 +135,7 @@ Window {
                 text: qsTr("Hide")
                 onTriggered: {
                     mainWindow.hide()
-                }
-            }
+                }            }
             MenuSeparator {}
             MenuItem {
                 text: qsTr("Quit")
