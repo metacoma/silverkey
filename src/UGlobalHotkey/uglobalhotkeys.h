@@ -24,9 +24,8 @@ struct UHotkeyData
 #endif
 
 class UGLOBALHOTKEY_EXPORT UGlobalHotkeys : public QObject
-#if defined(Q_OS_LINUX)
-    ,
-                                            public QAbstractNativeEventFilter
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    , public QAbstractNativeEventFilter
 #endif
 {
     Q_OBJECT
@@ -41,7 +40,7 @@ public:
 protected:
 #if defined(Q_OS_WIN)
     bool winEvent(MSG *message, long *result);
-    bool nativeEvent(const QByteArray &eventType, void *message, long *result);
+    bool nativeEventFilter(const QByteArray &eventType, void *message, long *result);
 #elif defined(Q_OS_LINUX)
     bool nativeEventFilter(const QByteArray &eventType, void *message, long *result);
     bool linuxEvent(xcb_generic_event_t *message);
@@ -54,6 +53,7 @@ public:
 #endif
 signals:
     void activated(size_t id);
+    void hideWindow();
 
 private:
 #if defined(Q_OS_WIN)

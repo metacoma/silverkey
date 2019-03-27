@@ -27,7 +27,6 @@ Item {
 
         TextField {
             id: mainInput
-            focus: true
 
             anchors.fill: parent
             anchors.margins: 5
@@ -42,14 +41,6 @@ Item {
             onTextEdited:{
                 worker.keysModel.setFilter(text)
                 suggestions.visible = true
-            }
-
-            onFocusChanged: {
-                if (!focus) {
-                    mainInput.clear()
-                    worker.escapePressed()
-                    Window.window.hide()
-                }
             }
 
             Keys.onUpPressed: {

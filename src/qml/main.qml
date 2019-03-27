@@ -7,10 +7,10 @@ Window {
     id: mainWindow
 
     visible: false
-    property int defaultFlags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool | Qt.Dialog | Qt.WA_TranslucentBackground
+    property int defaultFlags:  Qt.FramelessWindowHint | Qt.Tool | Qt.Dialog | Qt.WA_TranslucentBackground
     flags: defaultFlags
     color: "transparent"
-
+    objectName: "SilverKeyMainWindow"
     readonly property int realHeight: 80
     property int realWidth : completerEdit.width + settingsButton.width + addButton.width + 20
     width: realWidth + (valueBalloon.visible ? (valueBalloon.width + 20) : 0)

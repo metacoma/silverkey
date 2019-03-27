@@ -20,6 +20,10 @@ UGlobalHotkeys::UGlobalHotkeys(QObject *parent, WId winId) : QObject(parent), m_
     X11Wid = xcb_setup_roots_iterator(xcb_get_setup(X11Connection)).data->root;
     X11KeySymbs = xcb_key_symbols_alloc(X11Connection);
 #endif
+
+#if defined(Q_OS_WIN)
+    qApp->installNativeEventFilter(this);
+#endif
 }
 
 void UGlobalHotkeys::registerHotkey(const QString &keySeq, size_t id)
@@ -156,16 +160,27 @@ bool UGlobalHotkeys::winEvent(MSG *message, long *result)
     if (message->message == WM_HOTKEY) {
         size_t id = message->wParam;
         Q_ASSERT(Registered.find(id) != Registered.end() && "Unregistered hotkey");
+        AllocConsole();
+        auto hWndConsole = GetConsoleWindow();
+        SetWindowPos(hWndConsole, 0, 0, 0, 0, 0, SWP_NOZORDER);
+        FreeConsole();
+        SetForegroundWindow(reinterpret_cast<HWND>(m_winId));
+
         emit activated(id);
+    }
+
+    if (message->message == WM_KILLFOCUS) {
+        emit hideWindow();
     }
     return false;
 }
 
-bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType, void *message, long *result)
+bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType, void *message, long *result)
 {
     Q_UNUSED(eventType);
     return winEvent(reinterpret_cast<MSG *>(message), result);
 }
+
 
 #elif defined(Q_OS_LINUX)
 

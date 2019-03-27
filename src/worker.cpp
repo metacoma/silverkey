@@ -88,11 +88,12 @@ void Worker::registerHotKey(QQuickWindow *window)
     }
 
     WId winId = window->winId();
-    qDebug() << "winId=" << winId;
+    qDebug() << "winId=" << winId << window->objectName();
 
     auto *hotkeyManager = new UGlobalHotkeys(this, winId);
     //TODO: Make hotkey configurable
     hotkeyManager->registerHotkey("Ctrl+D");
+    QObject::connect(hotkeyManager, &UGlobalHotkeys::hideWindow, this, &Worker::hideWindow);
     QObject::connect(hotkeyManager, &UGlobalHotkeys::activated, this, [this](size_t) {
         qDebug() << "I've got hotkey;";
         m_focusController->savePrevActive();
