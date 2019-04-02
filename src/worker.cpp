@@ -27,6 +27,7 @@
 #include <QMimeData>
 #include <QSettings>
 #include <QQuickWindow>
+#include <QThread>
 
 #ifdef Q_OS_MACOS
 #    define PASTE_MODIFIER KeySystem
@@ -46,14 +47,15 @@ Worker::Worker(QObject *parent) : QObject(parent)
     server->listen("SKApp");
 
     m_focusController = new FocusController(this);
-    m_keysModel = new KeysModel({}, this);
+    m_keysModel = new KeysModel({});
     m_dataManager = new DataManager(this);
 
     connect(m_dataManager, &DataManager::wordListUpdated, this, [this](const QStringList &wordList) {
-        if (m_keysModel)
-            delete m_keysModel;
-        m_keysModel = new KeysModel(wordList, this);
+        auto oldModel = m_keysModel;
+        m_keysModel = new KeysModel(wordList);
         emit keysModelChanged();
+        if (oldModel)
+            delete oldModel;
     });
 
     connect(m_dataManager, &DataManager::valueSaved, this, [this](const QString &key, const QString &) {
@@ -72,7 +74,15 @@ Worker::Worker(QObject *parent) : QObject(parent)
     connect(m_dataManager, &DataManager::loadFromServerError,
             [this]() { emit showErrorMessage(tr("Can't load value from server")); });
 
+    m_dataManager->requestWordList();
+
     //TODO: (for Mac developer) check in qml: m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+}
+
+Worker::~Worker()
+{
+    if (m_keysModel)
+        delete m_keysModel;
 }
 
 KeysModel *Worker::keysModel() const

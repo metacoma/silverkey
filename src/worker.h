@@ -14,6 +14,7 @@ class Worker : public QObject
 
 public:
     explicit Worker(QObject *parent = nullptr);
+    ~Worker();
     KeysModel *keysModel() const;
 
     Q_INVOKABLE void registerHotKey(QQuickWindow *window);

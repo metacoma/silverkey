@@ -22,6 +22,7 @@ public:
 
     Q_INVOKABLE void insertData(const QString &rawData);
     void requestValue(const QString &key);
+    void requestWordList();
 
 signals:
     void wordListUpdated(const QStringList &wordList);
@@ -43,7 +44,6 @@ private:
 
     void insertKeyValue(const QString &key, const QVariant &value);
 
-    void requestWordList();
     void requestSaveValue(const QString &key, const QString &value);
     void connectToHost();
 

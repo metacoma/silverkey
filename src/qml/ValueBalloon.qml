@@ -6,7 +6,7 @@ Rectangle {
     id: balloon
 
     property alias text: label.text
-
+    visible: false
     radius: height / 2
     color: "white"
     Label {

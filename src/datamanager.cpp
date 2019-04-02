@@ -37,7 +37,6 @@ DataManager::DataManager(QObject *parent) : QObject(parent)
                                  settings.value("port", 2379).toInt(), nullptr, this);
 
     connect(this, &DataManager::updateRequestError, this, &DataManager::waitForUpdates);
-    requestWordList();
 }
 
 void DataManager::insertData(const QString &rawData)

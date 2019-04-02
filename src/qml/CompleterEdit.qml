@@ -88,6 +88,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 model: worker.keysModel
+
                 clip: true
                 delegate: Label {
                     property string key: display
